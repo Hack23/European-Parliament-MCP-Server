@@ -567,9 +567,12 @@ const MAX_CONSECUTIVE_FETCH_FAILURES = 3;
 
 /**
  * Run the per-week DOCEO fetch loop sequentially, deduplicating RCV records
- * by `vote.id`. Returns the merged map plus a `anyWeekReached` flag used by
- * the caller to discriminate the "all weeks failed" branch from the "empty
- * corpus" branch.
+ * by record `id` (the top-level `LatestVoteRecord.id`). Returns the merged
+ * map plus a `anyWeekReached` flag used by the caller to discriminate the
+ * "all weeks failed" branch from the "empty corpus" branch, and
+ * `weeksAttempted` reflecting the number of weeks the loop actually tried
+ * to fetch (which can be less than `weeks.length` under the
+ * {@link MAX_CONSECUTIVE_FETCH_FAILURES} early-exit).
  *
  * @internal
  */
@@ -580,13 +583,16 @@ async function fetchAndDedupWeeks(
   dedup: Map<string, LatestVoteRecord>;
   anyWeekReached: boolean;
   rawFetched: number;
+  weeksAttempted: number;
 }> {
   const dedup = new Map<string, LatestVoteRecord>();
   let anyWeekReached = false;
   let rawFetched = 0;
+  let weeksAttempted = 0;
   let consecutiveFailures = 0;
   for (const week of weeks) {
     if (consecutiveFailures >= MAX_CONSECUTIVE_FETCH_FAILURES) break;
+    weeksAttempted += 1;
     const weekRecords = await fetchSinglePlenaryWeek(week, paginateWithinWeek);
     if (weekRecords === null) {
       consecutiveFailures += 1;
@@ -602,7 +608,7 @@ async function fetchAndDedupWeeks(
       }
     }
   }
-  return { dedup, anyWeekReached, rawFetched };
+  return { dedup, anyWeekReached, rawFetched, weeksAttempted };
 }
 
 /**
@@ -639,7 +645,8 @@ function countDistinctSittingWeeks(corpus: LatestVoteRecord[]): number {
  * per-MEP baseline to a single-week sample with zero stdev — see
  * Hack23/European-Parliament-MCP-Server#462 follow-up). Now iterates every
  * plenary-week Monday between `from` and `to`, sequentially under the
- * existing rate limiter, deduplicates by `vote.id`, and caps the corpus at
+ * existing rate limiter, deduplicates by record `id`
+ * (the top-level `LatestVoteRecord.id`), and caps the corpus at
  * {@link DOCEO_RCV_FETCH_LIMIT}.
  *
  * Resilience: per-week timeouts/errors are absorbed (the week is recorded as
@@ -659,19 +666,19 @@ async function fetchDoceoRcvRecords(
   const weeks = allWeeks.length === 0 ? [period.to] : allWeeks;
   const paginateWithinWeek = weeks.length === 1;
 
-  const { dedup, anyWeekReached, rawFetched } = await fetchAndDedupWeeks(weeks, paginateWithinWeek);
+  const { dedup, anyWeekReached, rawFetched, weeksAttempted } = await fetchAndDedupWeeks(weeks, paginateWithinWeek);
 
   if (!anyWeekReached) {
     auditLogger.logError(
       'detect_voting_anomalies.doceo_fetch',
-      { from: period.from, to: period.to, weeksAttempted: weeks.length },
+      { from: period.from, to: period.to, weeksAttempted },
       'all weekly fetches failed'
     );
     return {
       records: [],
       doceoAvailable: false,
       weeksContributing: 0,
-      weeksAttempted: weeks.length,
+      weeksAttempted,
       weeksTruncated,
     };
   }
@@ -679,11 +686,12 @@ async function fetchDoceoRcvRecords(
   const merged = [...dedup.values()];
   const corpus = sortRecordsDesc(merged).slice(0, DOCEO_RCV_FETCH_LIMIT);
   const weeksContributing = countDistinctSittingWeeks(corpus);
-  // `duplicatesRemoved` reflects RCV records collapsed by `vote.id`
-  // (pre-dedup fetched − unique merged). `truncatedRecords` reports the
-  // post-cap drop from `DOCEO_RCV_FETCH_LIMIT`. These were previously
-  // conflated into a single `dedupeRatio` computed against the *capped*
-  // corpus, which mostly measured truncation rather than true de-duplication
+  // `duplicatesRemoved` reflects RCV records collapsed by record `id`
+  // (the top-level `LatestVoteRecord.id`; pre-dedup fetched − unique merged).
+  // `truncatedRecords` reports the post-cap drop from
+  // `DOCEO_RCV_FETCH_LIMIT`. These were previously conflated into a single
+  // `dedupeRatio` computed against the *capped* corpus, which mostly
+  // measured truncation rather than true de-duplication
   // — see review on https://github.com/Hack23/European-Parliament-MCP-Server/pull/490.
   const duplicatesRemoved = Math.max(0, rawFetched - merged.length);
   const truncatedRecords = Math.max(0, merged.length - corpus.length);
@@ -696,7 +704,7 @@ async function fetchDoceoRcvRecords(
     {
       from: period.from,
       to: period.to,
-      weeksAttempted: weeks.length,
+      weeksAttempted,
       weeksContributing,
       rawRecords: rawFetched,
       uniqueRecords: merged.length,
@@ -712,7 +720,7 @@ async function fetchDoceoRcvRecords(
     records: corpus,
     doceoAvailable: true,
     weeksContributing,
-    weeksAttempted: weeks.length,
+    weeksAttempted,
     weeksTruncated,
   };
 }
@@ -883,7 +891,7 @@ function collectDataQualityWarnings(
   } else if (rcvVotesInspected < 10) {
     warnings.push('Fewer than 10 RCV votes inspected — confidence reduced to LOW.');
   }
-  if (weeksTruncated) {
+  if (doceoAvailable && weeksTruncated) {
     warnings.push(
       `Requested window exceeds the ${String(MAX_PLENARY_WEEKS)}-week cap — `
       + `fetched the most recent ${String(MAX_PLENARY_WEEKS)} plenary weeks only (weeksTruncated=true).`
@@ -1008,7 +1016,7 @@ function buildVotingAnomalyAnalysis(input: AnalysisInputs): VotingAnomalyAnalysi
     mepsAnalyzed: result.mepsAnalyzed,
     weeksInspected: corpus.weeksContributing,
   };
-  if (corpus.weeksTruncated) analysis.weeksTruncated = true;
+  if (dataAvailable && corpus.weeksTruncated) analysis.weeksTruncated = true;
   if (!dataAvailable) analysis.dataAvailable = false;
   return analysis;
 }
