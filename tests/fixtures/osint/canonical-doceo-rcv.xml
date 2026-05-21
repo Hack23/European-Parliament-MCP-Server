@@ -26,8 +26,8 @@
       <Result.PoliticalGroup.List Identifier="Renew">
         <PoliticalGroup.Member.Name MepId="104">Elena Papadaki (synthetic)</PoliticalGroup.Member.Name>
       </Result.PoliticalGroup.List>
-      <Result.PoliticalGroup.List Identifier="Left">
-        <PoliticalGroup.Member.Name MepId="105">Lars Andersson (synthetic)</PoliticalGroup.Member.Name>
+      <Result.PoliticalGroup.List Identifier="Greens/EFA">
+        <PoliticalGroup.Member.Name MepId="105">Lars Svensson (synthetic)</PoliticalGroup.Member.Name>
       </Result.PoliticalGroup.List>
     </Result.For>
     <Result.Against Number="1">
@@ -36,8 +36,8 @@
       </Result.PoliticalGroup.List>
     </Result.Against>
     <Result.Abstention Number="1">
-      <Result.PoliticalGroup.List Identifier="Verts">
-        <PoliticalGroup.Member.Name MepId="106">Sara Lindqvist (synthetic)</PoliticalGroup.Member.Name>
+      <Result.PoliticalGroup.List Identifier="S&amp;D">
+        <PoliticalGroup.Member.Name MepId="106">Ana Costa (synthetic)</PoliticalGroup.Member.Name>
       </Result.PoliticalGroup.List>
     </Result.Abstention>
   </RollCallVote.Result>

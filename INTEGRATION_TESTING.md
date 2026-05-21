@@ -170,7 +170,7 @@ For each of the 15 OSINT tools, two fixture **variants** are exercised:
 
 | Variant | Mock installer | What it covers |
 | --- | --- | --- |
-| `empty-path` | `installEmptyPathMocks` | MEP roster present, every other EP/DOCEO source empty. Verifies the no-silent-zero policy (`confidenceLevel ≠ HIGH` with non-empty `dataQualityWarnings`). |
+| `empty-path` | `installEmptyPathMocks` | MEP roster present, every other EP/DOCEO source empty. Verifies the no-silent-zero policy (`confidenceLevel` is `LOW` or `MEDIUM` with non-empty `dataQualityWarnings`). |
 | `hot-path` | `installHotPathMocks` | Substantive synthetic EP + DOCEO data (3 plenary RCVs, 3 procedures, committee documents, questions). Drives every tool through its scoring / classification / attribution code path so a methodology regression actually moves a snapshot value. |
 
 Each snapshot is the tool's JSON response after `stripVolatile` removes timestamp/run-identifier fields (`generatedAt`, `analysisTime`, `dataFreshness`, `cacheHit`, …) and after `stableStringify` sorts object keys ascending at every depth. Arrays preserve original order (OSINT scoring is order-sensitive).

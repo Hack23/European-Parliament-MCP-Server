@@ -123,12 +123,19 @@ function assertMatchesSnapshot(snapshotName: string, actual: unknown): void {
   const serialised = stableStringify(actual);
   const snapshotPath = join(SNAPSHOTS_DIR, `${snapshotName}.json`);
 
-  if (UPDATE_SNAPSHOTS || !existsSync(snapshotPath)) {
+  if (UPDATE_SNAPSHOTS) {
     mkdirSync(SNAPSHOTS_DIR, { recursive: true });
     writeFileSync(snapshotPath, serialised, 'utf-8');
-    // First-run / refresh: succeed silently — vitest will print the file
+    // Refresh: succeed silently — vitest will print the file
     // path in the run report via the normal pass output.
     return;
+  }
+
+  if (!existsSync(snapshotPath)) {
+    throw new Error(
+      `Snapshot file missing: ${snapshotPath}. ` +
+        `Run with UPDATE_SNAPSHOTS=1 to create it: npm run test:osint:snapshots -- -u`
+    );
   }
 
   const expected = readFileSync(snapshotPath, 'utf-8');
