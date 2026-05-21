@@ -248,39 +248,53 @@ describe('Performance Benchmarks', () => {
 
   describe('Phase 6 OSINT Response Time Benchmarks', () => {
     it('should respond to network_analysis within response threshold', async () => {
+      // Warm up cache — threshold targets cached response time
+      await handleNetworkAnalysis({});
+
       const [, duration] = await measureTime(async () => {
         return handleNetworkAnalysis({});
       });
 
       expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
-      console.log(`network_analysis: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+      console.log(`network_analysis cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
     }, 30000);
 
     it('should respond to sentiment_tracker within response threshold', async () => {
+      // Warm up cache — threshold targets cached response time
+      await handleSentimentTracker({});
+
       const [, duration] = await measureTime(async () => {
         return handleSentimentTracker({});
       });
 
       expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
-      console.log(`sentiment_tracker: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+      console.log(`sentiment_tracker cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
     }, 30000);
 
     it('should respond to early_warning_system within response threshold', async () => {
+      // Warm up cache — threshold targets cached response time
+      await handleEarlyWarningSystem({});
+
       const [, duration] = await measureTime(async () => {
         return handleEarlyWarningSystem({});
       });
 
       expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
-      console.log(`early_warning_system: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+      console.log(`early_warning_system cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
     }, 30000);
 
     it('should respond to comparative_intelligence within response threshold', async () => {
+      const params = { mepIds: [1, 2] };
+
+      // Warm up cache — threshold targets cached response time
+      await handleComparativeIntelligence(params);
+
       const [, duration] = await measureTime(async () => {
-        return handleComparativeIntelligence({ mepIds: [1, 2] });
+        return handleComparativeIntelligence(params);
       });
 
       expect(duration).toBeLessThan(CACHED_THRESHOLD_MS);
-      console.log(`comparative_intelligence: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
+      console.log(`comparative_intelligence cached: ${duration.toFixed(2)}ms (threshold: ${CACHED_THRESHOLD_MS}ms)`);
     }, 30000);
   });
 

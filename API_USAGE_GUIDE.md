@@ -3895,6 +3895,50 @@ The European Parliament MCP Server is the **most feature-rich political MCP serv
 
 ---
 
+## 🛑 Cancelling Requests with `abortSignal`
+
+Every public method on the typed EP clients accepts an optional
+`abortSignal?: AbortSignal` field that is forwarded to the underlying
+`fetch` call. Use it to cancel long-running requests pre-emptively — for
+example, when a parent deadline expires or a user navigates away.
+
+```typescript
+import { epClient } from '@hack23/european-parliament-mcp-server';
+
+const controller = new AbortController();
+setTimeout(() => controller.abort(new Error('5s budget')), 5_000);
+
+try {
+  const procedures = await epClient.getProcedures({
+    limit: 100,
+    abortSignal: controller.signal,
+  });
+  // …use procedures
+} catch (err) {
+  // APIError with statusCode === 0 indicates a cancellation
+  if ((err as { statusCode?: number }).statusCode === 0) {
+    console.log('Request was cancelled');
+  } else {
+    throw err;
+  }
+}
+```
+
+**Semantics:**
+- Signal **already aborted** when the call starts → rejects immediately with
+  `APIError(0)` and **no** HTTP request is issued (rate-limit token preserved).
+- Signal aborts **mid-flight** → underlying `fetch` is cancelled and the call
+  rejects with `APIError(0, { cause: signal.reason })`.
+- Signal **omitted** → behaviour is identical to all prior client versions.
+- Aborted requests are **never retried** even when `enableRetry: true`.
+
+The same parameter is accepted by every public method on
+`EuropeanParliamentClient` (`getMEPs`, `getProcedures`, `getAdoptedTexts`,
+`getCommitteeDocuments`, `getParliamentaryQuestions`, the `*Feed` helpers,
+the `*ById` helpers, etc.) and by `doceoClient.getLatestVotes`.
+
+---
+
 <p align="center">
   <strong>Built with ❤️ by <a href="https://hack23.com">Hack23 AB</a></strong><br>
   <em>ISMS-compliant open source demonstrating security excellence</em>

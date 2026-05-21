@@ -44,13 +44,13 @@ export class CommitteeClient extends BaseEPClient {
    * @throws {APIError} If committee not found
    * @private
    */
-  private async resolveCommittee(searchTerm: string): Promise<Committee> {
+  private async resolveCommittee(searchTerm: string, abortSignal?: AbortSignal): Promise<Committee> {
     if (searchTerm !== '') {
-      const directResult = await this.fetchCommitteeDirectly(searchTerm);
+      const directResult = await this.fetchCommitteeDirectly(searchTerm, abortSignal);
       if (directResult !== null) return directResult;
     }
 
-    const found = await this.searchCommitteeInList(searchTerm);
+    const found = await this.searchCommitteeInList(searchTerm, abortSignal);
     if (found !== null) return found;
 
     throw new APIError(`Committee not found: ${searchTerm || 'unknown'}`, 404);
@@ -60,9 +60,9 @@ export class CommitteeClient extends BaseEPClient {
    * Attempts a direct corporate-body lookup by ID.
    * @private
    */
-  private async fetchCommitteeDirectly(bodyId: string): Promise<Committee | null> {
+  private async fetchCommitteeDirectly(bodyId: string, abortSignal?: AbortSignal): Promise<Committee | null> {
     try {
-      const response = await this.get<JSONLDResponse>(`corporate-bodies/${bodyId}`, {});
+      const response = await this.get<JSONLDResponse>(`corporate-bodies/${bodyId}`, {}, undefined, abortSignal);
       if (response.data.length > 0) {
         return this.transformCorporateBody(response.data[0] ?? {});
       }
@@ -78,12 +78,12 @@ export class CommitteeClient extends BaseEPClient {
    * Searches the corporate-bodies list for a matching committee.
    * @private
    */
-  private async searchCommitteeInList(searchTerm: string): Promise<Committee | null> {
+  private async searchCommitteeInList(searchTerm: string, abortSignal?: AbortSignal): Promise<Committee | null> {
     const listParams: Record<string, unknown> = {
       'body-classification': 'COMMITTEE_PARLIAMENTARY_STANDING',
       limit: 100,
     };
-    const response = await this.get<JSONLDResponse>('corporate-bodies', listParams);
+    const response = await this.get<JSONLDResponse>('corporate-bodies', listParams, undefined, abortSignal);
 
     for (const item of response.data) {
       const committee = this.transformCorporateBody(item);
@@ -99,24 +99,27 @@ export class CommitteeClient extends BaseEPClient {
    *
    * **EP API Endpoint:** `GET /corporate-bodies/{body-id}` or `GET /corporate-bodies`
    *
-   * @param params - id or abbreviation of the committee
+   * @param params - id or abbreviation of the committee, with optional `abortSignal`
    * @returns Committee information
    * @security Audit logged per GDPR Article 30
    */
   async getCommitteeInfo(params: {
     id?: string;
     abbreviation?: string;
+    abortSignal?: AbortSignal;
   }): Promise<Committee> {
     const action = 'get_committee_info';
+    // Audit params exclude `abortSignal` (not a property we want in audit logs).
+    const auditParams = { id: params.id, abbreviation: params.abbreviation };
     try {
       const searchTerm = params.abbreviation ?? params.id ?? '';
-      const committee = await this.resolveCommittee(searchTerm);
-      auditLogger.logDataAccess(action, params, 1);
+      const committee = await this.resolveCommittee(searchTerm, params.abortSignal);
+      auditLogger.logDataAccess(action, auditParams, 1);
       return committee;
     } catch (error: unknown) {
       auditLogger.logError(
         action,
-        params,
+        auditParams,
         error instanceof Error ? error.message : 'Unknown error'
       );
       throw error;
@@ -130,10 +133,10 @@ export class CommitteeClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
    * Extended timeout applied (120 s minimum).
    */
-  async getCorporateBodiesFeed(): Promise<JSONLDResponse> {
+  async getCorporateBodiesFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('corporate-bodies/feed', {
       format: 'application/ld+json',
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
   }
 
   /**
@@ -143,13 +146,16 @@ export class CommitteeClient extends BaseEPClient {
   async getCurrentCorporateBodies(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<Committee>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
 
     const response = await this.get<JSONLDResponse>(
       'corporate-bodies/show-current',
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];

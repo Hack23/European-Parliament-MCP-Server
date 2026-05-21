@@ -121,6 +121,7 @@ export class DocumentClient extends BaseEPClient {
     committee?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<LegislativeDocument>> {
     const action = 'search_documents';
     try {
@@ -133,7 +134,7 @@ export class DocumentClient extends BaseEPClient {
       const apiParams = this.buildDocumentSearchParams(params);
       apiParams['limit'] = requestedLimit;
       apiParams['offset'] = currentOffset;
-      const response = await this.get<JSONLDResponse>('documents', apiParams);
+      const response = await this.get<JSONLDResponse>('documents', apiParams, undefined, params.abortSignal);
       const pageSize = response.data.length;
 
       let documents = response.data.map((item) => this.transformDocument(item));
@@ -169,6 +170,7 @@ export class DocumentClient extends BaseEPClient {
     year?: number;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -179,7 +181,7 @@ export class DocumentClient extends BaseEPClient {
     };
     if (params.year !== undefined) apiParams['year'] = params.year;
 
-    const response = await this.get<JSONLDResponse>('plenary-documents', apiParams);
+    const response = await this.get<JSONLDResponse>('plenary-documents', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
     const hasMore = docs.length === limit;
@@ -197,6 +199,7 @@ export class DocumentClient extends BaseEPClient {
   async getCommitteeDocuments(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -206,7 +209,7 @@ export class DocumentClient extends BaseEPClient {
       limit,
     };
 
-    const response = await this.get<JSONLDResponse>('committee-documents', apiParams);
+    const response = await this.get<JSONLDResponse>('committee-documents', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
     const hasMore = docs.length === limit;
@@ -220,6 +223,7 @@ export class DocumentClient extends BaseEPClient {
   async getPlenarySessionDocuments(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -228,7 +232,7 @@ export class DocumentClient extends BaseEPClient {
       format: 'application/ld+json',
       offset,
       limit,
-    });
+    }, undefined, params.abortSignal);
 
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
@@ -243,13 +247,16 @@ export class DocumentClient extends BaseEPClient {
   async getPlenarySessionDocumentItems(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
 
     const response = await this.get<JSONLDResponse>(
       'plenary-session-documents-items',
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
@@ -269,6 +276,7 @@ export class DocumentClient extends BaseEPClient {
   async getExternalDocuments(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<LegislativeDocument>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -278,7 +286,7 @@ export class DocumentClient extends BaseEPClient {
       limit,
     };
 
-    const response = await this.get<JSONLDResponse>('external-documents', apiParams);
+    const response = await this.get<JSONLDResponse>('external-documents', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const docs = items.map((item) => this.transformDocument(item));
     const hasMore = docs.length === limit;
@@ -294,10 +302,10 @@ export class DocumentClient extends BaseEPClient {
    * default window (typically one month).  Response times can exceed
    * 120 s, so an extended minimum timeout is applied automatically.
    */
-  async getDocumentsFeed(): Promise<JSONLDResponse> {
+  async getDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('documents/feed', {
       format: 'application/ld+json',
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
   }
 
   /**
@@ -307,10 +315,10 @@ export class DocumentClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter.
    * Extended timeout applied (120 s minimum).
    */
-  async getPlenaryDocumentsFeed(): Promise<JSONLDResponse> {
+  async getPlenaryDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('plenary-documents/feed', {
       format: 'application/ld+json',
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
   }
 
   /**
@@ -320,10 +328,10 @@ export class DocumentClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter.
    * Extended timeout applied (120 s minimum).
    */
-  async getCommitteeDocumentsFeed(): Promise<JSONLDResponse> {
+  async getCommitteeDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('committee-documents/feed', {
       format: 'application/ld+json',
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
   }
 
   /**
@@ -333,10 +341,10 @@ export class DocumentClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter.
    * Extended timeout applied (120 s minimum).
    */
-  async getPlenarySessionDocumentsFeed(): Promise<JSONLDResponse> {
+  async getPlenarySessionDocumentsFeed(options: { abortSignal?: AbortSignal } = {}): Promise<JSONLDResponse> {
     return this.get<JSONLDResponse>('plenary-session-documents/feed', {
       format: 'application/ld+json',
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
   }
 
   /**
@@ -351,6 +359,7 @@ export class DocumentClient extends BaseEPClient {
     timeframe?: string;
     startDate?: string;
     workType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     const minimumTimeout = params.timeframe === 'one-month'
       ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
@@ -360,18 +369,20 @@ export class DocumentClient extends BaseEPClient {
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    }, minimumTimeout);
+    }, minimumTimeout, params.abortSignal);
   }
 
   /**
    * Returns a single document by ID.
    * **EP API Endpoint:** `GET /documents/{doc-id}`
    */
-  async getDocumentById(docId: string): Promise<LegislativeDocument> {
+  async getDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
     const response = await this.get<Record<string, unknown>>(
       `documents/${docId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformDocument(response);
   }
@@ -380,11 +391,13 @@ export class DocumentClient extends BaseEPClient {
    * Returns a single plenary document by ID.
    * **EP API Endpoint:** `GET /plenary-documents/{doc-id}`
    */
-  async getPlenaryDocumentById(docId: string): Promise<LegislativeDocument> {
+  async getPlenaryDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
     const response = await this.get<Record<string, unknown>>(
       `plenary-documents/${docId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformDocument(response);
   }
@@ -393,11 +406,13 @@ export class DocumentClient extends BaseEPClient {
    * Returns a single plenary session document by ID.
    * **EP API Endpoint:** `GET /plenary-session-documents/{doc-id}`
    */
-  async getPlenarySessionDocumentById(docId: string): Promise<LegislativeDocument> {
+  async getPlenarySessionDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
     const response = await this.get<Record<string, unknown>>(
       `plenary-session-documents/${docId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformDocument(response);
   }
@@ -406,11 +421,13 @@ export class DocumentClient extends BaseEPClient {
    * Returns a single committee document by ID.
    * **EP API Endpoint:** `GET /committee-documents/{doc-id}`
    */
-  async getCommitteeDocumentById(docId: string): Promise<LegislativeDocument> {
+  async getCommitteeDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
     const response = await this.get<Record<string, unknown>>(
       `committee-documents/${docId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformDocument(response);
   }
@@ -419,11 +436,13 @@ export class DocumentClient extends BaseEPClient {
    * Returns a single external document by ID.
    * **EP API Endpoint:** `GET /external-documents/{doc-id}`
    */
-  async getExternalDocumentById(docId: string): Promise<LegislativeDocument> {
+  async getExternalDocumentById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<LegislativeDocument> {
     if (docId.trim() === '') throw new APIError('Document ID is required', 400);
     const response = await this.get<Record<string, unknown>>(
       `external-documents/${docId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformDocument(response);
   }

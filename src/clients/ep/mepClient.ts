@@ -100,7 +100,7 @@ export class MEPClient extends BaseEPClient {
   }
 
   /** Fetch all current MEPs in paginated batches (max 100 per request). */
-  private async fetchAllCurrentMEPs(): Promise<MEP[]> {
+  private async fetchAllCurrentMEPs(abortSignal?: AbortSignal): Promise<MEP[]> {
     const batchSize = 100;
     const allMeps: MEP[] = [];
     let fetchOffset = 0;
@@ -111,7 +111,7 @@ export class MEPClient extends BaseEPClient {
         format: 'application/ld+json',
         offset: fetchOffset,
         limit: batchSize,
-      });
+      }, undefined, abortSignal);
       const items = Array.isArray(response.data) ? response.data : [];
       const batch = items.map((item) => ({ ...this.transformMEP(item), active: true }));
       allMeps.push(...batch);
@@ -150,6 +150,7 @@ export class MEPClient extends BaseEPClient {
     active?: boolean;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise<PaginatedResponse<MEP>> {
     const action = 'get_meps';
     try {
@@ -160,7 +161,7 @@ export class MEPClient extends BaseEPClient {
       apiParams['limit'] = limit;
       apiParams['offset'] = offset;
 
-      const response = await this.get<JSONLDResponse>('meps', apiParams);
+      const response = await this.get<JSONLDResponse>('meps', apiParams, undefined, params.abortSignal);
       const meps = response.data.map((item) => this.transformMEP(item));
       const hasMore = meps.length === limit;
       const result: PaginatedResponse<MEP> = {
@@ -193,7 +194,7 @@ export class MEPClient extends BaseEPClient {
    * @returns Detailed MEP information
    * @security Personal data access logged per GDPR Article 30
    */
-  async getMEPDetails(id: string): Promise<MEPDetails> {
+  async getMEPDetails(id: string, options: { abortSignal?: AbortSignal } = {}): Promise<MEPDetails> {
     const action = 'get_mep_details';
     const params = { id };
 
@@ -205,7 +206,7 @@ export class MEPClient extends BaseEPClient {
     }
 
     try {
-      const response = await this.get<JSONLDResponse>(`meps/${normalizedId}`, {});
+      const response = await this.get<JSONLDResponse>(`meps/${normalizedId}`, {}, undefined, options.abortSignal);
       if (response.data.length > 0) {
         const mepDetails = this.transformMEPDetails(response.data[0] ?? {});
         auditLogger.logDataAccess(action, params, 1);
@@ -242,13 +243,14 @@ export class MEPClient extends BaseEPClient {
     group?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
     const needsFiltering = params.country !== undefined || params.group !== undefined;
 
     if (needsFiltering) {
-      const allMeps = await this.fetchAllCurrentMEPs();
+      const allMeps = await this.fetchAllCurrentMEPs(params.abortSignal);
       const filtered = this.filterMEPs(allMeps, params.country, params.group);
       return this.paginateFiltered(filtered, limit, offset, true);
     }
@@ -257,7 +259,7 @@ export class MEPClient extends BaseEPClient {
       format: 'application/ld+json',
       offset,
       limit,
-    });
+    }, undefined, params.abortSignal);
 
     const items = Array.isArray(response.data) ? response.data : [];
     const allMeps = items.map((item) => ({ ...this.transformMEP(item), active: true }));
@@ -271,6 +273,7 @@ export class MEPClient extends BaseEPClient {
   async getIncomingMEPs(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -279,7 +282,7 @@ export class MEPClient extends BaseEPClient {
       format: 'application/ld+json',
       offset,
       limit,
-    });
+    }, undefined, params.abortSignal);
 
     const items = Array.isArray(response.data) ? response.data : [];
     const meps = items.map((item) => this.transformMEP(item));
@@ -294,6 +297,7 @@ export class MEPClient extends BaseEPClient {
   async getOutgoingMEPs(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -302,7 +306,7 @@ export class MEPClient extends BaseEPClient {
       format: 'application/ld+json',
       offset,
       limit,
-    });
+    }, undefined, params.abortSignal);
 
     const items = Array.isArray(response.data) ? response.data : [];
     const meps = items.map((item) => this.transformMEP(item));
@@ -317,6 +321,7 @@ export class MEPClient extends BaseEPClient {
   async getHomonymMEPs(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEP>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -325,7 +330,7 @@ export class MEPClient extends BaseEPClient {
       format: 'application/ld+json',
       offset,
       limit,
-    });
+    }, undefined, params.abortSignal);
 
     const items = Array.isArray(response.data) ? response.data : [];
     const meps = items.map((item) => this.transformMEP(item));
@@ -342,6 +347,7 @@ export class MEPClient extends BaseEPClient {
     year?: number;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise<PaginatedResponse<MEPDeclaration>> {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -353,7 +359,7 @@ export class MEPClient extends BaseEPClient {
     };
     if (params.year !== undefined) apiParams['year'] = params.year;
 
-    const response = await this.get<JSONLDResponse>('meps-declarations', apiParams);
+    const response = await this.get<JSONLDResponse>('meps-declarations', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : [];
     const declarations = items.map((item) => this.transformMEPDeclaration(item));
 
@@ -371,6 +377,7 @@ export class MEPClient extends BaseEPClient {
   async getMEPsFeed(params: {
     timeframe?: string;
     startDate?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     const minimumTimeout = params.timeframe === 'one-month'
       ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
@@ -379,7 +386,7 @@ export class MEPClient extends BaseEPClient {
       format: 'application/ld+json',
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
-    }, minimumTimeout);
+    }, minimumTimeout, params.abortSignal);
   }
 
   /**
@@ -392,6 +399,7 @@ export class MEPClient extends BaseEPClient {
     timeframe?: string;
     startDate?: string;
     workType?: string;
+    abortSignal?: AbortSignal;
   } = {}): Promise<JSONLDResponse> {
     const minimumTimeout = params.timeframe === 'one-month'
       ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
@@ -401,7 +409,7 @@ export class MEPClient extends BaseEPClient {
       ...(params.timeframe !== undefined ? { timeframe: params.timeframe } : {}),
       ...(params.startDate !== undefined ? { 'start-date': params.startDate } : {}),
       ...(params.workType !== undefined ? { 'work-type': params.workType } : {}),
-    }, minimumTimeout);
+    }, minimumTimeout, params.abortSignal);
   }
 
   /**
@@ -409,13 +417,15 @@ export class MEPClient extends BaseEPClient {
    * **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
    * @gdpr Declarations contain personal financial data – access is audit-logged
    */
-  async getMEPDeclarationById(docId: string): Promise<MEPDeclaration> {
+  async getMEPDeclarationById(docId: string, options: { abortSignal?: AbortSignal } = {}): Promise<MEPDeclaration> {
     if (docId.trim() === '') {
       throw new APIError('Document ID is required', 400);
     }
     const response = await this.get<Record<string, unknown>>(
       `meps-declarations/${docId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal
     );
     const declaration = this.transformMEPDeclaration(response);
     auditLogger.logDataAccess('getMEPDeclarationById', { docId }, 1);
