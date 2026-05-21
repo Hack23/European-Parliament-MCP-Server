@@ -419,6 +419,14 @@ interface DoceoCorpus {
 /** Corpus cache TTL — 5 minutes per issue spec. */
 const CORPUS_CACHE_TTL_MS = 5 * 60 * 1_000;
 
+/**
+ * Bound on the multi-week corpus cache to prevent unbounded memory growth in
+ * long-lived servers as varied `${scope}|${from}|${to}` windows accumulate
+ * — mirrors the convention used by `analyzeCommitteeActivity` and
+ * `doceoMepAggregator`.
+ */
+const MAX_CORPUS_CACHE_ENTRIES = 200;
+
 interface CorpusCacheEntry {
   corpus: DoceoCorpus;
   expiresAt: number;
@@ -563,21 +571,27 @@ function detectWindowTruncation(
 async function fetchAndDedupWeeks(
   weeks: string[],
   paginateWithinWeek: boolean
-): Promise<{ dedup: Map<string, LatestVoteRecord>; anyWeekReached: boolean }> {
+): Promise<{
+  dedup: Map<string, LatestVoteRecord>;
+  anyWeekReached: boolean;
+  rawFetched: number;
+}> {
   const dedup = new Map<string, LatestVoteRecord>();
   let anyWeekReached = false;
+  let rawFetched = 0;
   for (const week of weeks) {
     const weekRecords = await fetchSinglePlenaryWeek(week, paginateWithinWeek);
     if (weekRecords === null) continue;
     anyWeekReached = true;
     for (const v of weekRecords) {
       if (v.dataSource !== 'RCV') continue;
+      rawFetched += 1;
       if (!dedup.has(v.id)) {
         dedup.set(v.id, v);
       }
     }
   }
-  return { dedup, anyWeekReached };
+  return { dedup, anyWeekReached, rawFetched };
 }
 
 /**
@@ -586,6 +600,11 @@ async function fetchAndDedupWeeks(
  * and is robust against fixtures where the same DOCEO XML fixture is returned
  * for multiple `weekStart` anchors.
  *
+ * Malformed sitting dates (anything not matching `YYYY-MM-DD` or that
+ * `Date.parse` cannot resolve) are skipped so they cannot inflate the
+ * distinct-week count with bogus week keys — see review on
+ * https://github.com/Hack23/European-Parliament-MCP-Server/pull/490.
+ *
  * @internal
  */
 function countDistinctSittingWeeks(corpus: LatestVoteRecord[]): number {
@@ -593,6 +612,8 @@ function countDistinctSittingWeeks(corpus: LatestVoteRecord[]): number {
   for (const v of corpus) {
     const date = v.sittingDate ?? v.date;
     if (date === '') continue;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    if (Number.isNaN(Date.parse(`${date}T00:00:00Z`))) continue;
     distinctWeeks.add(isoWeekStart(date));
   }
   return distinctWeeks.size;
@@ -627,7 +648,7 @@ async function fetchDoceoRcvRecords(
   const weeks = allWeeks.length === 0 ? [period.to] : allWeeks;
   const paginateWithinWeek = weeks.length === 1;
 
-  const { dedup, anyWeekReached } = await fetchAndDedupWeeks(weeks, paginateWithinWeek);
+  const { dedup, anyWeekReached, rawFetched } = await fetchAndDedupWeeks(weeks, paginateWithinWeek);
 
   if (!anyWeekReached) {
     auditLogger.logError(
@@ -647,6 +668,17 @@ async function fetchDoceoRcvRecords(
   const merged = [...dedup.values()];
   const corpus = sortRecordsDesc(merged).slice(0, DOCEO_RCV_FETCH_LIMIT);
   const weeksContributing = countDistinctSittingWeeks(corpus);
+  // `duplicatesRemoved` reflects RCV records collapsed by `vote.id`
+  // (pre-dedup fetched − unique merged). `truncatedRecords` reports the
+  // post-cap drop from `DOCEO_RCV_FETCH_LIMIT`. These were previously
+  // conflated into a single `dedupeRatio` computed against the *capped*
+  // corpus, which mostly measured truncation rather than true de-duplication
+  // — see review on https://github.com/Hack23/European-Parliament-MCP-Server/pull/490.
+  const duplicatesRemoved = Math.max(0, rawFetched - merged.length);
+  const truncatedRecords = Math.max(0, merged.length - corpus.length);
+  const dedupeRatio = rawFetched > 0
+    ? Math.round((duplicatesRemoved / rawFetched) * 1000) / 1000
+    : 0;
 
   auditLogger.logDataAccess(
     'detect_voting_anomalies.doceo_corpus',
@@ -655,11 +687,12 @@ async function fetchDoceoRcvRecords(
       to: period.to,
       weeksAttempted: weeks.length,
       weeksContributing,
-      rawRecords: merged.length,
+      rawRecords: rawFetched,
+      uniqueRecords: merged.length,
+      duplicatesRemoved,
       cappedRecords: corpus.length,
-      dedupeRatio: merged.length > 0
-        ? Math.round((1 - corpus.length / merged.length) * 1000) / 1000
-        : 0,
+      truncatedRecords,
+      dedupeRatio,
     },
     corpus.length
   );
@@ -688,13 +721,25 @@ async function getDoceoCorpus(
   const key = `${scopeKey}|${period.from}|${period.to}`;
   const now = Date.now();
   const cached = corpusCache.get(key);
-  if (cached !== undefined && cached.expiresAt > now) {
-    return cached.corpus;
+  if (cached !== undefined) {
+    if (cached.expiresAt > now) {
+      return cached.corpus;
+    }
+    // Expired entries are removed eagerly so the bounded cache reclaims slots
+    // promptly instead of waiting for the FIFO eviction below.
+    corpusCache.delete(key);
   }
   const corpus = await fetchDoceoRcvRecords(period);
   // Only cache successful fetches so a transient outage doesn't lock the
   // window into LOW confidence for 5 minutes.
   if (corpus.doceoAvailable) {
+    if (corpusCache.size >= MAX_CORPUS_CACHE_ENTRIES) {
+      // FIFO eviction: Map iteration order is insertion order in JS, so the
+      // first key is the oldest insertion. Sufficient for a small bounded
+      // corpus cache; full LRU is not warranted at this scale.
+      const firstKey = corpusCache.keys().next().value;
+      if (firstKey !== undefined) corpusCache.delete(firstKey);
+    }
     corpusCache.set(key, { corpus, expiresAt: now + CORPUS_CACHE_TTL_MS });
   }
   return corpus;

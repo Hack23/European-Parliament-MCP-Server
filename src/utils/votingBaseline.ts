@@ -544,34 +544,65 @@ export const MAX_PLENARY_WEEKS = 26;
  *
  * - Returns an empty array when either bound is missing/empty or unparsable.
  * - Returns an empty array when `from > to`.
+ * - A week is included only when its Mon–Fri span intersects `[from, to]`
+ *   (i.e. `weekStart + 4d >= from`). This prevents `from` on Sat/Sun from
+ *   pulling in the prior week, whose Friday ended before `from`.
  * - Weeks are ordered chronologically (oldest first) for stable iteration.
- * - Capped at {@link MAX_PLENARY_WEEKS} (≈6 months) per request; callers
- *   should treat `result.length === MAX_PLENARY_WEEKS` AND a wider input
- *   window as truncation and surface a `weeksTruncated` warning.
+ * - Capped at {@link MAX_PLENARY_WEEKS} (≈6 months) per request, retaining
+ *   the *most recent* in-scope weeks (enumeration walks backward from `to`
+ *   and is then reversed). Callers should treat `result.length ===
+ *   MAX_PLENARY_WEEKS` AND a wider input window as truncation and surface a
+ *   `weeksTruncated` warning.
  *
  * @param from - Inclusive period start (YYYY-MM-DD).
  * @param to - Inclusive period end (YYYY-MM-DD).
  * @returns Mondays of intersecting plenary weeks, oldest first.
  */
-export function iteratePlenaryWeeks(from: string, to: string): string[] {
-  if (from === '' || to === '') return [];
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return [];
+/**
+ * Parse and validate a `[from, to]` window for {@link iteratePlenaryWeeks}.
+ * Returns the parsed millisecond bounds, or `null` for empty/malformed/
+ * reversed inputs. Extracted to keep `iteratePlenaryWeeks` below the
+ * cyclomatic-complexity ceiling.
+ *
+ * @internal
+ */
+function parseIsoDateWindow(from: string, to: string): { fromMs: number; toMs: number } | null {
+  if (from === '' || to === '') return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return null;
   const fromMs = Date.parse(`${from}T00:00:00Z`);
   const toMs = Date.parse(`${to}T00:00:00Z`);
-  if (Number.isNaN(fromMs) || Number.isNaN(toMs)) return [];
-  if (fromMs > toMs) return [];
+  if (Number.isNaN(fromMs) || Number.isNaN(toMs)) return null;
+  if (fromMs > toMs) return null;
+  return { fromMs, toMs };
+}
 
-  const startMonday = isoWeekStart(from);
+export function iteratePlenaryWeeks(from: string, to: string): string[] {
+  const bounds = parseIsoDateWindow(from, to);
+  if (bounds === null) return [];
+  const { fromMs, toMs } = bounds;
+
+  const DAY_MS = 24 * 3_600_000;
+  const WEEK_MS = 7 * DAY_MS;
+  // Plenary weeks run Mon–Fri; intersection with `[from, to]` requires
+  // `weekStart <= to` AND `weekStart + 4d >= from`.
+  const FRIDAY_OFFSET_MS = 4 * DAY_MS;
+
+  // Walk backward from the ISO-week containing `to` so the
+  // MAX_PLENARY_WEEKS cap retains the *most recent* in-scope weeks.
+  const endMonday = isoWeekStart(to);
+  let cursorMs = Date.parse(`${endMonday}T00:00:00Z`);
   const weeks: string[] = [];
-  // Walk forward by 7 days from the first Monday until we step past `to`.
-  let cursorMs = Date.parse(`${startMonday}T00:00:00Z`);
-  while (cursorMs <= toMs && weeks.length < MAX_PLENARY_WEEKS) {
-    const d = new Date(cursorMs);
-    const yyyy = String(d.getUTCFullYear()).padStart(4, '0');
-    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const dd = String(d.getUTCDate()).padStart(2, '0');
-    weeks.push(`${yyyy}-${mm}-${dd}`);
-    cursorMs += 7 * 24 * 3_600_000;
+  while (weeks.length < MAX_PLENARY_WEEKS) {
+    if (cursorMs + FRIDAY_OFFSET_MS < fromMs) break;
+    if (cursorMs <= toMs) {
+      const d = new Date(cursorMs);
+      const yyyy = String(d.getUTCFullYear()).padStart(4, '0');
+      const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+      const dd = String(d.getUTCDate()).padStart(2, '0');
+      weeks.push(`${yyyy}-${mm}-${dd}`);
+    }
+    cursorMs -= WEEK_MS;
   }
+  weeks.reverse();
   return weeks;
 }

@@ -351,6 +351,27 @@ describe('votingBaseline.iteratePlenaryWeeks', () => {
     expect(weeks.length).toBe(MAX_PLENARY_WEEKS);
   });
 
+  it('retains the most recent 26 weeks when the window is wider than the cap', () => {
+    // Truncation direction must match the warning text ("most recent 26
+    // plenary weeks") — the last entry must be the ISO-week containing `to`.
+    const weeks = iteratePlenaryWeeks('2025-01-01', '2026-06-30');
+    expect(weeks.length).toBe(MAX_PLENARY_WEEKS);
+    // 2026-06-30 is a Tuesday → ISO-week Monday is 2026-06-29.
+    expect(weeks[weeks.length - 1]).toBe('2026-06-29');
+    // Earliest retained week is 25 × 7 days before the latest.
+    const latestMs = Date.parse('2026-06-29T00:00:00Z');
+    const earliestMs = Date.parse(`${weeks[0] ?? ''}T00:00:00Z`);
+    expect(latestMs - earliestMs).toBe(25 * 7 * 24 * 3_600_000);
+  });
+
+  it('excludes the prior week when `from` falls on Sat/Sun (no Mon–Fri intersection)', () => {
+    // 2026-01-03 is a Saturday — the previous week's Mon–Fri (Dec 29 – Jan 2)
+    // ended before `from`, so it must NOT be included. The week starting
+    // 2026-01-05 is the first whose Mon–Fri intersects `[from, to]`.
+    expect(iteratePlenaryWeeks('2026-01-03', '2026-01-09')).toEqual(['2026-01-05']);
+    expect(iteratePlenaryWeeks('2026-01-04', '2026-01-09')).toEqual(['2026-01-05']);
+  });
+
   it('returned weeks are strictly chronological and spaced 7 days apart', () => {
     const weeks = iteratePlenaryWeeks('2026-01-05', '2026-03-30');
     for (let i = 1; i < weeks.length; i += 1) {

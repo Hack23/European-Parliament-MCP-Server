@@ -1357,7 +1357,7 @@ sort. A hard server-side cap of **26 plenary weeks** (≈6 months) per request
 bounds the fan-out — wider windows are truncated to the most recent 26 weeks
 and surface a `weeksTruncated: true` flag together with an explicit
 `dataQualityWarning`. Corpus results are cached for **5 minutes** keyed by
-`${mepId | groupId | 'all'}|${dateFrom}|${dateTo}` so back-to-back calls reuse
+`${mepId ?? groupId ?? 'all'}|${dateFrom}|${dateTo}` so back-to-back calls reuse
 the multi-week fetch.
 
 | Anomaly Type | Trigger |
