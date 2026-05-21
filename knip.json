@@ -15,7 +15,9 @@
   "ignoreDependencies": [
     "@typescript-eslint/eslint-plugin",
     "@typescript-eslint/parser",
-    "typedoc-plugin-markdown"
+    "typedoc-plugin-markdown",
+    "@stryker-mutator/core",
+    "@stryker-mutator/vitest-runner"
   ],
   "ignoreBinaries": [],
   "ignore": [

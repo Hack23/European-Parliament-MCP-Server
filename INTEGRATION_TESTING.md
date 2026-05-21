@@ -153,6 +153,35 @@ The suite completes in ~1 s because it uses `vi.mock` to stub the EP and DOCEO c
 3. Run `npx vitest run tests/integration/osint/contract.test.ts` — a failing `beforeAll` will list any registered OSINT tool that lacks a `TOOL_INPUTS` entry.
 4. If the new tool calls an EP API method not yet mocked in `installDefaultMocks()`, add a default mock there (use `emptyPaginated()` for list endpoints).
 
+### Mutation testing (Stryker)
+
+The contract suite enforces the **structural** envelope and the no-silent-zero policy, but cannot detect **logic** regressions (boundary off-by-ones in percentile calculations, swapped comparison operators in anomaly thresholds, inverted Jaccard similarity weights, etc.). To close that gap, the `osint-qa` workflow runs [Stryker](https://stryker-mutator.io/) mutation testing as a third stage after the contract suite and the per-file coverage gate.
+
+**Scope** (defined in [`stryker.config.json`](stryker.config.json)):
+
+| Category | Files |
+|----------|-------|
+| OSINT tool implementations (15) | `src/tools/{assessMepInfluence,analyzeCoalitionDynamics,detectVotingAnomalies,comparePoliticalGroups,analyzeLegislativeEffectiveness,monitorLegislativePipeline,analyzeCommitteeActivity,trackMepAttendance,analyzeCountryDelegation,generatePoliticalLandscape,networkAnalysis,sentimentTracker,earlyWarningSystem,comparativeIntelligence,correlateIntelligence}.ts` |
+| Shared OSINT utilities (7) | `src/utils/{votingBaseline,graphAlgorithms,networkVotingSimilarity,effectivenessAggregator,lifecycleStatistics,doceoMepAggregator,politicalGroupNormalization}.ts` |
+
+**Exclusions**: `**/*.test.ts`, `**/*.spec.ts`, `src/generated/**`, all non-OSINT tools, EP/DOCEO client transport code (those are exercised by integration tests with real fixtures).
+
+**Thresholds** (baseline phase): `{ high: 80, low: 60, break: null }` — informational only. After one green run on `main`, `break` will be promoted to `70` and the CI job's `continue-on-error: true` flag will be removed.
+
+**Running locally**:
+
+```bash
+# Full mutation run, writes builds/stryker/mutation-report.html
+npm run test:mutation
+
+# CI-equivalent (concurrency 4, info log level)
+npm run test:mutation:ci
+```
+
+**Runtime budget**: contract suite ≤2 min, coverage ≤3 min, mutation ≤15 min (the `--concurrency 4` flag in `stryker.config.json` keeps Stryker inside the 15-min budget on GitHub-hosted runners). The vitest runner reuses the existing unit-test infrastructure, so there is no per-mutant fork overhead.
+
+See [`CONTRIBUTING.md` § "Mutation testing (OSINT)"](CONTRIBUTING.md#mutation-testing-osint) for the surviving-mutant triage policy.
+
 ---
 
 
