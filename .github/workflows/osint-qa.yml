@@ -58,6 +58,7 @@ on:
       - "tests/integration/osint/**"
       - "stryker.config.json"
       - "vitest.config.ts"
+      - "vitest.stryker.config.ts"
       - ".github/workflows/osint-qa.yml"
   workflow_dispatch:
 
@@ -129,7 +130,6 @@ jobs:
 
     permissions:
       contents: read
-      checks: write
 
     steps:
       - name: Harden the runner (Audit all outbound calls)
