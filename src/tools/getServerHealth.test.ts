@@ -309,4 +309,34 @@ describe('get_server_health Tool', () => {
       expect(getServerHealthToolMetadata.inputSchema).toHaveProperty('properties');
     });
   });
+
+  describe('Lifecycle Cache Section', () => {
+    it('should include lifecycleCache block in response', async () => {
+      const result = await handleGetServerHealth({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as {
+        lifecycleCache: { state: string; ageMs: number | null; corpusSize: number | null; lastRefreshErrorAt: string | null };
+      };
+
+      expect(parsed).toHaveProperty('lifecycleCache');
+      expect(parsed.lifecycleCache).toHaveProperty('state');
+      expect(parsed.lifecycleCache).toHaveProperty('ageMs');
+      expect(parsed.lifecycleCache).toHaveProperty('corpusSize');
+      expect(parsed.lifecycleCache).toHaveProperty('lastRefreshErrorAt');
+    });
+
+    it('should report COLD state when the lifecycle cache has never been warmed', async () => {
+      // resetLifecycleStatisticsCache is invoked indirectly by importing the
+      // cache module; rely on the fact that fresh test files start with an
+      // empty cache. We avoid forcing a real network rebuild here.
+      const { resetLifecycleStatisticsCache } = await import('../utils/lifecycleStatistics.js');
+      resetLifecycleStatisticsCache();
+      const result = await handleGetServerHealth({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '') as {
+        lifecycleCache: { state: string; ageMs: number | null; corpusSize: number | null };
+      };
+      expect(parsed.lifecycleCache.state).toBe('COLD');
+      expect(parsed.lifecycleCache.ageMs).toBeNull();
+      expect(parsed.lifecycleCache.corpusSize).toBeNull();
+    });
+  });
 });

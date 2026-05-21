@@ -21,6 +21,9 @@ import { z } from 'zod';
 import { SERVER_VERSION } from '../config.js';
 import { feedHealthTracker } from '../services/FeedHealthTracker.js';
 import type { AvailabilityLevel, FeedStatus } from '../services/FeedHealthTracker.js';
+import { lifecycleWarmupScheduler } from '../services/LifecycleWarmupScheduler.js';
+import { getLifecycleCacheStatus } from '../utils/lifecycleStatistics.js';
+import type { LifecycleCacheState } from '../utils/lifecycleStatistics.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import type { ToolResult } from './shared/types.js';
@@ -58,6 +61,35 @@ function projectFeeds(feeds: Record<string, FeedStatus>): Record<string, FeedPro
     projection[name] = entry;
   }
   return projection;
+}
+
+/**
+ * Lifecycle-statistics cache projection exposed in the health response.
+ *
+ * | Field                 | Meaning |
+ * |-----------------------|---------|
+ * | `state`               | `WARM` (cached & fresh), `STALE` (cached but TTL elapsed), `COLD` (never warmed) |
+ * | `ageMs`               | Age of the cached model in ms; `null` when COLD |
+ * | `corpusSize`          | Number of procedures the cached model was built from; `null` when COLD |
+ * | `lastRefreshErrorAt`  | ISO-8601 timestamp of the last warmup-scheduler failure; `null` when none |
+ */
+export interface LifecycleCacheProjection {
+  state: LifecycleCacheState;
+  ageMs: number | null;
+  corpusSize: number | null;
+  lastRefreshErrorAt: string | null;
+}
+
+/** Build the lifecycle-cache projection consumed by the health response. */
+function projectLifecycleCache(): LifecycleCacheProjection {
+  const cache = getLifecycleCacheStatus();
+  const { lastRefreshErrorAt } = lifecycleWarmupScheduler.getStatus();
+  return {
+    state: cache.state,
+    ageMs: cache.ageMs,
+    corpusSize: cache.corpusSize,
+    lastRefreshErrorAt,
+  };
 }
 
 /**
@@ -123,6 +155,7 @@ export async function handleGetServerHealth(args: unknown): Promise<ToolResult> 
   const feeds = feedHealthTracker.getAllStatuses();
   const availability = feedHealthTracker.getAvailability();
   const feedsProjection = projectFeeds(feeds);
+  const lifecycleCache = projectLifecycleCache();
 
   const result = {
     server: {
@@ -138,6 +171,7 @@ export async function handleGetServerHealth(args: unknown): Promise<ToolResult> 
       total_feeds: availability.totalFeeds,
       level: availability.level,
     },
+    lifecycleCache,
   };
 
   return await Promise.resolve(buildToolResponse(result));
@@ -148,8 +182,11 @@ export const getServerHealthToolMetadata = {
   name: 'get_server_health',
   description:
     'Check server health and feed availability status. Returns server version, uptime, ' +
-    'per-feed health status (ok/error/unknown) and overall availability level ' +
-    '(Full/Degraded/Sparse/Unavailable/Unknown). Per-feed `lastProbedAt` and ' +
+    'per-feed health status (ok/error/unknown), overall availability level ' +
+    '(Full/Degraded/Sparse/Unavailable/Unknown), and a `lifecycleCache` block ' +
+    '({state: WARM|STALE|COLD, ageMs, corpusSize, lastRefreshErrorAt}) reporting ' +
+    'the state of the corpus-wide lifecycle-statistics cache that feeds ' +
+    '`monitor_legislative_pipeline`. Per-feed `lastProbedAt` and ' +
     '`lastAttempt` staleness timestamps are included only once a feed has been probed ' +
     '(absent for never-probed feeds). `Unknown` is reported when no feeds have been ' +
     'probed yet (cache empty) and must NOT be interpreted as an outage — consumers ' +

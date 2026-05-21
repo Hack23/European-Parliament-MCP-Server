@@ -101,7 +101,8 @@
     "docs:test-reports": "mkdir -p builds/test-results docs/test-results; vitest run src --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/test-results/index.html --outputFile.json=./builds/test-results/results.json || true; cp -r builds/test-results/* docs/test-results/ 2>/dev/null || true",
     "docs:e2e-reports": "mkdir -p builds/e2e-results docs/e2e-results; vitest run tests/e2e --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/e2e-results/index.html --outputFile.json=./builds/e2e-results/results.json || true; cp -r builds/e2e-results/* docs/e2e-results/ 2>/dev/null || true",
     "docs:build": "npm run docs:clean && npm run docs && npm run docs:md && npm run docs:coverage && npm run docs:test-reports && npm run docs:e2e-reports",
-    "docs:sitemap": "npx tsx scripts/generate-sitemap.ts"
+    "docs:sitemap": "npx tsx scripts/generate-sitemap.ts",
+    "warmup:lifecycle": "npx tsx scripts/warmup-lifecycle.ts"
   },
   "keywords": [
     "mcp",

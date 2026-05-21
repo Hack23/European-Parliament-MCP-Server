@@ -40,6 +40,7 @@ import { handleToolError } from './tools/shared/errorHandler.js';
 import { SERVER_NAME, SERVER_VERSION } from './config.js';
 import { getPromptMetadataArray, handleGetPrompt } from './prompts/index.js';
 import { getResourceTemplateArray, handleReadResource } from './resources/index.js';
+import { lifecycleWarmupScheduler } from './services/LifecycleWarmupScheduler.js';
 /** Re-export all public types, branded identifiers, and error classes */
 export type * from './types/index.js';
 /** Re-export all runtime type guards, factory functions, and error utilities */
@@ -276,6 +277,18 @@ export class EuropeanParliamentMCPServer {
         : new Error('Failed to connect MCP transport', { cause: connectError });
     }
 
+    // Out-of-band warmup for the lifecycle-statistics cache so
+    // `monitor_legislative_pipeline` (cache-only on the request path) does
+    // not degrade to `INSUFFICIENT_DATA` after a cold start or after the
+    // 30-minute TTL expires. The interval is `unref()`'d so it never
+    // blocks process exit; errors are logged but non-fatal.
+    try {
+      void lifecycleWarmupScheduler.refreshNow();
+      lifecycleWarmupScheduler.start();
+    } catch (warmupError: unknown) {
+      console.error('[WARN] Lifecycle warmup scheduler failed to start:', warmupError);
+    }
+
     const tools = getToolMetadataArray();
     const coreToolCount = tools.filter(t => t.category === 'core').length;
     const nonCoreToolCount = tools.length - coreToolCount;
@@ -317,6 +330,7 @@ if (isMainModule) {
 
   function handleShutdownSignal(signal: string): void {
     console.error(`[${SERVER_NAME}] Received ${signal} — exiting`);
+    lifecycleWarmupScheduler.dispose();
     process.exit(0);
   }
 

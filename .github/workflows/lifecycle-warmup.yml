@@ -1,0 +1,72 @@
+# Lifecycle-Statistics Cache Warmup
+#
+# Forces a periodic rebuild of the corpus-wide lifecycle-statistics model used
+# by `monitor_legislative_pipeline`. The tool reads the cache only on the
+# request path (cold-cache requests degrade to `INSUFFICIENT_DATA` forecasts),
+# so this cron job is the out-of-band warmup that keeps the 30-minute TTL
+# from ever expiring.
+#
+# The job invokes `npm run warmup:lifecycle`, which delegates to
+# `scripts/warmup-lifecycle.ts`. The script forces a corpus rebuild via
+# `getLifecycleStatistics({ forceRefresh: true })`, prints success/failure
+# diagnostics, and exits with the appropriate status code.
+#
+# Operators who maintain a long-running deployment may instead run the
+# in-process `LifecycleWarmupScheduler` (started automatically at server
+# bootstrap); this workflow exists primarily for ephemeral/CI environments
+# and as a manual override.
+#
+# ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation),
+#   A.8.16 (Monitoring activities), A.8.32 (Change management).
+
+name: Lifecycle Cache Warmup
+
+on:
+  schedule:
+    # Every 25 minutes — 5 minutes before the 30-minute corpus TTL elapses
+    - cron: '*/25 * * * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual warmup (for audit log)'
+        required: false
+        default: 'manual'
+        type: string
+
+permissions:
+  contents: read
+
+# Resilience against transient npm registry / mirror failures.
+env:
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_FETCH_TIMEOUT: "300000"
+
+jobs:
+  warmup-lifecycle:
+    name: Force lifecycle-statistics corpus rebuild
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '26'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Warm lifecycle-statistics cache
+        run: npm run warmup:lifecycle
+        env:
+          NODE_ENV: production

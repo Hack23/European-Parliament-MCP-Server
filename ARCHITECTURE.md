@@ -723,6 +723,68 @@ See [SECURITY_ARCHITECTURE.md](./SECURITY_ARCHITECTURE.md) for full details. For
 
 ---
 
+## ⏱️ Lifecycle-Statistics Cache Warmup
+
+`monitor_legislative_pipeline` reads the corpus-wide lifecycle-statistics
+model from cache only on the request path (rebuilding the corpus inline
+would race the request's own rate-limited `/events` fan-out and degrade
+to a timeout envelope). To keep the 30-minute cache from ever expiring,
+the server runs an out-of-band warmup scheduler.
+
+```mermaid
+flowchart LR
+    Bootstrap["MCP server bootstrap<br/>(src/index.ts)"]
+    Scheduler["LifecycleWarmupScheduler<br/>(src/services/)"]
+    Stats["getLifecycleStatistics<br/>(src/utils/lifecycleStatistics.ts)"]
+    Cache[("memoCacheByCorpusSize<br/>(30-min TTL)")]
+    Tool["monitor_legislative_pipeline<br/>(cache-only read)"]
+    Health["get_server_health<br/>(lifecycleCache block)"]
+    Cron["GitHub Actions cron<br/>lifecycle-warmup.yml<br/>(*/25 * * * *)"]
+    CLI["npm run warmup:lifecycle<br/>(scripts/warmup-lifecycle.ts)"]
+
+    Bootstrap -->|start + refreshNow| Scheduler
+    Scheduler -->|forceRefresh| Stats
+    Stats -->|populate| Cache
+    Cron -->|invoke| CLI
+    CLI -->|forceRefresh| Stats
+    Tool -->|getCachedLifecycleStatistics| Cache
+    Health -->|getLifecycleCacheStatus + scheduler.getStatus| Scheduler
+    Health -->|read state| Cache
+```
+
+**Mechanics:**
+
+- The bootstrap (`src/index.ts`) calls `lifecycleWarmupScheduler.refreshNow()`
+  to prime the cache after the MCP transport binds, then starts the
+  periodic `setInterval` (`unref()`'d so it never blocks exit).
+- The interval defaults to **25 minutes** (5 minutes shy of the
+  `CACHE_TTL_MS`). Operators can override via
+  `EP_LIFECYCLE_WARMUP_INTERVAL_MS`, clamped to `[60_000, 3_600_000]`.
+- Concurrent calls share the existing in-flight mutex inside
+  `getLifecycleStatistics`, so a warmup tick that overlaps with a
+  request-path build never doubles the EP-API load.
+- Failures are logged but non-fatal; the scheduler keeps firing on the
+  next tick. The most recent failure timestamp is exposed via
+  `get_server_health.lifecycleCache.lastRefreshErrorAt`.
+- For ephemeral / container deployments, the GitHub Actions workflow
+  `.github/workflows/lifecycle-warmup.yml` (cron `*/25 * * * *`) and the
+  `npm run warmup:lifecycle` CLI script (`scripts/warmup-lifecycle.ts`)
+  provide external priming with the same audit-log surface.
+- Unit tests pass `{ disable: true }` to `start()` to opt out of the
+  background timer and stay hermetic.
+
+When a request lands before the first warmup completes,
+`monitor_legislative_pipeline` returns an `INSUFFICIENT_DATA` forecast
+*and* a `dataQualityWarnings` entry pointing consumers at
+`get_server_health.lifecycleCache` so the cold-start condition is
+observable rather than silent.
+
+ISMS references: A.8.16 (Monitoring activities), A.8.32 (Change
+management), AU-002 (Audit Logging), SC-002 (Input Validation),
+AC-003 (Least Privilege).
+
+---
+
 ## ✅ ISMS Compliance Mapping
 
 | Control | Standard | Clause | Implementation |
