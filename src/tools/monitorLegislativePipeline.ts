@@ -569,6 +569,9 @@ function buildWarnings(
     warnings.push(`${String(eventFetchFailures)} procedure(s) had no lifecycle events available — fell back to procedure-metadata dates for dwell computation`);
   }
   if (envelopeBasis === 'INSUFFICIENT_DATA' && !lifecycleCacheMiss) {
+    // Suppress the generic "insufficient historical data" warning when the
+    // cache-miss-specific warning above has already explained *why* the
+    // forecast degraded — avoids a redundant pair of warnings on cold caches.
     warnings.push('Forecast basis: insufficient historical lifecycle data — `estimatedCompletionDays` uses a heuristic fallback');
   }
   return warnings;
