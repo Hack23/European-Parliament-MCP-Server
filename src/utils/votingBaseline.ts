@@ -523,3 +523,55 @@ export function coverageConfidence(rcvVotesInspected: number): 'HIGH' | 'MEDIUM'
   if (rcvVotesInspected >= 10) return 'MEDIUM';
   return 'LOW';
 }
+
+/**
+ * Hard cap on the number of plenary weeks enumerated by {@link iteratePlenaryWeeks}
+ * — ~6 months of weekly fan-out per request. The 26th week is the last one
+ * returned; callers can detect truncation by comparing the returned array
+ * length against `26`.
+ */
+export const MAX_PLENARY_WEEKS = 26;
+
+/**
+ * Enumerate the Monday (ISO-week start, UTC) of every plenary week whose
+ * Mon–Fri span intersects the inclusive `[from, to]` date range.
+ *
+ * Used by `detect_voting_anomalies` to drive the multi-week DOCEO fetch loop
+ * so the per-MEP rolling baseline reflects every plenary week in the requested
+ * window rather than the single week containing `to`.
+ *
+ * Behaviour:
+ *
+ * - Returns an empty array when either bound is missing/empty or unparsable.
+ * - Returns an empty array when `from > to`.
+ * - Weeks are ordered chronologically (oldest first) for stable iteration.
+ * - Capped at {@link MAX_PLENARY_WEEKS} (≈6 months) per request; callers
+ *   should treat `result.length === MAX_PLENARY_WEEKS` AND a wider input
+ *   window as truncation and surface a `weeksTruncated` warning.
+ *
+ * @param from - Inclusive period start (YYYY-MM-DD).
+ * @param to - Inclusive period end (YYYY-MM-DD).
+ * @returns Mondays of intersecting plenary weeks, oldest first.
+ */
+export function iteratePlenaryWeeks(from: string, to: string): string[] {
+  if (from === '' || to === '') return [];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return [];
+  const fromMs = Date.parse(`${from}T00:00:00Z`);
+  const toMs = Date.parse(`${to}T00:00:00Z`);
+  if (Number.isNaN(fromMs) || Number.isNaN(toMs)) return [];
+  if (fromMs > toMs) return [];
+
+  const startMonday = isoWeekStart(from);
+  const weeks: string[] = [];
+  // Walk forward by 7 days from the first Monday until we step past `to`.
+  let cursorMs = Date.parse(`${startMonday}T00:00:00Z`);
+  while (cursorMs <= toMs && weeks.length < MAX_PLENARY_WEEKS) {
+    const d = new Date(cursorMs);
+    const yyyy = String(d.getUTCFullYear()).padStart(4, '0');
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    weeks.push(`${yyyy}-${mm}-${dd}`);
+    cursorMs += 7 * 24 * 3_600_000;
+  }
+  return weeks;
+}
