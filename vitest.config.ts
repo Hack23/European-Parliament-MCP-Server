@@ -22,11 +22,32 @@ export default defineConfig({
       // Line threshold set to 80% (up from 78.9%) — achievable with new test infrastructure
       // Branch threshold set to 72% (up from 70%) — incremental improvement
       // Function threshold set to 82% (up from 80%) — achievable with new mocked tests
+      //
+      // Per-file thresholds (Vitest 3+ `thresholds.<glob>` map syntax) enforce tighter
+      // gates on the 15 OSINT tools — ≥90 % for the 10 non-DOCEO tools, ≥95 % for the
+      // 5 DOCEO-touching tools that carry the highest correctness risk
+      // (assessMepInfluence, detectVotingAnomalies, sentimentTracker, networkAnalysis,
+      //  analyzeCoalitionDynamics). Follow-up to #461 / PR #474. ISMS: A.8.29.
       thresholds: {
         lines: 80,
         branches: 72,
         functions: 82,
-        statements: 82
+        statements: 82,
+        perFile: false,
+        // DOCEO-touching OSINT tools — highest correctness risk surface.
+        'src/tools/{assessMepInfluence,detectVotingAnomalies,sentimentTracker,networkAnalysis,analyzeCoalitionDynamics}.ts': {
+          lines: 95,
+          branches: 90,
+          functions: 95,
+          statements: 95
+        },
+        // Remaining OSINT tools — registered with `category: 'osint'` in src/server/toolRegistry.ts.
+        'src/tools/{analyzeCommitteeActivity,analyzeCountryDelegation,analyzeLegislativeEffectiveness,comparativeIntelligence,comparePoliticalGroups,correlateIntelligence,earlyWarningSystem,generatePoliticalLandscape,monitorLegislativePipeline,trackMepAttendance}.ts': {
+          lines: 90,
+          branches: 85,
+          functions: 90,
+          statements: 90
+        }
       }
     },
     reporters: ['default', 'html', 'json'],

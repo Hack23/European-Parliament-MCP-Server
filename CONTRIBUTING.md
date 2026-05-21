@@ -278,6 +278,32 @@ Every OSINT tool returns the [`OsintStandardOutput`](src/tools/shared/types.ts) 
 
 The contract test enforces the observable invariant: if `confidenceLevel` is `LOW`/`MEDIUM`, `dataQualityWarnings` MUST be non-empty. A degraded confidence level with no warning fails the test. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy and golden-snapshot refresh procedure.
 
+#### Mutation testing (OSINT)
+
+The contract suite catches structural envelope violations but cannot detect logic regressions in scoring/anomaly methodology. The dedicated **`osint-qa`** CI workflow runs Stryker against the 15 OSINT tool files plus their seven shared utilities (`votingBaseline.ts`, `graphAlgorithms.ts`, `networkVotingSimilarity.ts`, `effectivenessAggregator.ts`, `lifecycleStatistics.ts`, `doceoMepAggregator.ts`, `politicalGroupNormalization.ts`).
+
+Run the mutation suite locally:
+
+```bash
+# Full mutation run (≈10–15 min on a laptop, scoped per stryker.config.json)
+npm run test:mutation
+
+# CI-equivalent invocation
+npm run test:mutation:ci
+```
+
+Reports are written to `builds/stryker/mutation-report.html` and `.json`.
+
+**Acceptable surviving mutants:**
+
+- **Log-string mutants** — string-literal mutations inside `console.error` / `auditSink` log messages have no observable effect and may be left surviving.
+- **Defensive `?? 0` / `|| []` fallbacks** unreachable from existing fixtures — annotate with `// Stryker disable next-line` and a one-line justification rather than adding contrived tests.
+- **Pure dev-time guard clauses** (e.g. type-narrowing branches that mirror Zod validation) — same triage.
+
+Everything else — boundary mutations on percentiles, anomaly thresholds, voting-similarity scores, lifecycle bucketing, coalition strength tiers, sentiment classification cuts — **must be killed by a test**. If a survivor lands on a DOCEO-touching tool (`assessMepInfluence`, `detectVotingAnomalies`, `sentimentTracker`, `networkAnalysis`, `analyzeCoalitionDynamics`), add a regression test before merging.
+
+The mutation job is currently `continue-on-error: true` while we observe the baseline score on `main`. Once stable, `thresholds.break` in `stryker.config.json` will be promoted from `null` to `70`, making the job a required check.
+
 ---
 
 ## DI Container Pattern

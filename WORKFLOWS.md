@@ -118,7 +118,7 @@ graph LR
 | 1 | **Code Validation** | `dependency-review.yml`, `labeler.yml`, `knip.yml` | PR | ~1 min | Dependency scanning, PR labeling, unused-code detection |
 | 2 | **Build & Test** | `test-and-report.yml` | Push, PR | ~3 min | TypeScript build, lint, unit tests, coverage |
 | 3 | **Security Analysis** | `codeql.yml` | Push, PR, Weekly | ~5 min | SAST scanning (CodeQL) |
-| 4 | **Integration Testing** | `integration-tests.yml` | Push, PR, Daily | ~5 min | E2E tests, live API validation |
+| 4 | **Integration Testing** | `integration-tests.yml`, `osint-qa.yml` | Push, PR, Daily | ~5–20 min | E2E tests, live API validation, OSINT QA harness (contract + per-file coverage + Stryker mutation) |
 | 5 | **Release & Publish** | `release.yml` | Tag (v\*) | ~8 min | npm publish, GitHub Release, docs, SBOM generation |
 | 6 | **Supply Chain** | `slsa-provenance.yml` | Release, Push | ~4 min | SLSA provenance, attestations |
 | 7 | **Continuous Monitoring** | `scorecard.yml`, `refresh-stats.yml` | Push, Weekly | ~5 min | OpenSSF Scorecard, EP statistics refresh |
@@ -142,6 +142,7 @@ graph LR
 | 10 | **Copilot Setup** | `copilot-setup-steps.yml` | Push, PR, Manual | 26.x + TS 6.0.3 | Scoped per caller | Dev Tooling |
 | 11 | **EP Statistics Refresh** | `refresh-stats.yml` | Weekly (cron), Manual | 26.x + TS 6.0.3 | `contents: write` | Agentic data intelligence |
 | 12 | **Knip — Unused Code** | `knip.yml` | Push, PR, Manual | node-version: 26 | `contents: read` | ISO 27001 A.8.28 (Secure Coding) |
+| 13 | **OSINT QA Harness** | `osint-qa.yml` | Push, PR (paths), Manual | node-version: 26 | `contents: read`, `checks: write` | ISO 27001 A.8.29 (Security testing in dev & acceptance), A.8.34 (Audit protection); CIS v8.1 Control 16; Hack23 ISMS Secure Development Policy §4.4 (Testing), §4.5 (QA) |
 
 ---
 
