@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { handleDetectVotingAnomalies } from './detectVotingAnomalies.js';
+import { handleDetectVotingAnomalies, clearDoceoCorpusCache } from './detectVotingAnomalies.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 import * as doceoClientModule from '../clients/ep/doceoClient.js';
 import type { LatestVoteRecord } from '../clients/ep/doceoXmlParser.js';
@@ -81,6 +81,11 @@ function weekVotes(weekMonday: string, count: number, position: 'FOR' | 'AGAINST
 describe('detect_voting_anomalies Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset the multi-week DOCEO corpus cache between tests so per-test mocks
+    // are honoured. The cache key is `${scope}|${from}|${to}` and the default
+    // period is identical across tests, so without this clear earlier results
+    // leak into later assertions.
+    clearDoceoCorpusCache();
 
     vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
       id: 'MEP-1',
@@ -410,6 +415,165 @@ describe('detect_voting_anomalies Tool', () => {
     it('wraps EP API errors', async () => {
       vi.mocked(epClientModule.epClient.getMEPDetails).mockRejectedValueOnce(new Error('Not found'));
       await expect(handleDetectVotingAnomalies({ mepId: '999999' })).rejects.toThrow('Failed to detect voting anomalies');
+    });
+  });
+
+  describe('Multi-week DOCEO baseline', () => {
+    /**
+     * Helper: mock `getLatestVotes` to return a *different* slice of records
+     * depending on the `weekStart` parameter, mirroring real DOCEO behaviour
+     * where each plenary week's XML carries unique vote IDs and sittingDates.
+     */
+    function mockPerWeek(
+      byWeekStart: Record<string, LatestVoteRecord[]>
+    ): void {
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockImplementation(async (params) => {
+        const week = params?.weekStart ?? '';
+        const records = byWeekStart[week] ?? [];
+        return await Promise.resolve({
+          ...emptyDoceoResponse,
+          data: records,
+          total: records.length,
+          datesAvailable: records.length > 0 ? [week] : [],
+        });
+      });
+    }
+
+    it('aggregates votes across a 3-week window and reports weeksInspected', async () => {
+      mockPerWeek({
+        '2026-01-05': weekVotes('2026-01-05', 20, 'FOR', 'w1'),
+        '2026-01-12': weekVotes('2026-01-12', 20, 'FOR', 'w2'),
+        '2026-01-19': weekVotes('2026-01-19', 20, 'FOR', 'w3'),
+      });
+      const result = await handleDetectVotingAnomalies({
+        mepId: 'MEP-1',
+        dateFrom: '2026-01-05',
+        dateTo: '2026-01-19',
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        weeksInspected: number;
+        weeksTruncated?: boolean;
+        rcvVotesInspected: number;
+        confidenceLevel: string;
+      };
+      expect(data.weeksInspected).toBe(3);
+      expect(data.weeksTruncated).toBeUndefined();
+      expect(data.rcvVotesInspected).toBe(60);
+      // 60 votes inspected across 3 weeks → HIGH per new ladder.
+      expect(data.confidenceLevel).toBe('HIGH');
+      // The DOCEO client should have been invoked once per plenary week.
+      expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mock.calls.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('truncates windows wider than 26 weeks and surfaces weeksTruncated warning', async () => {
+      // Empty fixture is fine; we only care about the cap behaviour and the warning.
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        ...emptyDoceoResponse,
+        data: weekVotes('2026-06-01', 5, 'FOR', 'late'),
+        total: 5,
+      });
+      const result = await handleDetectVotingAnomalies({
+        mepId: 'MEP-1',
+        dateFrom: '2025-01-01',
+        dateTo: '2026-06-30',
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        weeksTruncated?: boolean;
+        dataQualityWarnings: string[];
+      };
+      expect(data.weeksTruncated).toBe(true);
+      expect(data.dataQualityWarnings.some(w => w.includes('26-week cap'))).toBe(true);
+      // Exactly 26 weekly calls under the cap (the helper enforces breadth-first).
+      expect(vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mock.calls.length).toBe(26);
+    });
+
+    it('deduplicates vote IDs across overlapping weekly fetches', async () => {
+      // Return the SAME 5-record fixture for every weekStart anchor — the
+      // dedup-by-id contract should collapse the duplicates to one set in the
+      // final corpus regardless of how many weekly fetches contributed.
+      const overlapping = weekVotes('2026-01-05', 5, 'FOR', 'dup');
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue({
+        ...emptyDoceoResponse,
+        data: overlapping,
+        total: overlapping.length,
+      });
+      const result = await handleDetectVotingAnomalies({
+        mepId: 'MEP-1',
+        dateFrom: '2026-01-05',
+        dateTo: '2026-01-26',
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        rcvVotesInspected: number;
+        weeksInspected: number;
+      };
+      // Dedup → 5 unique records (not 5 × number-of-weekly-calls).
+      expect(data.rcvVotesInspected).toBe(5);
+      // All deduplicated records share a single sittingDate → 1 ISO week.
+      expect(data.weeksInspected).toBe(1);
+    });
+
+    it('survives partial weekly fetch failures and returns the recoverable corpus', async () => {
+      // First weekly call rejects, the rest succeed.
+      let callIndex = 0;
+      vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockImplementation(async () => {
+        callIndex += 1;
+        if (callIndex === 1) {
+          return await Promise.reject(new Error('transient network error'));
+        }
+        return await Promise.resolve({
+          ...emptyDoceoResponse,
+          data: weekVotes(`2026-01-${String(5 + callIndex).padStart(2, '0')}`, 10, 'FOR', `w${String(callIndex)}`),
+          total: 10,
+        });
+      });
+      const result = await handleDetectVotingAnomalies({
+        mepId: 'MEP-1',
+        dateFrom: '2026-01-05',
+        dateTo: '2026-01-26',
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        dataAvailable?: boolean;
+        rcvVotesInspected: number;
+      };
+      // The fetch loop should NOT bail on the single failed week — the
+      // recoverable weeks contribute their records to the corpus.
+      expect(data.dataAvailable).not.toBe(false);
+      expect(data.rcvVotesInspected).toBeGreaterThan(0);
+    });
+
+    it('caches the corpus by `${scope}|${from}|${to}` for back-to-back calls', async () => {
+      mockPerWeek({
+        '2026-01-05': weekVotes('2026-01-05', 5, 'FOR', 'c1'),
+        '2026-01-12': weekVotes('2026-01-12', 5, 'FOR', 'c2'),
+      });
+      const args = { mepId: 'MEP-1', dateFrom: '2026-01-05', dateTo: '2026-01-12' };
+      await handleDetectVotingAnomalies(args);
+      const callsAfterFirst = vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mock.calls.length;
+      await handleDetectVotingAnomalies(args);
+      const callsAfterSecond = vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mock.calls.length;
+      // No additional DOCEO traffic on the cache hit.
+      expect(callsAfterSecond).toBe(callsAfterFirst);
+    });
+
+    it('caps confidence at MEDIUM when fewer than 3 weeks contribute votes (no multi-week dispersion)', async () => {
+      // 60 RCVs but all in a single sittingDate week → coverage alone says
+      // HIGH, but the new ladder requires ≥3 contributing weeks.
+      mockPerWeek({
+        '2026-01-05': weekVotes('2026-01-05', 60, 'FOR', 'mono'),
+      });
+      const result = await handleDetectVotingAnomalies({
+        mepId: 'MEP-1',
+        dateFrom: '2026-01-05',
+        dateTo: '2026-01-12',
+      });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        confidenceLevel: string;
+        weeksInspected: number;
+        dataQualityWarnings: string[];
+      };
+      expect(data.weeksInspected).toBe(1);
+      expect(data.confidenceLevel).toBe('MEDIUM');
+      expect(data.dataQualityWarnings.some(w => w.includes('plenary week'))).toBe(true);
     });
   });
 });

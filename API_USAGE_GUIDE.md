@@ -1350,8 +1350,15 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 #### Methodology
 
 Each anomaly is detected against the MEP's *own* rolling baseline derived from
-DOCEO roll-call (RCV) records bounded to **up to 200** votes (2×100 paged
-fetching) in the requested period:
+DOCEO roll-call (RCV) records. The fetch loop **iterates every plenary week
+between `dateFrom` and `dateTo`** (Monday–Friday), aggregates records into a
+deduplicated corpus (by record `id`), and caps it at **up to 200 votes** after
+sort. A hard server-side cap of **26 plenary weeks** (≈6 months) per request
+bounds the fan-out — wider windows are truncated to the most recent 26 weeks
+and surface a `weeksTruncated: true` flag together with an explicit
+`dataQualityWarnings` entry. Corpus results are cached for **5 minutes** keyed by
+`${mepId ?? groupId ?? 'all'}|${dateFrom}|${dateTo}` so back-to-back calls reuse
+the multi-week fetch.
 
 | Anomaly Type | Trigger |
 |--------------|---------|
@@ -1382,14 +1389,21 @@ FOR) for deterministic results. Each MEP vote is classified as `aligned`,
 
 #### Confidence Level
 
-Reflects RCV coverage (votes inspected on which the MEP appeared on the roll):
+Reflects RCV coverage (votes inspected on which the MEP appeared on the roll)
+*and* multi-week dispersion of the corpus:
 
-- `HIGH` for ≥ **50** RCVs
-- `MEDIUM` for **10–49** RCVs
+- `HIGH` for ≥ **50** RCVs inspected **AND** ≥ **3** distinct plenary weeks contributing votes
+- `MEDIUM` for **10–49** RCVs, **or** ≥50 RCVs but < 3 contributing weeks (no multi-week dispersion)
 - `LOW` for **< 10** RCVs, or when DOCEO is unreachable
 
+The `weeksInspected` envelope field reports the number of distinct plenary
+weeks that contributed RCV records to the analysed corpus. `weeksTruncated`
+is `true` when the requested window exceeded the 26-week server cap.
+
 When DOCEO supplies at least one record with a sitting date within the last
-**72 hours**, `dataFreshness` is reported as `NEAR_REALTIME`.
+**72 hours**, `dataFreshness` is reported as `NEAR_REALTIME`. Multi-week
+corpora additionally surface the **oldest contributing week** so callers can
+see the span actually covered.
 
 #### Example Usage
 

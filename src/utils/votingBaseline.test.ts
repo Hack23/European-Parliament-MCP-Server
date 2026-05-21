@@ -12,6 +12,8 @@ import {
   findOutlierWeeks,
   findWoWShifts,
   isoWeekStart,
+  iteratePlenaryWeeks,
+  MAX_PLENARY_WEEKS,
   resolveGroupBreakdownRow,
   resolveGroupMajority,
   zScore,
@@ -315,5 +317,92 @@ describe('votingBaseline.coverageConfidence', () => {
     expect(coverageConfidence(49)).toBe('MEDIUM');
     expect(coverageConfidence(50)).toBe('HIGH');
     expect(coverageConfidence(500)).toBe('HIGH');
+  });
+});
+
+describe('votingBaseline.iteratePlenaryWeeks', () => {
+  it('returns the Mondays of every plenary week intersecting [from, to]', () => {
+    // 2026-01-05 is a Monday; 2026-01-26 is the start of the 4th week.
+    const weeks = iteratePlenaryWeeks('2026-01-05', '2026-01-26');
+    expect(weeks).toEqual(['2026-01-05', '2026-01-12', '2026-01-19', '2026-01-26']);
+  });
+
+  it('aligns mid-week start/end to the containing ISO-week Mondays', () => {
+    // 2026-01-07 (Wed) — week starts 2026-01-05.
+    // 2026-01-23 (Fri) — week starts 2026-01-19.
+    const weeks = iteratePlenaryWeeks('2026-01-07', '2026-01-23');
+    expect(weeks).toEqual(['2026-01-05', '2026-01-12', '2026-01-19']);
+  });
+
+  it('returns a single week when from and to fall in the same ISO week', () => {
+    expect(iteratePlenaryWeeks('2026-01-07', '2026-01-09')).toEqual(['2026-01-05']);
+  });
+
+  it('returns an empty array for malformed bounds, reversed range, or empty inputs', () => {
+    expect(iteratePlenaryWeeks('', '2026-01-09')).toEqual([]);
+    expect(iteratePlenaryWeeks('2026-01-05', '')).toEqual([]);
+    expect(iteratePlenaryWeeks('not-a-date', '2026-01-09')).toEqual([]);
+    expect(iteratePlenaryWeeks('2026-01-26', '2026-01-05')).toEqual([]);
+  });
+
+  it('caps the enumeration at MAX_PLENARY_WEEKS for windows >6 months', () => {
+    // 2025-01-01 → 2026-06-30 spans ~78 weeks → cap at 26.
+    const weeks = iteratePlenaryWeeks('2025-01-01', '2026-06-30');
+    expect(weeks.length).toBe(MAX_PLENARY_WEEKS);
+  });
+
+  it('retains the most recent 26 weeks when the window is wider than the cap', () => {
+    // Truncation direction must match the warning text ("most recent 26
+    // plenary weeks") — the last entry must be the ISO-week containing `to`.
+    const weeks = iteratePlenaryWeeks('2025-01-01', '2026-06-30');
+    expect(weeks.length).toBe(MAX_PLENARY_WEEKS);
+    // 2026-06-30 is a Tuesday → ISO-week Monday is 2026-06-29.
+    expect(weeks[weeks.length - 1]).toBe('2026-06-29');
+    // Earliest retained week is 25 × 7 days before the latest.
+    const latestMs = Date.parse('2026-06-29T00:00:00Z');
+    const earliestMs = Date.parse(`${weeks[0] ?? ''}T00:00:00Z`);
+    expect(latestMs - earliestMs).toBe(25 * 7 * 24 * 3_600_000);
+  });
+
+  it('excludes the prior week when `from` falls on Sat/Sun (no Mon–Fri intersection)', () => {
+    // 2026-01-03 is a Saturday — the previous week's Mon–Fri (Dec 29 – Jan 2)
+    // ended before `from`, so it must NOT be included. The week starting
+    // 2026-01-05 is the first whose Mon–Fri intersects `[from, to]`.
+    expect(iteratePlenaryWeeks('2026-01-03', '2026-01-09')).toEqual(['2026-01-05']);
+    expect(iteratePlenaryWeeks('2026-01-04', '2026-01-09')).toEqual(['2026-01-05']);
+  });
+
+  it('returned weeks are strictly chronological and spaced 7 days apart', () => {
+    const weeks = iteratePlenaryWeeks('2026-01-05', '2026-03-30');
+    for (let i = 1; i < weeks.length; i += 1) {
+      const prev = Date.parse(`${weeks[i - 1]}T00:00:00Z`);
+      const curr = Date.parse(`${weeks[i]}T00:00:00Z`);
+      expect(curr - prev).toBe(7 * 24 * 3_600_000);
+    }
+  });
+});
+
+describe('votingBaseline multi-week dispersion contract', () => {
+  it('bucketByWeek produces ≥2 buckets for a multi-week corpus', () => {
+    const buckets = bucketByWeek([
+      { voteId: 'a', sittingDate: '2026-01-05', alignment: 'aligned', groupMajority: 'FOR', mepPosition: 'FOR', matchingOtherGroups: [] },
+      { voteId: 'b', sittingDate: '2026-01-12', alignment: 'aligned', groupMajority: 'FOR', mepPosition: 'FOR', matchingOtherGroups: [] },
+      { voteId: 'c', sittingDate: '2026-01-19', alignment: 'aligned', groupMajority: 'FOR', mepPosition: 'FOR', matchingOtherGroups: [] },
+    ]);
+    expect(buckets.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('computeBaseline.stdev > 0 for a dispersed weekly defection-rate series', () => {
+    // Simulate three weeks with materially different defection rates — the
+    // failure mode this issue was opened to fix is a single-week sample that
+    // yields stdev = 0 and zero outliers regardless of the data.
+    const baseline = computeBaseline([0, 50, 25]);
+    expect(baseline.stdev).toBeGreaterThan(0);
+  });
+
+  it('computeBaseline.stdev === 0 for a constant (single-week-equivalent) series', () => {
+    // Regression guard: this is exactly the degenerate baseline the legacy
+    // single-week fetch produced — confirms the contract before/after.
+    expect(computeBaseline([42, 42, 42]).stdev).toBe(0);
   });
 });
