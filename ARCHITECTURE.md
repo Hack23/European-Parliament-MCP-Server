@@ -329,6 +329,8 @@ The following five tools extend the OSINT capability with network analysis, sent
 
 **Contract enforcement:** All 15 OSINT tools are validated against the shared envelope by a registry-driven contract suite at [`tests/integration/osint/contract.test.ts`](tests/integration/osint/contract.test.ts). The suite drives off `getToolMetadataArray().filter(t => t.category === 'osint')`, parses every response against [`OsintStandardOutputSchema`](src/schemas/ep/analysis.ts), and enforces the **no-silent-zero policy** (numeric fields must never be silently zero when data is unavailable — a `dataQualityWarnings` entry must explain the unavailability) plus a determinism guard. See `INTEGRATION_TESTING.md` § "OSINT QA Harness".
 
+**Regression detection — golden snapshots:** Beyond the envelope contract, every OSINT tool has per-tool golden snapshots at [`tests/integration/osint/__snapshots__/<tool>.<variant>.json`](tests/integration/osint/__snapshots__) (`empty-path` + `hot-path` variants — 30 snapshots total) driven by the shared fixture factory at [`tests/fixtures/osint/index.ts`](tests/fixtures/osint/index.ts). The snapshot suite ([`tests/integration/osint/snapshots.test.ts`](tests/integration/osint/snapshots.test.ts)) is the regression-detection point for OSINT scoring weights, classification thresholds, alignment buckets and attribution lists — any methodology change that moves a numeric value or re-orders a ranked list produces a reviewer-visible JSON diff. Refresh procedure and reviewer acknowledgement: see `CONTRIBUTING.md` § "Refreshing OSINT golden snapshots".
+
 
 #### EP Data Access Tools (8)
 

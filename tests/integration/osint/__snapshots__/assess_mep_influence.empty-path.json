@@ -1,0 +1,64 @@
+{
+  "computedAttributes": {
+    "diversityIndex": 60,
+    "effectivenessRatio": 49.86,
+    "leadershipIndicator": 52.5,
+    "loyaltyScore": 74.58,
+    "participationRate": 92
+  },
+  "confidenceLevel": "MEDIUM",
+  "country": "DE",
+  "dataQualityWarnings": [
+    "Parliamentary questions data unavailable or MEP has no questions — oversight dimension reports zero"
+  ],
+  "dataSource": "EP_API",
+  "dimensions": [
+    {
+      "dimension": "Voting Activity",
+      "metrics": {},
+      "score": 63.73,
+      "weight": 0.25,
+      "weightedScore": 15.93
+    },
+    {
+      "dimension": "Legislative Output",
+      "metrics": {},
+      "score": 36,
+      "weight": 0.25,
+      "weightedScore": 9
+    },
+    {
+      "dimension": "Committee Engagement",
+      "metrics": {},
+      "score": 52.5,
+      "weight": 0.2,
+      "weightedScore": 10.5
+    },
+    {
+      "dimension": "Parliamentary Oversight",
+      "metrics": {},
+      "score": 0,
+      "weight": 0.15,
+      "weightedScore": 0
+    },
+    {
+      "dimension": "Coalition Building",
+      "metrics": {},
+      "score": 75.65,
+      "weight": 0.15,
+      "weightedScore": 11.35
+    }
+  ],
+  "mepId": "101",
+  "mepName": "Thomas Weber (synthetic)",
+  "methodology": "CIA Political Scorecards - 5-dimension weighted scoring model using real EP Open Data. Parliamentary questions fetched from /parliamentary-questions endpoint. Voting Activity and Coalition Building dimensions sourced from EP API MEPDetails.votingStatistics. Data source: European Parliament Open Data Portal.",
+  "overallScore": 46.78,
+  "period": {
+    "from": "2024-01-01",
+    "to": "2024-12-31"
+  },
+  "politicalGroup": "EPP",
+  "rank": "Moderate Influence",
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "votingDataAvailable": true
+}

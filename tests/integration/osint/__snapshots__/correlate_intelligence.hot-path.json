@@ -1,0 +1,41 @@
+{
+  "alerts": [],
+  "confidenceLevel": "MEDIUM",
+  "correlations": {
+    "coalitionFracture": null,
+    "influenceAnomaly": [],
+    "networkProfiles": []
+  },
+  "dataAvailability": "PARTIAL",
+  "dataQualityWarnings": [
+    "Downstream tools responded but produced no actionable correlations — results may be incomplete",
+    "4 of 6 sub-tool results have LOW confidence — underlying data is proxy or heuristic",
+    "Network analysis was not included — committee co-membership correlations are absent"
+  ],
+  "methodology": "Cross-tool OSINT correlation engine — orchestrates assess_mep_influence, detect_voting_anomalies, early_warning_system, analyze_coalition_dynamics. Correlation thresholds: influence ≥ 70 (sensitivity: MEDIUM). Data source: European Parliament Open Data Portal (data.europarl.europa.eu).",
+  "scope": {
+    "groups": [
+      "EPP",
+      "S&D",
+      "Renew",
+      "Greens/EFA",
+      "ECR",
+      "ID"
+    ],
+    "mepIds": [
+      "101",
+      "102"
+    ],
+    "networkAnalysisIncluded": false,
+    "sensitivityLevel": "MEDIUM"
+  },
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "summary": {
+    "correlationsFound": 0,
+    "criticalAlerts": 0,
+    "highAlerts": 0,
+    "lowAlerts": 0,
+    "mediumAlerts": 0,
+    "totalAlerts": 0
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "computedAttributes": {
+    "competitiveIndex": 1,
+    "highestAttendance": "EPP",
+    "mostActive": "EPP",
+    "mostCohesive": "EPP",
+    "mostDisciplined": "EPP",
+    "parliamentaryBalance": 0.5,
+    "strongestOverall": "EPP"
+  },
+  "confidenceLevel": "MEDIUM",
+  "dataQualityWarnings": [
+    "Per-MEP voting statistics unavailable from EP API — voting discipline, activity level, attendance, and cohesion dimensions report zero",
+    "Seat share and member counts are real EP API data; performance scores are not comparable without voting data"
+  ],
+  "groupCount": 2,
+  "groups": [
+    {
+      "computedAttributes": {
+        "effectivenessPerMember": 0,
+        "engagementIntensity": 0,
+        "overallPerformanceScore": 0,
+        "relativeStrength": 0,
+        "seatShare": 50
+      },
+      "dimensions": {
+        "activityLevel": 0,
+        "attendance": 0,
+        "cohesion": 0,
+        "legislativeOutput": 0,
+        "votingDiscipline": 0
+      },
+      "groupId": "EPP",
+      "memberCount": 7
+    },
+    {
+      "computedAttributes": {
+        "effectivenessPerMember": 0,
+        "engagementIntensity": 0,
+        "overallPerformanceScore": 0,
+        "relativeStrength": 0,
+        "seatShare": 50
+      },
+      "dimensions": {
+        "activityLevel": 0,
+        "attendance": 0,
+        "cohesion": 0,
+        "legislativeOutput": 0,
+        "votingDiscipline": 0
+      },
+      "groupId": "S&D",
+      "memberCount": 7
+    }
+  ],
+  "methodology": "Multi-dimensional comparative analysis using real EP Open Data MEP records. Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; voting discipline, activity level, attendance, and cohesion dimensions report zero. Member counts and group composition are real. Data source: European Parliament Open Data Portal.",
+  "period": {
+    "from": "2024-01-01",
+    "to": "2024-12-31"
+  },
+  "rankings": [
+    {
+      "dimension": "votingDiscipline",
+      "ranking": [
+        {
+          "groupId": "EPP",
+          "score": 0
+        },
+        {
+          "groupId": "S&D",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "dimension": "activityLevel",
+      "ranking": [
+        {
+          "groupId": "EPP",
+          "score": 0
+        },
+        {
+          "groupId": "S&D",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "dimension": "legislativeOutput",
+      "ranking": [
+        {
+          "groupId": "EPP",
+          "score": 0
+        },
+        {
+          "groupId": "S&D",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "dimension": "attendance",
+      "ranking": [
+        {
+          "groupId": "EPP",
+          "score": 0
+        },
+        {
+          "groupId": "S&D",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "dimension": "cohesion",
+      "ranking": [
+        {
+          "groupId": "EPP",
+          "score": 0
+        },
+        {
+          "groupId": "S&D",
+          "score": 0
+        }
+      ]
+    }
+  ],
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu"
+}

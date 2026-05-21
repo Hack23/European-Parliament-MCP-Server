@@ -1,0 +1,59 @@
+{
+  "committeePresence": {
+    "committeesRepresented": 6,
+    "leadershipRoles": 13
+  },
+  "computedAttributes": {
+    "delegationInfluence": "HIGH",
+    "engagementLevel": "HIGH",
+    "groupFragmentation": "HIGH",
+    "nationalCohesionLevel": "LOW"
+  },
+  "confidenceLevel": "HIGH",
+  "country": "SE",
+  "dataQualityWarnings": [
+    "National cohesion includes +10 baseline offset (proxy for national-interest voting beyond group lines)"
+  ],
+  "delegation": {
+    "activeMEPs": 7,
+    "groupDistribution": [
+      {
+        "count": 2,
+        "group": "EPP",
+        "percentage": 28.57
+      },
+      {
+        "count": 2,
+        "group": "S&D",
+        "percentage": 28.57
+      },
+      {
+        "count": 1,
+        "group": "ECR",
+        "percentage": 14.29
+      },
+      {
+        "count": 1,
+        "group": "Renew",
+        "percentage": 14.29
+      },
+      {
+        "count": 1,
+        "group": "Greens/EFA",
+        "percentage": 14.29
+      }
+    ],
+    "totalMEPs": 7
+  },
+  "methodology": "Country delegation analysis using EP Open Data: political group distribution, voting behavior aggregation, committee representation mapping, and national cohesion scoring. Data source: European Parliament Open Data Portal.",
+  "period": {
+    "from": "2023-06-15",
+    "to": "2024-06-15"
+  },
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "votingBehavior": {
+    "averageAttendance": 89.86,
+    "averageLoyalty": 70,
+    "nationalCohesion": 38.57
+  }
+}

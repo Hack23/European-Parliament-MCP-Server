@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Canonical synthetic DOCEO Roll-Call Vote (RCV) sample fixture.
+
+  This XML is for reviewer/documentation reference only — the snapshot suite
+  mocks `doceoClient.getLatestVotes` at the client boundary and consumes the
+  pre-parsed `hotPathDoceoVotes[]` from `tests/fixtures/osint/index.ts`.
+
+  The data here mirrors the first vote in that factory
+  (`RCV-2024-03-12-001` — "Climate Regulation Amendment") so reviewers can
+  diff fixture-shape changes against an EP-realistic XML payload without
+  needing a network round-trip.
+
+  Names, IDs and vote counts are intentionally synthetic and clearly marked.
+-->
+<PV.RollCallVoteResult Sitting.Date="2024-03-12" Sitting.Number="12">
+  <RollCallVote.Description.Text>Climate Regulation Amendment (synthetic)</RollCallVote.Description.Text>
+  <RollCallVote.Result Identifier="RCV-2024-03-12-001" Number="1" Type="single" For="4" Against="1" Abst="1">
+    <Result.For Number="4">
+      <Result.PoliticalGroup.List Identifier="EPP">
+        <PoliticalGroup.Member.Name MepId="101">Thomas Weber (synthetic)</PoliticalGroup.Member.Name>
+      </Result.PoliticalGroup.List>
+      <Result.PoliticalGroup.List Identifier="S&amp;D">
+        <PoliticalGroup.Member.Name MepId="102">Marie Leclerc (synthetic)</PoliticalGroup.Member.Name>
+      </Result.PoliticalGroup.List>
+      <Result.PoliticalGroup.List Identifier="Renew">
+        <PoliticalGroup.Member.Name MepId="104">Elena Papadaki (synthetic)</PoliticalGroup.Member.Name>
+      </Result.PoliticalGroup.List>
+      <Result.PoliticalGroup.List Identifier="Left">
+        <PoliticalGroup.Member.Name MepId="105">Lars Andersson (synthetic)</PoliticalGroup.Member.Name>
+      </Result.PoliticalGroup.List>
+    </Result.For>
+    <Result.Against Number="1">
+      <Result.PoliticalGroup.List Identifier="ECR">
+        <PoliticalGroup.Member.Name MepId="103">Piotr Kowalski (synthetic)</PoliticalGroup.Member.Name>
+      </Result.PoliticalGroup.List>
+    </Result.Against>
+    <Result.Abstention Number="1">
+      <Result.PoliticalGroup.List Identifier="Verts">
+        <PoliticalGroup.Member.Name MepId="106">Sara Lindqvist (synthetic)</PoliticalGroup.Member.Name>
+      </Result.PoliticalGroup.List>
+    </Result.Abstention>
+  </RollCallVote.Result>
+</PV.RollCallVoteResult>
