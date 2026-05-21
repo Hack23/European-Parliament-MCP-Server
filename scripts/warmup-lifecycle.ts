@@ -40,7 +40,7 @@ async function main(): Promise<void> {
     process.exit(0);
   } catch (error: unknown) {
     const durationMs = Date.now() - start;
-    const message = error instanceof Error ? error.message : String(error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
     // eslint-disable-next-line no-console
     console.error(
       `[warmup-lifecycle] failure durationMs=${String(durationMs)} error=${message}`,

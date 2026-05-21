@@ -460,7 +460,7 @@ export function getCachedLifecycleStatistics(
 
 /**
  * Observable cache state, exposed via `get_server_health.lifecycleCache` and
- * consumed by {@link LifecycleWarmupScheduler} to surface warmup observability.
+ * read by {@link getLifecycleCacheStatus} to surface warmup observability.
  *
  * | State   | Meaning |
  * |---------|---------|

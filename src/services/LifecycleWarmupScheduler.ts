@@ -37,6 +37,7 @@ import {
   DEFAULT_LIFECYCLE_WARMUP_INTERVAL_MS,
   resolveLifecycleWarmupIntervalMs,
 } from '../config.js';
+import { toErrorMessage } from '../utils/auditLogger.js';
 
 /** Options accepted by {@link LifecycleWarmupScheduler.start}. */
 export interface LifecycleWarmupSchedulerStartOptions {
@@ -244,10 +245,7 @@ export class LifecycleWarmupScheduler {
  * stack traces or non-string error bodies into observability surfaces.
  */
 function sanitizeErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message.replace(/\s+/g, ' ').slice(0, 200);
-  }
-  return String(error).replace(/\s+/g, ' ').slice(0, 200);
+  return toErrorMessage(error).replace(/\s+/g, ' ').slice(0, 200);
 }
 
 /**
