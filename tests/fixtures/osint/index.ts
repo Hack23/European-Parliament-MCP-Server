@@ -478,9 +478,7 @@ export const OSINT_TOOL_INPUTS: Record<string, Record<string, unknown>> = {
  *
  * Includes per-run timestamps (`generatedAt`, `analysisTime`, ...), generated
  * correlation/run identifiers, and cache-observability fields that are not
- * stable across runs (`cacheHit`, `dataFreshness` ISO timestamps, the
- * caller-omitted `period.from` / `period.to` that some tools backfill from
- * `Date.now()`).
+ * stable across runs (`cacheHit`, `dataFreshness` ISO timestamps).
  *
  * NOTE — `dataFreshness` is included even though `vi.setSystemTime` pins it,
  * because the field's wording embeds a `now-…` delta that is meaningful for
