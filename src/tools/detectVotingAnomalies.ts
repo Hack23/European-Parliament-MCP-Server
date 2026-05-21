@@ -130,8 +130,9 @@ interface VotingAnomalyAnalysis {
   weeksInspected: number;
   /**
    * `true` when the requested `[from, to]` window spans more than the
-   * server-side cap of 26 plenary weeks and the fetch was truncated to the
-   * 26 most recent weeks in scope. Accompanied by a `dataQualityWarning`.
+   * server-side cap of {@link MAX_PLENARY_WEEKS} plenary weeks and the fetch
+   * was truncated to the most recent weeks in scope. Accompanied by a
+   * `dataQualityWarnings` entry.
    */
   weeksTruncated?: boolean;
   /**
@@ -1016,7 +1017,7 @@ function buildVotingAnomalyAnalysis(input: AnalysisInputs): VotingAnomalyAnalysi
     mepsAnalyzed: result.mepsAnalyzed,
     weeksInspected: corpus.weeksContributing,
   };
-  if (dataAvailable && corpus.weeksTruncated) analysis.weeksTruncated = true;
+  if (corpus.doceoAvailable && corpus.weeksTruncated) analysis.weeksTruncated = true;
   if (!dataAvailable) analysis.dataAvailable = false;
   return analysis;
 }

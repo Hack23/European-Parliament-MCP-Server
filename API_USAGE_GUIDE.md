@@ -1356,7 +1356,7 @@ deduplicated corpus (by record `id`), and caps it at **up to 200 votes** after
 sort. A hard server-side cap of **26 plenary weeks** (≈6 months) per request
 bounds the fan-out — wider windows are truncated to the most recent 26 weeks
 and surface a `weeksTruncated: true` flag together with an explicit
-`dataQualityWarning`. Corpus results are cached for **5 minutes** keyed by
+`dataQualityWarnings` entry. Corpus results are cached for **5 minutes** keyed by
 `${mepId ?? groupId ?? 'all'}|${dateFrom}|${dateTo}` so back-to-back calls reuse
 the multi-week fetch.
 
