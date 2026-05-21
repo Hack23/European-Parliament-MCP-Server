@@ -50,6 +50,9 @@ on:
       - "src/utils/lifecycleStatistics.ts"
       - "src/utils/doceoMepAggregator.ts"
       - "src/utils/politicalGroupNormalization.ts"
+      - "src/utils/timeout.ts"
+      - "src/utils/auditLogger.ts"
+      - "src/schemas/europeanParliament.ts"
       # Registry and envelope files the contract suite depends on
       - "src/server/toolRegistry.ts"
       - "src/tools/shared/responseBuilder.ts"
@@ -87,6 +90,9 @@ on:
       - "src/utils/lifecycleStatistics.ts"
       - "src/utils/doceoMepAggregator.ts"
       - "src/utils/politicalGroupNormalization.ts"
+      - "src/utils/timeout.ts"
+      - "src/utils/auditLogger.ts"
+      - "src/schemas/europeanParliament.ts"
       # Registry and envelope files the contract suite depends on
       - "src/server/toolRegistry.ts"
       - "src/tools/shared/responseBuilder.ts"
