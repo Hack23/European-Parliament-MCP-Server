@@ -1352,7 +1352,7 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 Each anomaly is detected against the MEP's *own* rolling baseline derived from
 DOCEO roll-call (RCV) records. The fetch loop **iterates every plenary week
 between `dateFrom` and `dateTo`** (Monday–Friday), aggregates records into a
-deduplicated corpus (by `vote.id`), and caps it at **up to 200 votes** after
+deduplicated corpus (by record `id`), and caps it at **up to 200 votes** after
 sort. A hard server-side cap of **26 plenary weeks** (≈6 months) per request
 bounds the fan-out — wider windows are truncated to the most recent 26 weeks
 and surface a `weeksTruncated: true` flag together with an explicit

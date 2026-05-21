@@ -527,8 +527,10 @@ export function coverageConfidence(rcvVotesInspected: number): 'HIGH' | 'MEDIUM'
 /**
  * Hard cap on the number of plenary weeks enumerated by {@link iteratePlenaryWeeks}
  * — ~6 months of weekly fan-out per request. The {@link MAX_PLENARY_WEEKS}th
- * week is the last one returned; callers can detect truncation by comparing
- * the returned array length against {@link MAX_PLENARY_WEEKS}.
+ * week is the last one returned. Truncation is not implied by length alone:
+ * callers should combine `length === MAX_PLENARY_WEEKS` with an input-window
+ * overflow check (for example, {@link detectWindowTruncation} in
+ * `detectVotingAnomalies`).
  */
 export const MAX_PLENARY_WEEKS = 26;
 

@@ -203,7 +203,7 @@ function buildMethodologyDescription(
       + `via sensitivityThreshold=${String(sensitivity)})`;
   return 'Per-MEP defection / abstention / cross-party alignment anomaly detection on DOCEO RCV '
     + 'records — iterates weekly DOCEO RCV pages across the requested period (deduplicated by '
-    + `vote.id, capped at 200 records, ${String(MAX_PLENARY_WEEKS)}-week hard limit). Per-vote group `
+    + `record id, capped at 200 records, ${String(MAX_PLENARY_WEEKS)}-week hard limit). Per-vote group `
     + 'majority resolved by plurality with alphabetical tie-breaking. Each MEP vote classified as '
     + 'aligned / defected / abstained / absent against their home-group majority. Anomalies emitted '
     + `when defection-rate z-score ≥ ${String(z)}, `
