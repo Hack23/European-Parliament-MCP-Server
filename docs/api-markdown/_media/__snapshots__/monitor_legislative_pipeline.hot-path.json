@@ -1,0 +1,162 @@
+{
+  "bottlenecks": [
+    {
+      "avgDaysStuck": 67,
+      "procedureCount": 1,
+      "severity": "MODERATE",
+      "stage": "COMMITTEE",
+      "thresholdDays": 0
+    }
+  ],
+  "computedAttributes": {
+    "bottleneckIndex": 22.33,
+    "estimatedClearanceTime": 67,
+    "legislativeMomentum": "MODERATE",
+    "pipelineHealthScore": 66.67,
+    "stalledProcedureRate": 33.33,
+    "throughputRate": 66.67
+  },
+  "confidenceLevel": "LOW",
+  "dataQualityWarnings": [
+    "Lifecycle-statistics cache is cold — per-procedure forecasts degraded to `INSUFFICIENT_DATA`. The corpus is warmed out-of-band by the lifecycle warmup scheduler (default every 25 min) or `npm run warmup:lifecycle`. See `get_server_health.lifecycleCache` for current warmup status.",
+    "Small procedure sample (< 10) — pipeline health metrics may not be statistically representative"
+  ],
+  "filter": {
+    "status": "ALL"
+  },
+  "forecastBasis": "INSUFFICIENT_DATA",
+  "lifecycleCorpus": {
+    "computationTimeMs": 0,
+    "corpusSize": 0,
+    "totalObservations": 0
+  },
+  "methodology": "Lifecycle-driven pipeline analysis using EP API /procedures and /procedures/{id}/events. For each procedure in scope the authoritative event sequence is fetched in parallel (bounded ≤8). `daysInCurrentStage` is the delta between the most recent event and now. `bottleneckRisk` is a percentile bucket of the current dwell against the historical distribution for the same (procedureType, stage) observed across the latest 500 procedures (30 min cache). `estimatedCompletionDays` uses the historical median remaining-time at the current stage; when no comparable historical sample exists the response is flagged `INSUFFICIENT_DATA`. Bottlenecks are aggregated from procedures whose dwell is ≥ the 95th percentile.",
+  "period": {
+    "from": "2024-05-16",
+    "to": "2024-06-15"
+  },
+  "pipeline": [
+    {
+      "computedAttributes": {
+        "bottleneckRisk": "MEDIUM",
+        "complexityIndicator": "HIGH",
+        "estimatedCompletionDays": 0,
+        "progressPercentage": 100,
+        "velocityScore": 33
+      },
+      "currentStage": "FINAL_ACT",
+      "daysInCurrentStage": 67,
+      "isStalled": false,
+      "lifecycleEvents": [
+        {
+          "date": "2024-01-15",
+          "stage": ""
+        },
+        {
+          "date": "2024-02-01",
+          "stage": ""
+        },
+        {
+          "date": "2024-02-12",
+          "stage": ""
+        },
+        {
+          "date": "2024-03-12",
+          "stage": ""
+        },
+        {
+          "date": "2024-04-09",
+          "stage": ""
+        }
+      ],
+      "nextExpectedAction": "COMPLETED",
+      "procedureId": "COD-2024-0042",
+      "title": "Climate Regulation Amendment (synthetic)",
+      "type": "COD"
+    },
+    {
+      "computedAttributes": {
+        "bottleneckRisk": "MEDIUM",
+        "complexityIndicator": "HIGH",
+        "estimatedCompletionDays": 0,
+        "progressPercentage": 100,
+        "velocityScore": 33
+      },
+      "currentStage": "FINAL_ACT",
+      "daysInCurrentStage": 67,
+      "isStalled": false,
+      "lifecycleEvents": [
+        {
+          "date": "2024-01-15",
+          "stage": ""
+        },
+        {
+          "date": "2024-02-01",
+          "stage": ""
+        },
+        {
+          "date": "2024-02-12",
+          "stage": ""
+        },
+        {
+          "date": "2024-03-12",
+          "stage": ""
+        },
+        {
+          "date": "2024-04-09",
+          "stage": ""
+        }
+      ],
+      "nextExpectedAction": "COMPLETED",
+      "procedureId": "COD-2024-0099",
+      "title": "Digital Economy Package (synthetic)",
+      "type": "COD"
+    },
+    {
+      "computedAttributes": {
+        "bottleneckRisk": "HIGH",
+        "complexityIndicator": "HIGH",
+        "estimatedCompletionDays": 134,
+        "progressPercentage": 5,
+        "velocityScore": 20
+      },
+      "currentStage": "COMMITTEE",
+      "daysInCurrentStage": 67,
+      "isStalled": true,
+      "lifecycleEvents": [
+        {
+          "date": "2024-01-15",
+          "stage": ""
+        },
+        {
+          "date": "2024-02-01",
+          "stage": ""
+        },
+        {
+          "date": "2024-02-12",
+          "stage": ""
+        },
+        {
+          "date": "2024-03-12",
+          "stage": ""
+        },
+        {
+          "date": "2024-04-09",
+          "stage": ""
+        }
+      ],
+      "nextExpectedAction": "Continue COMMITTEE",
+      "procedureId": "COD-2024-0140",
+      "title": "Agricultural Subsidies Reform (synthetic)",
+      "type": "COD"
+    }
+  ],
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "summary": {
+    "activeCount": 0,
+    "avgDaysInPipeline": 67,
+    "completedCount": 2,
+    "stalledCount": 1,
+    "totalProcedures": 3
+  }
+}

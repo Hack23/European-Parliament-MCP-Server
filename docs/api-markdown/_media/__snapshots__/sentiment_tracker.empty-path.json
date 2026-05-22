@@ -1,0 +1,113 @@
+{
+  "computedAttributes": {
+    "bimodalityIndex": 0.4,
+    "highestVolatility": "EPP",
+    "mostNegativeGroup": "ECR",
+    "mostPositiveGroup": "EPP",
+    "trendingSentiment": "POSITIVE"
+  },
+  "confidenceLevel": "LOW",
+  "consensusTopics": [],
+  "dataAvailable": true,
+  "dataQualityWarnings": [
+    "DOCEO RCV coverage insufficient (0 RCVs in window) — sentiment scores fall back to seat-share proxy"
+  ],
+  "divisiveTopics": [],
+  "groupSentiments": [
+    {
+      "cohesionProxy": 0.59,
+      "groupId": "EPP",
+      "memberCount": 2,
+      "sentimentScore": 0.3,
+      "trend": "STABLE",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.59,
+      "groupId": "S&D",
+      "memberCount": 2,
+      "sentimentScore": 0.3,
+      "trend": "STABLE",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.53,
+      "groupId": "Renew",
+      "memberCount": 1,
+      "sentimentScore": 0.1,
+      "trend": "STABLE",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.53,
+      "groupId": "Greens/EFA",
+      "memberCount": 1,
+      "sentimentScore": 0.1,
+      "trend": "STABLE",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.53,
+      "groupId": "ECR",
+      "memberCount": 1,
+      "sentimentScore": 0.1,
+      "trend": "STABLE",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.47,
+      "groupId": "PfE",
+      "memberCount": 0,
+      "sentimentScore": -0.1,
+      "trend": "DECLINING",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.47,
+      "groupId": "The Left",
+      "memberCount": 0,
+      "sentimentScore": -0.1,
+      "trend": "DECLINING",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.47,
+      "groupId": "ESN",
+      "memberCount": 0,
+      "sentimentScore": -0.1,
+      "trend": "DECLINING",
+      "volatility": 0.12
+    },
+    {
+      "cohesionProxy": 0.47,
+      "groupId": "NI",
+      "memberCount": 0,
+      "sentimentScore": -0.1,
+      "trend": "DECLINING",
+      "volatility": 0.12
+    }
+  ],
+  "methodology": "FALLBACK PATH (no DOCEO RCV votes found in 90d window). Sentiment scores fall back to seat-share proxy (larger group → stronger institutional position). Trend defaults to seat-share band. polarizationIndex = std-dev of fallback scores. Data source (composition): https://data.europarl.europa.eu/api/v2/meps",
+  "overallParliamentSentiment": 0.18,
+  "polarizationIndex": 0.2,
+  "sentimentShifts": [
+    {
+      "direction": "POSITIVE",
+      "estimatedCause": "Large seat share indicates strong institutional position on tracked topics",
+      "fromScore": 0,
+      "groupId": "EPP",
+      "magnitude": 0.3,
+      "toScore": 0.3
+    },
+    {
+      "direction": "POSITIVE",
+      "estimatedCause": "Large seat share indicates strong institutional position on tracked topics",
+      "fromScore": 0,
+      "groupId": "S&D",
+      "magnitude": 0.3,
+      "toScore": 0.3
+    }
+  ],
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "timeframe": "last_quarter"
+}

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **validateApiUrl**(`url`, `label?`): `string`
 
-Defined in: [clients/ep/baseClient.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L75)
+Defined in: [clients/ep/baseClient.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L77)
 
 Validates an EP API base URL to prevent SSRF via environment variable or
 constructor argument poisoning.

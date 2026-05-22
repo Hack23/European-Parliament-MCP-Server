@@ -1,0 +1,35 @@
+{
+  "anomalies": [],
+  "computedAttributes": {
+    "anomalyRate": 0,
+    "defectionTrend": "DECREASING",
+    "groupStabilityScore": 100,
+    "riskLevel": "LOW",
+    "severityIndex": 0
+  },
+  "confidenceLevel": "LOW",
+  "dataAvailable": false,
+  "dataQualityWarnings": [
+    "No DOCEO RCV records returned for the requested period.",
+    "Requested window exceeds the 26-week cap — fetched the most recent 26 plenary weeks only (weeksTruncated=true)."
+  ],
+  "dataSource": "DOCEO",
+  "mepsAnalyzed": 1,
+  "methodology": "Per-MEP defection / abstention / cross-party alignment anomaly detection on DOCEO RCV records — iterates weekly DOCEO RCV pages across the requested period (deduplicated by record id, capped at 200 records, 26-week hard limit). Per-vote group majority resolved by plurality with alphabetical tie-breaking. Each MEP vote classified as aligned / defected / abstained / absent against their home-group majority. Anomalies emitted when defection-rate z-score ≥ 1.5, abstention-rate z-score ≥ 1.5, week-over-week defection delta ≥ 20pp, or non-home-group alignment share ≥ 60% in a weekly sub-window (spec defaults). Confidence: HIGH requires ≥50 RCVs inspected AND ≥3 contributing weeks; otherwise MEDIUM (10-49 RCVs or <3 weeks) or LOW (<10 RCVs). Source: EP DOCEO XML.",
+  "period": {
+    "from": "2024-01-01",
+    "to": "2024-12-31"
+  },
+  "rcvVotesInspected": 0,
+  "rcvVotesInspectedMax": 0,
+  "sourceAttribution": "European Parliament DOCEO XML — europarl.europa.eu/doceo",
+  "summary": {
+    "highSeverity": 0,
+    "lowSeverity": 0,
+    "mediumSeverity": 0,
+    "totalAnomalies": 0
+  },
+  "targetScope": "MEP: 101",
+  "weeksInspected": 0,
+  "weeksTruncated": true
+}

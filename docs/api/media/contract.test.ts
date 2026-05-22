@@ -31,11 +31,6 @@
 
 import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest';
 import { OsintStandardOutputSchema } from '../../../src/schemas/europeanParliament.js';
-import {
-  osintPhase6MEPs,
-  osintPhase6MEPDetails,
-  osintPhase6PaginatedMEPs,
-} from '../../fixtures/osintPhase6Fixtures.js';
 
 // ── Mock the EP client and DOCEO client ──────────────────────────────────────
 // `vi.mock` calls must precede any imports that transitively pull in the
@@ -69,29 +64,13 @@ import * as epClientModule from '../../../src/clients/europeanParliamentClient.j
 import * as doceoClientModule from '../../../src/clients/ep/doceoClient.js';
 import { dispatchToolCall, getToolMetadataArray } from '../../../src/server/toolRegistry.js';
 import { clearDoceoMepAggregatorCache } from '../../../src/utils/doceoMepAggregator.js';
+import {
+  installEmptyPathMocks,
+  OSINT_TOOL_INPUTS as TOOL_INPUTS,
+  stripVolatile,
+} from '../../fixtures/osint/index.js';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Empty paginated EP response for any EP API method returning data lists. */
-const emptyPaginated = <T>(): { data: T[]; total: number; limit: number; offset: number; hasMore: boolean } => ({
-  data: [],
-  total: 0,
-  limit: 50,
-  offset: 0,
-  hasMore: false,
-});
-
-/** Empty DOCEO response — no plenary-week RCV records available. */
-const emptyDoceoResponse = {
-  data: [],
-  total: 0,
-  datesAvailable: [] as string[],
-  datesUnavailable: [] as string[],
-  source: { type: 'DOCEO_XML' as const, term: 10, urls: [] as string[] },
-  limit: 100,
-  offset: 0,
-  hasMore: false,
-};
 
 /**
  * Parse the JSON envelope from an MCP tool response.
@@ -111,72 +90,9 @@ function parseToolPayload(result: { content: { type: string; text: string }[] })
   return parsed as Record<string, unknown>;
 }
 
-/**
- * Return a deep copy of `value` with volatile keys removed recursively.
- * Pure function — does NOT mutate the input; new arrays and objects are
- * always allocated.
- *
- * Volatile keys recognised (timestamp / per-run identifier fields):
- *  `analysisTime`, `assessmentTime`, `generatedAt`, `timestamp`,
- *  `correlationId`, `runId`, `requestId`, `computedAt`, `asOf`.
- *
- * Note: filtering is key-based only — embedded timestamp values inside
- * non-volatile fields are not stripped. If a tool ever embeds a wall-clock
- * timestamp in a non-volatile field, add the field name to {@link VOLATILE_KEYS}.
- */
-const VOLATILE_KEYS = new Set([
-  'analysisTime',
-  'assessmentTime',
-  'generatedAt',
-  'timestamp',
-  'correlationId',
-  'runId',
-  'requestId',
-  'computedAt',
-  'asOf',
-]);
-
-function stripVolatile(value: unknown): unknown {
-  if (Array.isArray(value)) {
-    return value.map(stripVolatile);
-  }
-  if (value !== null && typeof value === 'object') {
-    const out: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-      if (VOLATILE_KEYS.has(k)) continue;
-      out[k] = stripVolatile(v);
-    }
-    return out;
-  }
-  return value;
-}
-
-/**
- * Per-tool minimal valid inputs.
- *
- * The contract test invokes each OSINT tool with the simplest input that
- * passes Zod validation. Tools without required fields receive `{}`.
- *
- * NOTE: adding a new OSINT tool only requires adding an entry here; the
- * test driver below auto-discovers tools from `getToolMetadataArray()`.
- */
-const TOOL_INPUTS: Record<string, Record<string, unknown>> = {
-  assess_mep_influence: { mepId: '101' },
-  analyze_coalition_dynamics: {},
-  detect_voting_anomalies: { mepId: '101' },
-  compare_political_groups: { groupIds: ['EPP', 'S&D'] },
-  analyze_legislative_effectiveness: { subjectType: 'COMMITTEE', subjectId: 'AFET' },
-  monitor_legislative_pipeline: { status: 'ALL', limit: 5 },
-  analyze_committee_activity: { committeeId: 'AFET' },
-  track_mep_attendance: { limit: 5 },
-  analyze_country_delegation: { country: 'SE' },
-  generate_political_landscape: {},
-  network_analysis: {},
-  sentiment_tracker: {},
-  early_warning_system: {},
-  comparative_intelligence: { mepIds: [101, 102] },
-  correlate_intelligence: { mepIds: ['101', '102'] },
-};
+// `stripVolatile` and `TOOL_INPUTS` are imported from the shared OSINT fixture
+// factory (`tests/fixtures/osint/index.ts`) so the contract suite and the
+// per-tool golden-snapshot suite cannot drift apart.
 
 /**
  * Install default mock implementations for every EP API method an OSINT
@@ -186,29 +102,7 @@ const TOOL_INPUTS: Record<string, Record<string, unknown>> = {
  * data-unavailable scenarios.
  */
 function installDefaultMocks(): void {
-  vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue(osintPhase6PaginatedMEPs);
-  vi.mocked(epClientModule.epClient.getMEPDetails).mockImplementation((id: string) => {
-    const detail = osintPhase6MEPDetails.find(m => m.id === id)
-      ?? { ...osintPhase6MEPs[0], ...osintPhase6MEPDetails[0], id };
-    return Promise.resolve(detail);
-  });
-  vi.mocked(epClientModule.epClient.getVotingRecords).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getProcedures).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getProcedureEvents).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValue({
-    id: 'COMM-AFET',
-    name: 'Committee on Foreign Affairs (synthetic)',
-    abbreviation: 'AFET',
-    members: [],
-    viceChairs: [],
-  });
-  vi.mocked(epClientModule.epClient.getCommitteeDocuments).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getAdoptedTexts).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getPlenarySessions).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getMeetingDecisions).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getParliamentaryQuestions).mockResolvedValue(emptyPaginated());
-  vi.mocked(epClientModule.epClient.getPlenarySessionDocumentItems).mockResolvedValue(emptyPaginated());
-  vi.mocked(doceoClientModule.doceoClient.getLatestVotes).mockResolvedValue(emptyDoceoResponse);
+  installEmptyPathMocks(epClientModule.epClient, doceoClientModule.doceoClient);
 }
 
 // ── Driver ───────────────────────────────────────────────────────────────────

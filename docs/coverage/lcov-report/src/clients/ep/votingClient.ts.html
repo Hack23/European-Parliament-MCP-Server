@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.45% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>47/55</span>
+                <span class='fraction'>48/56</span>
             </div>
         
             
@@ -305,7 +305,17 @@
 <a name='L240'></a><a href='#L240'>240</a>
 <a name='L241'></a><a href='#L241'>241</a>
 <a name='L242'></a><a href='#L242'>242</a>
-<a name='L243'></a><a href='#L243'>243</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -340,7 +350,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">344x</span>
+<span class="cline-any cline-yes">345x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -362,11 +372,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -395,6 +409,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -455,6 +471,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
@@ -514,6 +531,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -541,6 +559,8 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -602,11 +622,14 @@ export class VotingClient extends BaseEPClient {
    */
   private async fetchVoteResultsForSession(
     sessionId: string,
-    apiParams: Record&lt;string, unknown&gt;
+    apiParams: Record&lt;string, unknown&gt;,
+    abortSignal?: AbortSignal,
   ): Promise&lt;VotingRecord[]&gt; {
     const response = await this.get&lt;JSONLDResponse&gt;(
       `meetings/${sessionId}/vote-results`,
-      apiParams
+      apiParams,
+      undefined,
+      abortSignal,
     );
     return response.data.map((item) =&gt; this.transformVoteResult(item, sessionId));
   }
@@ -618,13 +641,14 @@ export class VotingClient extends BaseEPClient {
   private async fetchVoteResultsFromRecentMeetings(params: {
     dateFrom?: string;
     limit?: number;
+    abortSignal?: AbortSignal;
   }): Promise&lt;VotingRecord[]&gt; {
     const meetingsParams: Record&lt;string, unknown&gt; = { limit: 5 };
     if (params.dateFrom !== undefined &amp;&amp; params.dateFrom !== '') {
       meetingsParams['year'] = params.dateFrom.substring(0, 4);
     }
 &nbsp;
-    const meetingsResponse = await this.get&lt;JSONLDResponse&gt;('meetings', meetingsParams);
+    const meetingsResponse = await this.get&lt;JSONLDResponse&gt;('meetings', meetingsParams, undefined, params.abortSignal);
     const records: VotingRecord[] = [];
     const recordLimit = params.limit ?? <span class="branch-1 cbranch-no" title="branch not covered" >50;</span>
 &nbsp;
@@ -638,7 +662,9 @@ export class VotingClient extends BaseEPClient {
       try {
         const voteResponse = await this.get&lt;JSONLDResponse&gt;(
           `meetings/${meetingId}/vote-results`,
-          { limit: recordLimit }
+          { limit: recordLimit },
+          undefined,
+          params.abortSignal,
         );
         const transformed = voteResponse.data.map((item) =&gt;
           this.transformVoteResult(item, meetingId)
@@ -696,6 +722,7 @@ export class VotingClient extends BaseEPClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   }): Promise&lt;PaginatedResponse&lt;VotingRecord&gt;&gt; {
     const action = 'get_voting_records';
 &nbsp;
@@ -708,7 +735,7 @@ export class VotingClient extends BaseEPClient {
       let records: VotingRecord[];
 &nbsp;
       if (effectiveSessionId !== '') {
-        records = await this.fetchVoteResultsForSession(effectiveSessionId, apiParams);
+        records = await this.fetchVoteResultsForSession(effectiveSessionId, apiParams, params.abortSignal);
       } else {
         records = await this.fetchVoteResultsFromRecentMeetings(params);
       }
@@ -755,6 +782,7 @@ export class VotingClient extends BaseEPClient {
     dateTo?: string;
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise&lt;PaginatedResponse&lt;Speech&gt;&gt; {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
@@ -767,7 +795,7 @@ export class VotingClient extends BaseEPClient {
     if (params.dateFrom !== undefined) apiParams['sitting-date'] = params.dateFrom;
     if (params.dateTo !== undefined) apiParams['sitting-date-end'] = params.dateTo;
 &nbsp;
-    const response = await this.get&lt;JSONLDResponse&gt;('speeches', apiParams);
+    const response = await this.get&lt;JSONLDResponse&gt;('speeches', apiParams, undefined, params.abortSignal);
     const items = Array.isArray(response.data) ? response.data : <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
     const speeches = items.map((item) =&gt; this.transformSpeech(item));
     const hasMore = speeches.length === limit;
@@ -778,13 +806,15 @@ export class VotingClient extends BaseEPClient {
    * Returns a single speech by ID.
    * **EP API Endpoint:** `GET /speeches/{speech-id}`
    */
-  async getSpeechById(speechId: string): Promise&lt;Speech&gt; {
+  async getSpeechById(speechId: string, options: { abortSignal?: AbortSignal } = {}): Promise&lt;Speech&gt; {
     if (speechId.trim() === '') {
       throw new APIError('Speech ID is required', 400);
     }
     const response = await this.get&lt;Record&lt;string, unknown&gt;&gt;(
       `speeches/${speechId}`,
-      { format: 'application/ld+json' }
+      { format: 'application/ld+json' },
+      undefined,
+      options.abortSignal,
     );
     return this.transformSpeech(response);
   }
@@ -796,7 +826,7 @@ export class VotingClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-20T00:19:49.820Z
+                at 2026-05-22T00:44:55.851Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

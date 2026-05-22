@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **resetLifecycleStatisticsCache**(): `void`
 
-Defined in: [utils/lifecycleStatistics.ts:480](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/lifecycleStatistics.ts#L480)
+Defined in: [utils/lifecycleStatistics.ts:542](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/lifecycleStatistics.ts#L542)
 
 Reset the in-memory cache. Intended for tests and forced refreshes.
 

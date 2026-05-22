@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.3.9**](README.md)
+[**European Parliament MCP Server API v1.3.10**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.3.9
+# European Parliament MCP Server API v1.3.10
 
 ## Documents
 
@@ -24,6 +24,7 @@
 ## Modules
 
 - [clients/ep](clients/ep/README.md)
+- [clients/ep/abortUtils](clients/ep/abortUtils/README.md)
 - [clients/ep/baseClient](clients/ep/baseClient/README.md)
 - [clients/ep/committeeClient](clients/ep/committeeClient/README.md)
 - [clients/ep/doceoClient](clients/ep/doceoClient/README.md)
@@ -65,6 +66,7 @@
 - [server/types](server/types/README.md)
 - [services/FeedHealthTracker](services/FeedHealthTracker/README.md)
 - [services/HealthService](services/HealthService/README.md)
+- [services/LifecycleWarmupScheduler](services/LifecycleWarmupScheduler/README.md)
 - [services/MetricsService](services/MetricsService/README.md)
 - [tools/analyzeCoalitionDynamics](tools/analyzeCoalitionDynamics/README.md)
 - [tools/analyzeCommitteeActivity](tools/analyzeCommitteeActivity/README.md)

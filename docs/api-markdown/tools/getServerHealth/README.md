@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../README.md)
 
 ***
 
@@ -24,6 +24,7 @@ ISMS Policy: MO-001 (Monitoring and Alerting), PE-001 (Performance Standards)
 ## Interfaces
 
 - [FeedProjection](interfaces/FeedProjection.md)
+- [LifecycleCacheProjection](interfaces/LifecycleCacheProjection.md)
 
 ## Variables
 

@@ -1,0 +1,953 @@
+{
+  "@description": "Canonical synthetic EP fixture payloads used by the OSINT golden-snapshot suite. Source of truth: tests/fixtures/osint/index.ts. Regenerate this file by re-running the snapshot suite update workflow.",
+  "@isms": {
+    "controls": [
+      "ISO 27001 A.8.29",
+      "A.8.34"
+    ],
+    "policy": "SC-002"
+  },
+  "adoptedTexts": {
+    "data": [
+      {
+        "date": "2024-03-12",
+        "id": "TA-2024-0042",
+        "procedureId": "COD-2024-0042",
+        "reference": "P10_TA(2024)0042",
+        "title": "Texts adopted — Climate Regulation Amendment (synthetic)"
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 1
+  },
+  "committeeDocuments": {
+    "data": [
+      {
+        "committee": "AFET",
+        "date": "2024-02-15",
+        "id": "AFET-DOC-001",
+        "reference": "A10-0042/2024",
+        "title": "Committee report on Foreign Policy Strategy (synthetic)",
+        "type": "REPORT"
+      },
+      {
+        "committee": "AFET",
+        "date": "2024-03-20",
+        "id": "AFET-DOC-002",
+        "reference": "A10-0066/2024",
+        "title": "Opinion on EU-Latin America Relations (synthetic)",
+        "type": "OPINION"
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 2
+  },
+  "doceoResponse": {
+    "data": [
+      {
+        "abstentions": 1,
+        "dataSource": "RCV",
+        "date": "2024-03-12",
+        "groupBreakdown": {
+          "ECR": {
+            "abstain": 0,
+            "against": 1,
+            "for": 0
+          },
+          "EPP": {
+            "abstain": 0,
+            "against": 0,
+            "for": 1
+          },
+          "Greens/EFA": {
+            "abstain": 0,
+            "against": 0,
+            "for": 1
+          },
+          "Renew": {
+            "abstain": 0,
+            "against": 0,
+            "for": 1
+          },
+          "S&D": {
+            "abstain": 1,
+            "against": 0,
+            "for": 1
+          }
+        },
+        "id": "RCV-2024-03-12-001",
+        "mepVotes": {
+          "101": "FOR",
+          "102": "FOR",
+          "103": "AGAINST",
+          "104": "FOR",
+          "105": "FOR",
+          "106": "ABSTAIN"
+        },
+        "officialCounts": {
+          "abstentions": 1,
+          "against": 1,
+          "for": 4
+        },
+        "reference": "A10-0042/2024",
+        "result": "ADOPTED",
+        "sittingDate": "2024-03-12",
+        "sittingNumber": "12",
+        "sourceUrl": "https://www.europarl.europa.eu/doceo/document/PV-10-2024-03-12-RCV_FR.xml",
+        "subject": "Climate Regulation Amendment (synthetic)",
+        "term": 10,
+        "votesAgainst": 1,
+        "votesFor": 4
+      },
+      {
+        "abstentions": 1,
+        "dataSource": "RCV",
+        "date": "2024-04-09",
+        "groupBreakdown": {
+          "ECR": {
+            "abstain": 0,
+            "against": 1,
+            "for": 0
+          },
+          "EPP": {
+            "abstain": 0,
+            "against": 0,
+            "for": 1
+          },
+          "Greens/EFA": {
+            "abstain": 0,
+            "against": 1,
+            "for": 0
+          },
+          "Renew": {
+            "abstain": 0,
+            "against": 0,
+            "for": 1
+          },
+          "S&D": {
+            "abstain": 1,
+            "against": 0,
+            "for": 1
+          }
+        },
+        "id": "RCV-2024-04-09-002",
+        "mepVotes": {
+          "101": "FOR",
+          "102": "ABSTAIN",
+          "103": "AGAINST",
+          "104": "FOR",
+          "105": "AGAINST",
+          "106": "FOR"
+        },
+        "officialCounts": {
+          "abstentions": 1,
+          "against": 2,
+          "for": 3
+        },
+        "reference": "A10-0099/2024",
+        "result": "ADOPTED",
+        "sittingDate": "2024-04-09",
+        "sittingNumber": "09",
+        "sourceUrl": "https://www.europarl.europa.eu/doceo/document/PV-10-2024-04-09-RCV_FR.xml",
+        "subject": "Digital Economy Package (synthetic)",
+        "term": 10,
+        "votesAgainst": 2,
+        "votesFor": 3
+      },
+      {
+        "abstentions": 0,
+        "dataSource": "RCV",
+        "date": "2024-05-21",
+        "groupBreakdown": {
+          "ECR": {
+            "abstain": 0,
+            "against": 0,
+            "for": 1
+          },
+          "EPP": {
+            "abstain": 0,
+            "against": 1,
+            "for": 0
+          },
+          "Greens/EFA": {
+            "abstain": 0,
+            "against": 1,
+            "for": 0
+          },
+          "Renew": {
+            "abstain": 0,
+            "against": 1,
+            "for": 0
+          },
+          "S&D": {
+            "abstain": 0,
+            "against": 0,
+            "for": 1
+          }
+        },
+        "id": "RCV-2024-05-21-003",
+        "mepVotes": {
+          "101": "AGAINST",
+          "102": "FOR",
+          "103": "FOR",
+          "104": "AGAINST",
+          "105": "AGAINST"
+        },
+        "officialCounts": {
+          "abstentions": 0,
+          "against": 3,
+          "for": 2
+        },
+        "reference": "A10-0140/2024",
+        "result": "REJECTED",
+        "sittingDate": "2024-05-21",
+        "sittingNumber": "21",
+        "sourceUrl": "https://www.europarl.europa.eu/doceo/document/PV-10-2024-05-21-RCV_FR.xml",
+        "subject": "Agricultural Subsidies Reform (synthetic)",
+        "term": 10,
+        "votesAgainst": 3,
+        "votesFor": 2
+      }
+    ],
+    "datesAvailable": [
+      "2024-03-12",
+      "2024-04-09",
+      "2024-05-21"
+    ],
+    "datesUnavailable": [],
+    "hasMore": false,
+    "limit": 100,
+    "offset": 0,
+    "source": {
+      "term": 10,
+      "type": "DOCEO_XML",
+      "urls": [
+        "https://www.europarl.europa.eu/doceo/document/PV-10-2024-03-12-RCV_FR.xml",
+        "https://www.europarl.europa.eu/doceo/document/PV-10-2024-04-09-RCV_FR.xml",
+        "https://www.europarl.europa.eu/doceo/document/PV-10-2024-05-21-RCV_FR.xml"
+      ]
+    },
+    "total": 3
+  },
+  "doceoVotes": [
+    {
+      "abstentions": 1,
+      "dataSource": "RCV",
+      "date": "2024-03-12",
+      "groupBreakdown": {
+        "ECR": {
+          "abstain": 0,
+          "against": 1,
+          "for": 0
+        },
+        "EPP": {
+          "abstain": 0,
+          "against": 0,
+          "for": 1
+        },
+        "Greens/EFA": {
+          "abstain": 0,
+          "against": 0,
+          "for": 1
+        },
+        "Renew": {
+          "abstain": 0,
+          "against": 0,
+          "for": 1
+        },
+        "S&D": {
+          "abstain": 1,
+          "against": 0,
+          "for": 1
+        }
+      },
+      "id": "RCV-2024-03-12-001",
+      "mepVotes": {
+        "101": "FOR",
+        "102": "FOR",
+        "103": "AGAINST",
+        "104": "FOR",
+        "105": "FOR",
+        "106": "ABSTAIN"
+      },
+      "officialCounts": {
+        "abstentions": 1,
+        "against": 1,
+        "for": 4
+      },
+      "reference": "A10-0042/2024",
+      "result": "ADOPTED",
+      "sittingDate": "2024-03-12",
+      "sittingNumber": "12",
+      "sourceUrl": "https://www.europarl.europa.eu/doceo/document/PV-10-2024-03-12-RCV_FR.xml",
+      "subject": "Climate Regulation Amendment (synthetic)",
+      "term": 10,
+      "votesAgainst": 1,
+      "votesFor": 4
+    },
+    {
+      "abstentions": 1,
+      "dataSource": "RCV",
+      "date": "2024-04-09",
+      "groupBreakdown": {
+        "ECR": {
+          "abstain": 0,
+          "against": 1,
+          "for": 0
+        },
+        "EPP": {
+          "abstain": 0,
+          "against": 0,
+          "for": 1
+        },
+        "Greens/EFA": {
+          "abstain": 0,
+          "against": 1,
+          "for": 0
+        },
+        "Renew": {
+          "abstain": 0,
+          "against": 0,
+          "for": 1
+        },
+        "S&D": {
+          "abstain": 1,
+          "against": 0,
+          "for": 1
+        }
+      },
+      "id": "RCV-2024-04-09-002",
+      "mepVotes": {
+        "101": "FOR",
+        "102": "ABSTAIN",
+        "103": "AGAINST",
+        "104": "FOR",
+        "105": "AGAINST",
+        "106": "FOR"
+      },
+      "officialCounts": {
+        "abstentions": 1,
+        "against": 2,
+        "for": 3
+      },
+      "reference": "A10-0099/2024",
+      "result": "ADOPTED",
+      "sittingDate": "2024-04-09",
+      "sittingNumber": "09",
+      "sourceUrl": "https://www.europarl.europa.eu/doceo/document/PV-10-2024-04-09-RCV_FR.xml",
+      "subject": "Digital Economy Package (synthetic)",
+      "term": 10,
+      "votesAgainst": 2,
+      "votesFor": 3
+    },
+    {
+      "abstentions": 0,
+      "dataSource": "RCV",
+      "date": "2024-05-21",
+      "groupBreakdown": {
+        "ECR": {
+          "abstain": 0,
+          "against": 0,
+          "for": 1
+        },
+        "EPP": {
+          "abstain": 0,
+          "against": 1,
+          "for": 0
+        },
+        "Greens/EFA": {
+          "abstain": 0,
+          "against": 1,
+          "for": 0
+        },
+        "Renew": {
+          "abstain": 0,
+          "against": 1,
+          "for": 0
+        },
+        "S&D": {
+          "abstain": 0,
+          "against": 0,
+          "for": 1
+        }
+      },
+      "id": "RCV-2024-05-21-003",
+      "mepVotes": {
+        "101": "AGAINST",
+        "102": "FOR",
+        "103": "FOR",
+        "104": "AGAINST",
+        "105": "AGAINST"
+      },
+      "officialCounts": {
+        "abstentions": 0,
+        "against": 3,
+        "for": 2
+      },
+      "reference": "A10-0140/2024",
+      "result": "REJECTED",
+      "sittingDate": "2024-05-21",
+      "sittingNumber": "21",
+      "sourceUrl": "https://www.europarl.europa.eu/doceo/document/PV-10-2024-05-21-RCV_FR.xml",
+      "subject": "Agricultural Subsidies Reform (synthetic)",
+      "term": 10,
+      "votesAgainst": 3,
+      "votesFor": 2
+    }
+  ],
+  "mepDetails": [
+    {
+      "active": true,
+      "biography": "Synthetic biography for Thomas Weber — EPP, Germany.",
+      "committees": [
+        "AGRI",
+        "ENVI",
+        "BUDG"
+      ],
+      "country": "DE",
+      "id": "101",
+      "name": "Thomas Weber (synthetic)",
+      "politicalGroup": "EPP",
+      "roles": [
+        "Vice-Chair of AGRI Committee",
+        "Member of ENVI Committee"
+      ],
+      "termStart": "2024-07-16",
+      "votingStatistics": {
+        "abstentions": 25,
+        "attendanceRate": 92,
+        "totalVotes": 320,
+        "votesAgainst": 75,
+        "votesFor": 220
+      },
+      "website": "https://example.test/mep-101"
+    },
+    {
+      "active": true,
+      "biography": "Synthetic biography for Marie Leclerc — S&D, France.",
+      "committees": [
+        "ITRE",
+        "BUDG",
+        "ENVI"
+      ],
+      "country": "FR",
+      "id": "102",
+      "name": "Marie Leclerc (synthetic)",
+      "politicalGroup": "S&D",
+      "roles": [
+        "Member of ITRE Committee",
+        "Member of BUDG Committee"
+      ],
+      "termStart": "2024-07-16",
+      "votingStatistics": {
+        "abstentions": 30,
+        "attendanceRate": 88,
+        "totalVotes": 290,
+        "votesAgainst": 70,
+        "votesFor": 190
+      },
+      "website": "https://example.test/mep-102"
+    },
+    {
+      "active": true,
+      "biography": "Synthetic biography for Piotr Kowalski — ECR, Poland.",
+      "committees": [
+        "AGRI",
+        "LIBE",
+        "BUDG"
+      ],
+      "country": "PL",
+      "id": "103",
+      "name": "Piotr Kowalski (synthetic)",
+      "politicalGroup": "ECR",
+      "roles": [
+        "Member of AGRI Committee"
+      ],
+      "termStart": "2024-07-16",
+      "votingStatistics": {
+        "abstentions": 30,
+        "attendanceRate": 85,
+        "totalVotes": 280,
+        "votesAgainst": 100,
+        "votesFor": 150
+      },
+      "website": "https://example.test/mep-103"
+    },
+    {
+      "active": true,
+      "biography": "Synthetic biography for Elena Papadaki — Renew, Greece.",
+      "committees": [
+        "AFET",
+        "ITRE",
+        "LIBE"
+      ],
+      "country": "GR",
+      "id": "104",
+      "name": "Elena Papadaki (synthetic)",
+      "politicalGroup": "Renew",
+      "roles": [
+        "Vice-Chair of AFET Committee",
+        "Member of ITRE Committee"
+      ],
+      "termStart": "2024-07-16",
+      "votingStatistics": {
+        "abstentions": 35,
+        "attendanceRate": 91,
+        "totalVotes": 310,
+        "votesAgainst": 65,
+        "votesFor": 210
+      },
+      "website": "https://example.test/mep-104"
+    },
+    {
+      "active": true,
+      "biography": "Synthetic biography for Lars Svensson — Greens/EFA, Sweden.",
+      "committees": [
+        "ENVI",
+        "AGRI",
+        "AFET"
+      ],
+      "country": "SE",
+      "id": "105",
+      "name": "Lars Svensson (synthetic)",
+      "politicalGroup": "Greens/EFA",
+      "roles": [
+        "Chair of ENVI Committee subcommittee",
+        "Member of AGRI Committee"
+      ],
+      "termStart": "2024-07-16",
+      "votingStatistics": {
+        "abstentions": 20,
+        "attendanceRate": 94,
+        "totalVotes": 260,
+        "votesAgainst": 40,
+        "votesFor": 200
+      },
+      "website": "https://example.test/mep-105"
+    },
+    {
+      "active": true,
+      "biography": "Synthetic biography for Ana Costa — S&D, Portugal.",
+      "committees": [
+        "LIBE",
+        "ENVI",
+        "ITRE"
+      ],
+      "country": "PT",
+      "id": "106",
+      "name": "Ana Costa (synthetic)",
+      "politicalGroup": "S&D",
+      "roles": [
+        "Member of LIBE Committee",
+        "Member of ENVI Committee"
+      ],
+      "termStart": "2024-07-16",
+      "votingStatistics": {
+        "abstentions": 30,
+        "attendanceRate": 89,
+        "totalVotes": 275,
+        "votesAgainst": 60,
+        "votesFor": 185
+      },
+      "website": "https://example.test/mep-106"
+    },
+    {
+      "active": true,
+      "biography": "Synthetic biography for Henrik Nielsen — EPP, Denmark.",
+      "committees": [
+        "BUDG",
+        "AGRI",
+        "AFET"
+      ],
+      "country": "DK",
+      "id": "107",
+      "name": "Henrik Nielsen (synthetic)",
+      "politicalGroup": "EPP",
+      "roles": [
+        "Member of BUDG Committee",
+        "Member of AFET Committee"
+      ],
+      "termStart": "2024-07-16",
+      "votingStatistics": {
+        "abstentions": 25,
+        "attendanceRate": 90,
+        "totalVotes": 300,
+        "votesAgainst": 70,
+        "votesFor": 205
+      },
+      "website": "https://example.test/mep-107"
+    }
+  ],
+  "meps": [
+    {
+      "active": true,
+      "committees": [
+        "AGRI",
+        "ENVI",
+        "BUDG"
+      ],
+      "country": "DE",
+      "id": "101",
+      "name": "Thomas Weber (synthetic)",
+      "politicalGroup": "EPP",
+      "termStart": "2024-07-16"
+    },
+    {
+      "active": true,
+      "committees": [
+        "ITRE",
+        "BUDG",
+        "ENVI"
+      ],
+      "country": "FR",
+      "id": "102",
+      "name": "Marie Leclerc (synthetic)",
+      "politicalGroup": "S&D",
+      "termStart": "2024-07-16"
+    },
+    {
+      "active": true,
+      "committees": [
+        "AGRI",
+        "LIBE",
+        "BUDG"
+      ],
+      "country": "PL",
+      "id": "103",
+      "name": "Piotr Kowalski (synthetic)",
+      "politicalGroup": "ECR",
+      "termStart": "2024-07-16"
+    },
+    {
+      "active": true,
+      "committees": [
+        "AFET",
+        "ITRE",
+        "LIBE"
+      ],
+      "country": "GR",
+      "id": "104",
+      "name": "Elena Papadaki (synthetic)",
+      "politicalGroup": "Renew",
+      "termStart": "2024-07-16"
+    },
+    {
+      "active": true,
+      "committees": [
+        "ENVI",
+        "AGRI",
+        "AFET"
+      ],
+      "country": "SE",
+      "id": "105",
+      "name": "Lars Svensson (synthetic)",
+      "politicalGroup": "Greens/EFA",
+      "termStart": "2024-07-16"
+    },
+    {
+      "active": true,
+      "committees": [
+        "LIBE",
+        "ENVI",
+        "ITRE"
+      ],
+      "country": "PT",
+      "id": "106",
+      "name": "Ana Costa (synthetic)",
+      "politicalGroup": "S&D",
+      "termStart": "2024-07-16"
+    },
+    {
+      "active": true,
+      "committees": [
+        "BUDG",
+        "AGRI",
+        "AFET"
+      ],
+      "country": "DK",
+      "id": "107",
+      "name": "Henrik Nielsen (synthetic)",
+      "politicalGroup": "EPP",
+      "termStart": "2024-07-16"
+    }
+  ],
+  "paginatedMEPs": {
+    "data": [
+      {
+        "active": true,
+        "committees": [
+          "AGRI",
+          "ENVI",
+          "BUDG"
+        ],
+        "country": "DE",
+        "id": "101",
+        "name": "Thomas Weber (synthetic)",
+        "politicalGroup": "EPP",
+        "termStart": "2024-07-16"
+      },
+      {
+        "active": true,
+        "committees": [
+          "ITRE",
+          "BUDG",
+          "ENVI"
+        ],
+        "country": "FR",
+        "id": "102",
+        "name": "Marie Leclerc (synthetic)",
+        "politicalGroup": "S&D",
+        "termStart": "2024-07-16"
+      },
+      {
+        "active": true,
+        "committees": [
+          "AGRI",
+          "LIBE",
+          "BUDG"
+        ],
+        "country": "PL",
+        "id": "103",
+        "name": "Piotr Kowalski (synthetic)",
+        "politicalGroup": "ECR",
+        "termStart": "2024-07-16"
+      },
+      {
+        "active": true,
+        "committees": [
+          "AFET",
+          "ITRE",
+          "LIBE"
+        ],
+        "country": "GR",
+        "id": "104",
+        "name": "Elena Papadaki (synthetic)",
+        "politicalGroup": "Renew",
+        "termStart": "2024-07-16"
+      },
+      {
+        "active": true,
+        "committees": [
+          "ENVI",
+          "AGRI",
+          "AFET"
+        ],
+        "country": "SE",
+        "id": "105",
+        "name": "Lars Svensson (synthetic)",
+        "politicalGroup": "Greens/EFA",
+        "termStart": "2024-07-16"
+      },
+      {
+        "active": true,
+        "committees": [
+          "LIBE",
+          "ENVI",
+          "ITRE"
+        ],
+        "country": "PT",
+        "id": "106",
+        "name": "Ana Costa (synthetic)",
+        "politicalGroup": "S&D",
+        "termStart": "2024-07-16"
+      },
+      {
+        "active": true,
+        "committees": [
+          "BUDG",
+          "AGRI",
+          "AFET"
+        ],
+        "country": "DK",
+        "id": "107",
+        "name": "Henrik Nielsen (synthetic)",
+        "politicalGroup": "EPP",
+        "termStart": "2024-07-16"
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 7
+  },
+  "parliamentaryQuestions": {
+    "data": [
+      {
+        "authorMepId": "101",
+        "date": "2024-02-20",
+        "id": "QE-2024-001234",
+        "reference": "E-001234/2024",
+        "title": "Written question on climate policy implementation (synthetic)",
+        "type": "WRITTEN"
+      },
+      {
+        "authorMepId": "102",
+        "date": "2024-03-15",
+        "id": "QE-2024-002345",
+        "reference": "E-002345/2024",
+        "title": "Written question on digital sovereignty (synthetic)",
+        "type": "WRITTEN"
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 2
+  },
+  "plenarySessions": {
+    "data": [
+      {
+        "date": "2024-03-12",
+        "id": "P10-2024-03-12",
+        "location": "Strasbourg",
+        "term": 10
+      },
+      {
+        "date": "2024-04-09",
+        "id": "P10-2024-04-09",
+        "location": "Strasbourg",
+        "term": 10
+      },
+      {
+        "date": "2024-05-21",
+        "id": "P10-2024-05-21",
+        "location": "Strasbourg",
+        "term": 10
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 3
+  },
+  "procedureEvents": {
+    "data": [
+      {
+        "date": "2024-01-15",
+        "id": "EV-001",
+        "procedureId": "COD-2024-0042",
+        "stage": "COMMITTEE_REPORT"
+      },
+      {
+        "date": "2024-02-12",
+        "id": "EV-002",
+        "procedureId": "COD-2024-0042",
+        "stage": "PLENARY_VOTE"
+      },
+      {
+        "date": "2024-03-12",
+        "id": "EV-003",
+        "procedureId": "COD-2024-0042",
+        "stage": "FINAL_ACT"
+      },
+      {
+        "date": "2024-02-01",
+        "id": "EV-004",
+        "procedureId": "COD-2024-0099",
+        "stage": "COMMITTEE_REPORT"
+      },
+      {
+        "date": "2024-04-09",
+        "id": "EV-005",
+        "procedureId": "COD-2024-0099",
+        "stage": "PLENARY_VOTE"
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 5
+  },
+  "procedures": {
+    "data": [
+      {
+        "committee": "ENVI",
+        "dateLastActivity": "2024-03-12",
+        "id": "COD-2024-0042",
+        "rapporteur": {
+          "id": "101",
+          "name": "Thomas Weber (synthetic)"
+        },
+        "reference": "2024/0042(COD)",
+        "stage": "FINAL_ACT",
+        "status": "ADOPTED",
+        "title": "Climate Regulation Amendment (synthetic)",
+        "type": "COD"
+      },
+      {
+        "committee": "ITRE",
+        "dateLastActivity": "2024-04-09",
+        "id": "COD-2024-0099",
+        "rapporteur": {
+          "id": "102",
+          "name": "Marie Leclerc (synthetic)"
+        },
+        "reference": "2024/0099(COD)",
+        "stage": "FINAL_ACT",
+        "status": "ADOPTED",
+        "title": "Digital Economy Package (synthetic)",
+        "type": "COD"
+      },
+      {
+        "committee": "AGRI",
+        "dateLastActivity": "2024-05-21",
+        "id": "COD-2024-0140",
+        "rapporteur": {
+          "id": "103",
+          "name": "Piotr Kowalski (synthetic)"
+        },
+        "reference": "2024/0140(COD)",
+        "stage": "COMMITTEE",
+        "status": "ONGOING",
+        "title": "Agricultural Subsidies Reform (synthetic)",
+        "type": "COD"
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 3
+  },
+  "votingRecords": {
+    "data": [
+      {
+        "abstentions": 1,
+        "date": "2024-03-12T14:00:00Z",
+        "id": "RCV-2024-03-12-001",
+        "result": "ADOPTED",
+        "sessionId": "P10-2024-03-12",
+        "topic": "Climate Regulation Amendment (synthetic)",
+        "votesAgainst": 1,
+        "votesFor": 4
+      },
+      {
+        "abstentions": 1,
+        "date": "2024-04-09T14:00:00Z",
+        "id": "RCV-2024-04-09-002",
+        "result": "ADOPTED",
+        "sessionId": "P10-2024-04-09",
+        "topic": "Digital Economy Package (synthetic)",
+        "votesAgainst": 2,
+        "votesFor": 3
+      },
+      {
+        "abstentions": 0,
+        "date": "2024-05-21T14:00:00Z",
+        "id": "RCV-2024-05-21-003",
+        "result": "REJECTED",
+        "sessionId": "P10-2024-05-21",
+        "topic": "Agricultural Subsidies Reform (synthetic)",
+        "votesAgainst": 3,
+        "votesFor": 2
+      }
+    ],
+    "hasMore": false,
+    "limit": 50,
+    "offset": 0,
+    "total": 3
+  }
+}

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../README.md)
+[**European Parliament MCP Server API v1.3.10**](../README.md)
 
 ***
 
@@ -155,9 +155,95 @@ The suite completes in ~1 s because it uses `vi.mock` to stub the EP and DOCEO c
 ### Refreshing fixtures / adding a new OSINT tool
 
 1. Register the tool in [`src/server/toolRegistry.ts`](../server/toolRegistry/README.md) with `category: 'osint'`.
-2. Add the minimal-valid input for the tool in `TOOL_INPUTS` inside `tests/integration/osint/contract.test.ts`.
-3. Run `npx vitest run tests/integration/osint/contract.test.ts` — a failing `beforeAll` will list any registered OSINT tool that lacks a `TOOL_INPUTS` entry.
-4. If the new tool calls an EP API method not yet mocked in `installDefaultMocks()`, add a default mock there (use `emptyPaginated()` for list endpoints).
+2. Add the minimal-valid input for the tool in the shared `OSINT_TOOL_INPUTS` map in [`tests/fixtures/osint/index.ts`](../_media/index.ts) — both the contract suite and the golden-snapshot suite consume this map, so a single addition covers both.
+3. Run `npx vitest run tests/integration/osint/contract.test.ts` — a failing `beforeAll` will list any registered OSINT tool that lacks an entry.
+4. If the new tool calls an EP API method not yet covered by the shared mock-installer helpers (`installEmptyPathMocks`, `installHotPathMocks` in [`tests/fixtures/osint/index.ts`](../_media/index.ts)), add a default response there (use `emptyPaginated()` for list endpoints).
+5. Regenerate the golden snapshots once for the new tool — see the next section.
+
+### Mutation testing (Stryker)
+
+The contract suite enforces the **structural** envelope and the no-silent-zero policy, but cannot detect **logic** regressions (boundary off-by-ones in percentile calculations, swapped comparison operators in anomaly thresholds, inverted Jaccard similarity weights, etc.). To close that gap, the `osint-qa` workflow runs [Stryker](https://stryker-mutator.io/) mutation testing as a third stage after the contract suite and the per-file coverage gate.
+
+**Scope** (defined in [`stryker.config.json`](../_media/stryker.config.json)):
+
+| Category | Files |
+|----------|-------|
+| OSINT tool implementations (15) | `src/tools/{assessMepInfluence,analyzeCoalitionDynamics,detectVotingAnomalies,comparePoliticalGroups,analyzeLegislativeEffectiveness,monitorLegislativePipeline,analyzeCommitteeActivity,trackMepAttendance,analyzeCountryDelegation,generatePoliticalLandscape,networkAnalysis,sentimentTracker,earlyWarningSystem,comparativeIntelligence,correlateIntelligence}.ts` |
+| Shared OSINT utilities (7) | `src/utils/{votingBaseline,graphAlgorithms,networkVotingSimilarity,effectivenessAggregator,lifecycleStatistics,doceoMepAggregator,politicalGroupNormalization}.ts` |
+
+**Exclusions**: `**/*.test.ts`, `**/*.spec.ts`, `src/generated/**`, all non-OSINT tools, EP/DOCEO client transport code (those are exercised by integration tests with real fixtures).
+
+**Thresholds** (baseline phase): `{ high: 80, low: 60, break: null }` — informational only. After one green run on `main`, `break` will be promoted to `70` and the CI job's `continue-on-error: true` flag will be removed.
+
+**Running locally**:
+
+```bash
+# Full mutation run, writes builds/stryker/mutation-report.html
+npm run test:mutation
+
+# CI-equivalent (concurrency 4, info log level)
+npm run test:mutation:ci
+```
+
+**Runtime budget**: contract suite ≤2 min, coverage ≤3 min, mutation ≤15 min (the `--concurrency 4` flag in `stryker.config.json` keeps Stryker inside the 15-min budget on GitHub-hosted runners). The vitest runner reuses the existing unit-test infrastructure, so there is no per-mutant fork overhead.
+
+See [`CONTRIBUTING.md` § "Mutation testing (OSINT)"](CONTRIBUTING.md) for the surviving-mutant triage policy.
+
+---
+
+## 📸 OSINT QA Harness — Golden Snapshots
+
+The cross-tool contract suite locks down the **shape** of the OSINT envelope; the per-tool golden-snapshot suite locks down the **content** — scoring weights, classification buckets, attribution lists. Together they catch the regression surface area that pure schema validation cannot.
+
+**Location:** [`tests/integration/osint/snapshots.test.ts`](../_media/snapshots.test.ts)
+**Snapshots:** [`tests/integration/osint/__snapshots__/`](../_media/__snapshots__) — `<tool>.<variant>.json`
+**Fixtures (single source of truth):** [`tests/fixtures/osint/index.ts`](../_media/index.ts) — also dumped for reviewer visibility at [`tests/fixtures/osint/canonical-ep.json`](../_media/canonical-ep.json), [`canonical-doceo-rcv.xml`](../_media/canonical-doceo-rcv.xml), and [`canonical-doceo-vot.xml`](../_media/canonical-doceo-vot.xml).
+
+### What the snapshots assert
+
+For each of the 15 OSINT tools, two fixture **variants** are exercised:
+
+| Variant | Mock installer | What it covers |
+| --- | --- | --- |
+| `empty-path` | `installEmptyPathMocks` | MEP roster present, every other EP/DOCEO source empty. Verifies the no-silent-zero policy (tools degrade confidence and report non-empty `dataQualityWarnings` when confidence drops to `LOW`/`MEDIUM`, while some tools can remain `HIGH` when sufficient data remains). |
+| `hot-path` | `installHotPathMocks` | Substantive synthetic EP + DOCEO data (3 plenary RCVs, 3 procedures, committee documents, questions). Drives every tool through its scoring / classification / attribution code path so a methodology regression actually moves a snapshot value. |
+
+Each snapshot is the tool's JSON response after `stripVolatile` removes timestamp/run-identifier fields (`generatedAt`, `analysisTime`, `dataFreshness`, `cacheHit`, …) and after `stableStringify` sorts object keys ascending at every depth. Arrays preserve original order (OSINT scoring is order-sensitive).
+
+### Snapshot conventions
+
+- **Key sorting** — every object's keys are sorted ascending so spurious diffs from non-deterministic insertion order never appear.
+- **Volatile fields** — see `VOLATILE_KEYS` in [`tests/fixtures/osint/index.ts`](../_media/index.ts). Add new keys there (and only there) when a tool introduces a wall-clock-derived field.
+- **Wall-clock** — pinned via `vi.useFakeTimers({ toFake: ['Date'] })` + `vi.setSystemTime('2024-06-15T12:00:00.000Z')` in `beforeEach` so freshness fields render deterministically.
+- **Two variants per tool** — required so the snapshot exercises real scoring logic, not just the empty envelope (per the original issue's "hot path with substantive data" requirement).
+
+### Running just the snapshot suite
+
+```bash
+# Diff-assert mode — fails on any divergence
+npm run test:osint:snapshots
+
+# Refresh mode — rewrites snapshots in place
+npm run test:osint:snapshots -- -u
+
+# Refresh via env var (useful in CI's optional "refresh" job)
+UPDATE_OSINT_SNAPSHOTS=1 npx vitest run tests/integration/osint/snapshots.test.ts
+```
+
+The suite completes in ≈1 s (≤90 s CI budget) because it shares the registry-driven driver and `vi.mock`-based client stubs used by the contract suite. It runs automatically as part of `npm run test:integration`.
+
+### Refreshing snapshots — reviewer sign-off required
+
+Snapshot diffs represent a methodology change. They MUST be explicitly acknowledged:
+
+1. Run `npm run test:osint:snapshots -- -u` locally to regenerate.
+2. **Review every diff** — the JSON-text diff in your PR shows the precise field that moved.
+3. Tick the **"OSINT snapshot refresh acknowledged"** box in [`PULL_REQUEST_TEMPLATE.md`](../_media/PULL_REQUEST_TEMPLATE.md). Reviewers will block merges that change snapshots without this acknowledgement.
+4. Update the relevant tool's design-note section in `INTEGRATION_TESTING.md` if the change reflects a deliberate methodology shift (new scoring weight, new dimension, etc.).
+
+### Refresh fan-out — when fixture changes are intentional
+
+If you change the canonical fixture factory in `tests/fixtures/osint/index.ts` (e.g. add a new MEP, adjust a DOCEO record), expect **all 30 snapshots to diff** on the next run. This is by design — the snapshots ARE the regression detector. Follow the four steps above and call out the fixture change in your PR description.
 
 ---
 

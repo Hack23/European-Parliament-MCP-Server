@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../README.md)
+[**European Parliament MCP Server API v1.3.10**](../README.md)
 
 ***
 
@@ -273,7 +273,7 @@ Create `src/tools/myNewTool.test.ts` covering:
 - ✅ Invalid/empty input → `ZodError` thrown
 - ✅ Default parameter values applied
 
-**OSINT tools only**: any tool registered with `category: 'osint'` is automatically enrolled in the cross-tool contract suite ([`tests/integration/osint/contract.test.ts`](../_media/contract.test.ts)). Add a minimal-valid input entry to `TOOL_INPUTS` in that file, and ensure your tool follows the **no-silent-zero policy** (see below).
+**OSINT tools only**: any tool registered with `category: 'osint'` is automatically enrolled in the cross-tool contract suite ([`tests/integration/osint/contract.test.ts`](../_media/contract.test.ts)) **and** the per-tool golden-snapshot suite ([`tests/integration/osint/snapshots.test.ts`](../_media/snapshots.test.ts)). Add a minimal-valid input entry to `OSINT_TOOL_INPUTS` in [`tests/fixtures/osint/index.ts`](../_media/index.ts) (single source of truth — both suites import from it), and ensure your tool follows the **no-silent-zero policy** (see below).
 
 #### No-silent-zero policy (OSINT tools)
 
@@ -282,7 +282,52 @@ Every OSINT tool returns the [`OsintStandardOutput`](../tools/shared/types/READM
 1. Degrade `confidenceLevel` to `LOW` or `MEDIUM` **and** push a human-readable entry into `dataQualityWarnings` explaining the unavailability, OR
 2. Keep `confidenceLevel = HIGH` only when the remaining data is sufficient to fully back every non-warning numeric metric in the payload.
 
-The contract test enforces the observable invariant: if `confidenceLevel` is `LOW`/`MEDIUM`, `dataQualityWarnings` MUST be non-empty. A degraded confidence level with no warning fails the test. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy and golden-snapshot refresh procedure.
+The contract test enforces the observable invariant: if `confidenceLevel` is `LOW`/`MEDIUM`, `dataQualityWarnings` MUST be non-empty. A degraded confidence level with no warning fails the test. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy.
+
+#### Refreshing OSINT golden snapshots
+
+The golden-snapshot suite ([`tests/integration/osint/snapshots.test.ts`](../_media/snapshots.test.ts)) diff-asserts every OSINT tool's response against a checked-in snapshot for two fixture variants (`empty-path`, `hot-path`) — 30 snapshots total. A diff means a methodology change has occurred (scoring weight moved, classification bucket changed, attribution list re-ordered).
+
+If the diff is intentional:
+
+```bash
+# Regenerate the affected snapshots
+npm run test:osint:snapshots -- -u
+
+# Inspect every diff (snapshots live at tests/integration/osint/__snapshots__/)
+git diff tests/integration/osint/__snapshots__/
+
+# Acknowledge the refresh in your PR
+#   → tick "OSINT snapshot refresh acknowledged" in PULL_REQUEST_TEMPLATE.md
+```
+
+**Reviewer guidance:** never approve a PR that touches `tests/integration/osint/__snapshots__/` without the acknowledgement checkbox ticked AND a justification for the methodology change in the PR description. Snapshot diffs are the regression-detection line for OSINT scoring; silently rubber-stamping them defeats the purpose of the suite. See `INTEGRATION_TESTING.md` § "OSINT QA Harness — Golden Snapshots" for the full workflow.
+
+#### Mutation testing (OSINT)
+
+The contract suite catches structural envelope violations but cannot detect logic regressions in scoring/anomaly methodology. The dedicated **`osint-qa`** CI workflow runs Stryker against the 15 OSINT tool files plus their seven shared utilities (`votingBaseline.ts`, `graphAlgorithms.ts`, `networkVotingSimilarity.ts`, `effectivenessAggregator.ts`, `lifecycleStatistics.ts`, `doceoMepAggregator.ts`, `politicalGroupNormalization.ts`).
+
+Run the mutation suite locally:
+
+```bash
+# Full mutation run (≈10–15 min on a laptop, scoped per stryker.config.json)
+npm run test:mutation
+
+# CI-equivalent invocation
+npm run test:mutation:ci
+```
+
+Reports are written to `builds/stryker/mutation-report.html` and `.json`.
+
+**Acceptable surviving mutants:**
+
+- **Log-string mutants** — string-literal mutations inside `console.error` / `auditSink` log messages have no observable effect and may be left surviving.
+- **Defensive `?? 0` / `|| []` fallbacks** unreachable from existing fixtures — annotate with `// Stryker disable next-line` and a one-line justification rather than adding contrived tests.
+- **Pure dev-time guard clauses** (e.g. type-narrowing branches that mirror Zod validation) — same triage.
+
+Everything else — boundary mutations on percentiles, anomaly thresholds, voting-similarity scores, lifecycle bucketing, coalition strength tiers, sentiment classification cuts — **must be killed by a test**. If a survivor lands on a DOCEO-touching tool (`assessMepInfluence`, `detectVotingAnomalies`, `sentimentTracker`, `networkAnalysis`, `analyzeCoalitionDynamics`), add a regression test before merging.
+
+The mutation job is currently `continue-on-error: true` while we observe the baseline score on `main`. Once stable, `thresholds.break` in `stryker.config.json` will be promoted from `null` to `70`, making the job a required check.
 
 ---
 

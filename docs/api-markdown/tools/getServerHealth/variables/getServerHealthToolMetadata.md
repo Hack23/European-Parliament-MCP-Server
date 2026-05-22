@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getServerHealthToolMetadata**: `object`
 
-Defined in: [tools/getServerHealth.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L147)
+Defined in: [tools/getServerHealth.ts:181](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L181)
 
 Tool metadata for MCP registration.
 

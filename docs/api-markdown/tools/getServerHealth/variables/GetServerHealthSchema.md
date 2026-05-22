@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **GetServerHealthSchema**: `ZodObject`\<\{ \}, `$strip`\>
 
-Defined in: [tools/getServerHealth.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L29)
+Defined in: [tools/getServerHealth.ts:32](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L32)
 
 Zod schema for the (empty) input of this tool.

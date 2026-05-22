@@ -1,0 +1,59 @@
+{
+  "attributions": {
+    "amendmentAdoptedDocumentIds": [],
+    "amendmentDocumentIds": [],
+    "opinionProcedureIds": [],
+    "questionIds": [],
+    "reportProcedureIds": []
+  },
+  "benchmarks": {
+    "avgAmendmentsPerMep": 12.5,
+    "avgReportsPerMep": 3.2,
+    "avgSuccessRate": 38
+  },
+  "computedAttributes": {
+    "amendmentSuccessRate": 0,
+    "avgImpactPerReport": 0,
+    "committeeCoverageRate": 100,
+    "effectivenessRank": "DEVELOPING",
+    "legislativeOutputPerMonth": 0,
+    "peerComparisonPercentile": 0,
+    "questionFollowUpRate": 0
+  },
+  "confidenceLevel": "LOW",
+  "dataQualityWarnings": [
+    "procedures returned no items matching the subject within the date window",
+    "adopted texts returned no items matching the subject within the date window",
+    "plenary-session document items returned no items matching the subject within the date window",
+    "parliamentary questions returned no items matching the subject within the date window"
+  ],
+  "dataSources": {
+    "adoptedTexts": "EMPTY",
+    "plenaryDocumentItems": "EMPTY",
+    "procedures": "EMPTY",
+    "questions": "EMPTY"
+  },
+  "methodology": "Legislative effectiveness scoring built from four EP Open Data Portal sources fanned out under a 6000ms per-source timeout (Promise.allSettled): /procedures (rapporteur / shadow-rapporteur / opinion-rapporteur attribution), /adopted-texts (success-rate denominator), /plenary-session-documents-items (amendments tabled + adoption flag from document status), /parliamentary-questions (questions filed, filtered by author and date). For subjectType=COMMITTEE the aggregator sums per-MEP attributions across the committee membership returned by /corporate-bodies. legislativeSuccessRate = procedures-with-adopted-text / attributed-procedures (0-100). Each metric carries a per-source dataAvailability flag so downstream tools can branch on real coverage. Data source: European Parliament Open Data Portal (data.europarl.europa.eu).",
+  "metrics": {
+    "amendmentsAdopted": 0,
+    "amendmentsTabled": 0,
+    "legislativeSuccessRate": 0,
+    "opinionsDelivered": 0,
+    "questionsAsked": 0,
+    "reportsAuthored": 0
+  },
+  "period": {
+    "from": "2024-01-01",
+    "to": "2024-06-15"
+  },
+  "scores": {
+    "impactScore": 0,
+    "overallEffectiveness": 0,
+    "productivityScore": 0,
+    "qualityScore": 0
+  },
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "subjectId": "AFET",
+  "subjectName": "Committee on Foreign Affairs (synthetic)",
+  "subjectType": "COMMITTEE"
+}

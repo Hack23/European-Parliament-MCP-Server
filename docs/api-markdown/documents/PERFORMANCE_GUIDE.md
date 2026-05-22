@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../README.md)
+[**European Parliament MCP Server API v1.3.10**](../README.md)
 
 ***
 
@@ -674,6 +674,38 @@ setInterval(() => {
 - [Troubleshooting Guide](./TROUBLESHOOTING.md)
 - [Developer Guide](DEVELOPER_GUIDE.md)
 - [Deployment Guide](DEPLOYMENT_GUIDE.md)
+
+---
+
+## 🛑 Cooperative vs. Pre-emptive Cancellation
+
+OSINT tools that fan out across multiple EP endpoints (e.g.
+`analyze_legislative_effectiveness`, `analyze_committee_activity`,
+`analyze_coalition_dynamics`) wrap each per-source fetcher in
+`withTimeoutAndAbort()`. The helper exposes an internal `AbortSignal` to its
+inner callback.
+
+- **Cooperative cancellation** (pre-PR #481 baseline): the per-source
+  callback calls `throwIfAborted(signal)` between request boundaries. A
+  single slow EP endpoint cannot be cancelled while its `fetch` is in flight
+  — the budget is honoured only at the *next* request boundary, wasting the
+  remaining time that siblings could have used.
+- **Pre-emptive cancellation** (current): the per-source callback forwards
+  `signal` to the typed client (`epClient.getProcedures({ …, abortSignal:
+  signal })`). `BaseEPClient.get()` composes the external signal with its
+  internal timeout controller via `createLinkedAbortController()` and
+  forwards the linked signal to `undici`'s `fetch`. When the outer budget
+  expires, every in-flight EP call cancels within ~milliseconds, freeing
+  rate-limiter tokens and connection slots for the next request.
+
+**Operational outcome**: under the 100 req/min EP API rate limit, a slow
+`/procedures` page no longer pins its per-source budget past expiry; the
+caller receives a typed `APIError(0)` from the cancelled source and the
+remaining siblings continue with their original budget intact.
+
+See [ARCHITECTURE.md § Cancellation Contract](ARCHITECTURE.md)
+and [API_USAGE_GUIDE.md § Cancelling Requests with `abortSignal`](API_USAGE_GUIDE.md)
+for client-layer details.
 
 ---
 

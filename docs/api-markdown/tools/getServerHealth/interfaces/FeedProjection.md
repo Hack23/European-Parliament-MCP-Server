@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: FeedProjection
 
-Defined in: [tools/getServerHealth.ts:39](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L39)
+Defined in: [tools/getServerHealth.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L42)
 
 Per-feed projection used in the `get_server_health` response.
 
@@ -21,7 +21,7 @@ fields (backward compatible) and adds a `lastProbedAt` alias for
 
 > **status**: `"unknown"` \| `"error"` \| `"ok"`
 
-Defined in: [tools/getServerHealth.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L40)
+Defined in: [tools/getServerHealth.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L43)
 
 ***
 
@@ -29,7 +29,7 @@ Defined in: [tools/getServerHealth.ts:40](https://github.com/Hack23/European-Par
 
 > `optional` **lastAttempt?**: `string`
 
-Defined in: [tools/getServerHealth.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L41)
+Defined in: [tools/getServerHealth.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L44)
 
 ***
 
@@ -37,7 +37,7 @@ Defined in: [tools/getServerHealth.ts:41](https://github.com/Hack23/European-Par
 
 > `optional` **lastError?**: `string`
 
-Defined in: [tools/getServerHealth.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L44)
+Defined in: [tools/getServerHealth.ts:47](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L47)
 
 ***
 
@@ -45,7 +45,7 @@ Defined in: [tools/getServerHealth.ts:44](https://github.com/Hack23/European-Par
 
 > `optional` **lastProbedAt?**: `string`
 
-Defined in: [tools/getServerHealth.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L42)
+Defined in: [tools/getServerHealth.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L45)
 
 ***
 
@@ -53,4 +53,4 @@ Defined in: [tools/getServerHealth.ts:42](https://github.com/Hack23/European-Par
 
 > `optional` **lastSuccess?**: `string`
 
-Defined in: [tools/getServerHealth.ts:43](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L43)
+Defined in: [tools/getServerHealth.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getServerHealth.ts#L46)

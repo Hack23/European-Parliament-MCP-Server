@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **emptyLifecycleStatisticsModel**(): [`LifecycleStatisticsModel`](../interfaces/LifecycleStatisticsModel.md)
 
-Defined in: [utils/lifecycleStatistics.ts:467](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/lifecycleStatistics.ts#L467)
+Defined in: [utils/lifecycleStatistics.ts:529](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/lifecycleStatistics.ts#L529)
 
 An empty lifecycle model that callers can use as a fast fallback when the
 corpus rebuild fails or exceeds its time budget. With this model every

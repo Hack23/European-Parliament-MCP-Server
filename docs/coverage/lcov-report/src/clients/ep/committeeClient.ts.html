@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.12% </span>
+                <span class="strong">95.23% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>39/41</span>
+                <span class='fraction'>40/42</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.14% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>27/35</span>
+                <span class='fraction'>27/36</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.73% </span>
+                <span class="strong">94.87% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>36/38</span>
+                <span class='fraction'>37/39</span>
             </div>
         
             
@@ -223,7 +223,13 @@
 <a name='L158'></a><a href='#L158'>158</a>
 <a name='L159'></a><a href='#L159'>159</a>
 <a name='L160'></a><a href='#L160'>160</a>
-<a name='L161'></a><a href='#L161'>161</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -257,7 +263,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">344x</span>
+<span class="cline-any cline-yes">345x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -332,6 +338,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-yes">14x</span>
@@ -369,10 +378,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -429,13 +441,13 @@ export class CommitteeClient extends BaseEPClient {
    * @throws {APIError} If committee not found
    * @private
    */
-  private async resolveCommittee(searchTerm: string): Promise&lt;Committee&gt; {
+  private async resolveCommittee(searchTerm: string, abortSignal?: AbortSignal): Promise&lt;Committee&gt; {
     <span class="missing-if-branch" title="else path not taken" >E</span>if (searchTerm !== '') {
-      const directResult = await this.fetchCommitteeDirectly(searchTerm);
+      const directResult = await this.fetchCommitteeDirectly(searchTerm, abortSignal);
       if (directResult !== null) return directResult;
     }
 &nbsp;
-    const found = await this.searchCommitteeInList(searchTerm);
+    const found = await this.searchCommitteeInList(searchTerm, abortSignal);
     if (found !== null) return found;
 &nbsp;
     throw new APIError(`Committee not found: ${searchTerm || <span class="branch-1 cbranch-no" title="branch not covered" >'unknown'}`, 4</span>04);
@@ -445,9 +457,9 @@ export class CommitteeClient extends BaseEPClient {
    * Attempts a direct corporate-body lookup by ID.
    * @private
    */
-  private async fetchCommitteeDirectly(bodyId: string): Promise&lt;Committee | null&gt; {
+  private async fetchCommitteeDirectly(bodyId: string, abortSignal?: AbortSignal): Promise&lt;Committee | null&gt; {
     try {
-      const response = await this.get&lt;JSONLDResponse&gt;(`corporate-bodies/${bodyId}`, {});
+      const response = await this.get&lt;JSONLDResponse&gt;(`corporate-bodies/${bodyId}`, {}, undefined, abortSignal);
       <span class="missing-if-branch" title="else path not taken" >E</span>if (response.data.length &gt; 0) {
         return this.transformCorporateBody(response.data[0] ?? <span class="branch-1 cbranch-no" title="branch not covered" >{})</span>;
       }
@@ -463,12 +475,12 @@ export class CommitteeClient extends BaseEPClient {
    * Searches the corporate-bodies list for a matching committee.
    * @private
    */
-  private async searchCommitteeInList(searchTerm: string): Promise&lt;Committee | null&gt; {
+  private async searchCommitteeInList(searchTerm: string, abortSignal?: AbortSignal): Promise&lt;Committee | null&gt; {
     const listParams: Record&lt;string, unknown&gt; = {
       'body-classification': 'COMMITTEE_PARLIAMENTARY_STANDING',
       limit: 100,
     };
-    const response = await this.get&lt;JSONLDResponse&gt;('corporate-bodies', listParams);
+    const response = await this.get&lt;JSONLDResponse&gt;('corporate-bodies', listParams, undefined, abortSignal);
 &nbsp;
     for (const item of response.data) {
       const committee = this.transformCorporateBody(item);
@@ -484,24 +496,27 @@ export class CommitteeClient extends BaseEPClient {
    *
    * **EP API Endpoint:** `GET /corporate-bodies/{body-id}` or `GET /corporate-bodies`
    *
-   * @param params - id or abbreviation of the committee
+   * @param params - id or abbreviation of the committee, with optional `abortSignal`
    * @returns Committee information
    * @security Audit logged per GDPR Article 30
    */
   async getCommitteeInfo(params: {
     id?: string;
     abbreviation?: string;
+    abortSignal?: AbortSignal;
   }): Promise&lt;Committee&gt; {
     const action = 'get_committee_info';
+    // Audit params exclude `abortSignal` (not a property we want in audit logs).
+    const auditParams = { id: params.id, abbreviation: params.abbreviation };
     try {
       const searchTerm = params.abbreviation ?? params.id ?? <span class="branch-2 cbranch-no" title="branch not covered" >'';</span>
-      const committee = await this.resolveCommittee(searchTerm);
-      auditLogger.logDataAccess(action, params, 1);
+      const committee = await this.resolveCommittee(searchTerm, params.abortSignal);
+      auditLogger.logDataAccess(action, auditParams, 1);
       return committee;
     } catch (error: unknown) {
       auditLogger.logError(
         action,
-        params,
+        auditParams,
         error instanceof Error ? error.message : <span class="branch-1 cbranch-no" title="branch not covered" >'Unknown error'</span>
       );
       throw error;
@@ -515,10 +530,10 @@ export class CommitteeClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter per OpenAPI spec.
    * Extended timeout applied (120 s minimum).
    */
-  async <span class="fstat-no" title="function not covered" >getCorporateBodiesFeed(): Promise&lt;JSONLDResponse&gt; {</span>
+  async <span class="fstat-no" title="function not covered" >getCorporateBodiesFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('corporate-bodies/feed', {</span>
       format: 'application/ld+json',
-    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS);
+    }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
   }
 &nbsp;
   /**
@@ -528,13 +543,16 @@ export class CommitteeClient extends BaseEPClient {
   async getCurrentCorporateBodies(params: {
     limit?: number;
     offset?: number;
+    abortSignal?: AbortSignal;
   } = {}): Promise&lt;PaginatedResponse&lt;Committee&gt;&gt; {
     const limit = params.limit ?? 50;
     const offset = params.offset ?? 0;
 &nbsp;
     const response = await this.get&lt;JSONLDResponse&gt;(
       'corporate-bodies/show-current',
-      { format: 'application/ld+json', offset, limit }
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
     );
 &nbsp;
     const items = Array.isArray(response.data) ? response.data : <span class="branch-1 cbranch-no" title="branch not covered" >[];</span>
@@ -550,7 +568,7 @@ export class CommitteeClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-20T00:19:49.820Z
+                at 2026-05-22T00:44:55.851Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
