@@ -1,0 +1,158 @@
+{
+  "clusterAnalysis": [
+    {
+      "avgScore": 53.26,
+      "characteristicDimension": "attendance",
+      "clusterId": "moderate_performer_epp",
+      "members": [
+        "101"
+      ]
+    },
+    {
+      "avgScore": 49.11,
+      "characteristicDimension": "attendance",
+      "clusterId": "moderate_performer_s_d",
+      "members": [
+        "102"
+      ]
+    }
+  ],
+  "computedAttributes": {
+    "dimensionWithHighestVariance": "committee",
+    "lowestOverallPerformer": "Marie Leclerc (synthetic)",
+    "mostDifferentPair": {
+      "mepA": "101",
+      "mepB": "102",
+      "similarity": 1
+    },
+    "mostSimilarPair": {
+      "mepA": "101",
+      "mepB": "102",
+      "similarity": 1
+    },
+    "topOverallPerformer": "Thomas Weber (synthetic)"
+  },
+  "confidenceLevel": "MEDIUM",
+  "correlationMatrix": [
+    {
+      "mepA": "101",
+      "mepB": "102",
+      "similarityScore": 1
+    }
+  ],
+  "dataAvailable": true,
+  "dataQualityWarnings": [
+    "Voting and attendance scores are placeholder zeros — EP API does not expose per-MEP voting statistics",
+    "Correlation matrix computed from partially-zero score vectors — similarity values may not be meaningful"
+  ],
+  "dimensions": [
+    "voting",
+    "committee",
+    "legislative",
+    "attendance"
+  ],
+  "mepCount": 2,
+  "methodology": "Multi-dimensional MEP profiling and comparison. Voting score: participation volume (50%) + for-vote rate (50%). Committee score: membership breadth (60%) + leadership roles (40%). Legislative score: rapporteurships (15 pts each) + committee count (10 pts each). Attendance score: placeholder only — EP /meps/{id} does not expose attendance data; value is 0 until real data is available. Similarity: cosine similarity between score vectors. Outliers: z-score ≥ 1.5 standard deviations from group mean. Clusters: grouped by political group + performance tier. NOTE: Voting and attendance statistics are not available from the current EP API; all related scores are placeholder zeros. Data source: https://data.europarl.europa.eu/api/v2/meps",
+  "outlierMEPs": [],
+  "profiles": [
+    {
+      "clusterLabel": "moderate_performer_epp",
+      "country": "DE",
+      "mepId": "101",
+      "name": "Thomas Weber (synthetic)",
+      "overallScore": 53.26,
+      "politicalGroup": "EPP",
+      "scores": {
+        "attendance": 92,
+        "committee": 46,
+        "legislative": 30,
+        "voting": 45.04
+      }
+    },
+    {
+      "clusterLabel": "moderate_performer_s_d",
+      "country": "FR",
+      "mepId": "102",
+      "name": "Marie Leclerc (synthetic)",
+      "overallScore": 49.11,
+      "politicalGroup": "S&D",
+      "scores": {
+        "attendance": 88,
+        "committee": 36,
+        "legislative": 30,
+        "voting": 42.43
+      }
+    }
+  ],
+  "rankingByDimension": [
+    {
+      "dimension": "voting",
+      "ranking": [
+        {
+          "mepId": "101",
+          "name": "Thomas Weber (synthetic)",
+          "rank": 1,
+          "score": 45.04
+        },
+        {
+          "mepId": "102",
+          "name": "Marie Leclerc (synthetic)",
+          "rank": 2,
+          "score": 42.43
+        }
+      ]
+    },
+    {
+      "dimension": "committee",
+      "ranking": [
+        {
+          "mepId": "101",
+          "name": "Thomas Weber (synthetic)",
+          "rank": 1,
+          "score": 46
+        },
+        {
+          "mepId": "102",
+          "name": "Marie Leclerc (synthetic)",
+          "rank": 2,
+          "score": 36
+        }
+      ]
+    },
+    {
+      "dimension": "legislative",
+      "ranking": [
+        {
+          "mepId": "101",
+          "name": "Thomas Weber (synthetic)",
+          "rank": 1,
+          "score": 30
+        },
+        {
+          "mepId": "102",
+          "name": "Marie Leclerc (synthetic)",
+          "rank": 2,
+          "score": 30
+        }
+      ]
+    },
+    {
+      "dimension": "attendance",
+      "ranking": [
+        {
+          "mepId": "101",
+          "name": "Thomas Weber (synthetic)",
+          "rank": 1,
+          "score": 92
+        },
+        {
+          "mepId": "102",
+          "name": "Marie Leclerc (synthetic)",
+          "rank": 2,
+          "score": 88
+        }
+      ]
+    }
+  ],
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu"
+}

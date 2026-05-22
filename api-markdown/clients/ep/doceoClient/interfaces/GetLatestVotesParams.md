@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: GetLatestVotesParams
 
-Defined in: [clients/ep/doceoClient.ts:94](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L94)
+Defined in: [clients/ep/doceoClient.ts:71](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L71)
 
 Parameters for fetching latest votes from DOCEO.
 
@@ -16,7 +16,7 @@ Parameters for fetching latest votes from DOCEO.
 
 > `optional` **abortSignal?**: `AbortSignal`
 
-Defined in: [clients/ep/doceoClient.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L108)
+Defined in: [clients/ep/doceoClient.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L85)
 
 Optional cancellation signal for bounded internal enrichment calls
 
@@ -26,7 +26,7 @@ Optional cancellation signal for bounded internal enrichment calls
 
 > `optional` **date?**: `string`
 
-Defined in: [clients/ep/doceoClient.ts:96](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L96)
+Defined in: [clients/ep/doceoClient.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L73)
 
 Specific date (YYYY-MM-DD) to fetch votes for
 
@@ -36,7 +36,7 @@ Specific date (YYYY-MM-DD) to fetch votes for
 
 > `optional` **includeIndividualVotes?**: `boolean`
 
-Defined in: [clients/ep/doceoClient.ts:102](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L102)
+Defined in: [clients/ep/doceoClient.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L79)
 
 Whether to include individual MEP vote positions from RCV data
 
@@ -46,7 +46,7 @@ Whether to include individual MEP vote positions from RCV data
 
 > `optional` **limit?**: `number`
 
-Defined in: [clients/ep/doceoClient.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L104)
+Defined in: [clients/ep/doceoClient.ts:81](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L81)
 
 Maximum number of vote records to return
 
@@ -56,7 +56,7 @@ Maximum number of vote records to return
 
 > `optional` **offset?**: `number`
 
-Defined in: [clients/ep/doceoClient.ts:106](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L106)
+Defined in: [clients/ep/doceoClient.ts:83](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L83)
 
 Pagination offset
 
@@ -66,7 +66,7 @@ Pagination offset
 
 > `optional` **term?**: `number`
 
-Defined in: [clients/ep/doceoClient.ts:100](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L100)
+Defined in: [clients/ep/doceoClient.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L77)
 
 Parliamentary term number (defaults to 10)
 
@@ -76,6 +76,6 @@ Parliamentary term number (defaults to 10)
 
 > `optional` **weekStart?**: `string`
 
-Defined in: [clients/ep/doceoClient.ts:98](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L98)
+Defined in: [clients/ep/doceoClient.ts:75](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L75)
 
 Start of plenary week (Monday, YYYY-MM-DD). If omitted, uses most recent Monday.

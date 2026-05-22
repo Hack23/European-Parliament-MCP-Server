@@ -1,0 +1,52 @@
+{
+  "committeeId": "AFET",
+  "committeeName": "Committee on Foreign Affairs (synthetic)",
+  "computedAttributes": {
+    "engagementLevel": "LOW",
+    "policyImpactRating": "LOW",
+    "productivityScore": 0,
+    "workloadIntensity": "LOW"
+  },
+  "confidenceLevel": "LOW",
+  "dataQualityWarnings": [
+    "committee documents returned no items matching committee or date window",
+    "procedures returned no items matching committee or date window",
+    "plenary meetings returned no items matching committee or date window",
+    "meeting decisions returned no items matching committee or date window",
+    "Meeting attendance and amendment counts are not exposed by the EP API and remain zero."
+  ],
+  "dataSources": {
+    "decisions": "EMPTY",
+    "documents": "EMPTY",
+    "meetings": "EMPTY",
+    "procedures": "EMPTY"
+  },
+  "derivedMetrics": {
+    "activeFilesPerMember": 0,
+    "decisionsPerMeeting": 0,
+    "documentsPerMonth": 0
+  },
+  "legislativeOutput": {
+    "amendmentsProcessed": 0,
+    "reportsAdopted": 0,
+    "successRate": 0
+  },
+  "memberEngagement": {
+    "activeContributors": 0,
+    "averageAttendance": 0,
+    "totalMembers": 0
+  },
+  "methodology": "Committee activity analysis using real data from the EP Open Data Portal. Four sources fan out in parallel under a 5s per-source timeout (Promise.allSettled): /committee-documents (filtered client-side by committee + date), /procedures (filtered by responsibleCommittee + ongoing status + date), /meetings (filtered by date window), and /meetings/{id}/decisions (fan-out across the meetings settled above, capped at 8 sittings to honour the per-process rate-limit budget). Each field is tagged with a per-source data-availability status so downstream tools can branch on real coverage. Committee membership comes from /corporate-bodies; legislativeOutput.reportsAdopted is a parliament-wide /adopted-texts proxy retained for backward compatibility (not committee-filtered). Member attendance and amendment counts are not exposed by the EP API and remain zero. Data source: European Parliament Open Data Portal.",
+  "period": {
+    "from": "2023-12-15",
+    "to": "2024-06-15"
+  },
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "workload": {
+    "activeLegislativeFiles": 0,
+    "decisionsAdopted": 0,
+    "documentsProduced": 0,
+    "meetingsHeld": 0,
+    "opinionsIssued": 0
+  }
+}

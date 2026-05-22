@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../README.md)
 
 ***
 
@@ -8,8 +8,13 @@
 
 ## Interfaces
 
+- [LifecycleCacheStatus](interfaces/LifecycleCacheStatus.md)
 - [LifecycleStatisticsModel](interfaces/LifecycleStatisticsModel.md)
 - [StageDwellStatistics](interfaces/StageDwellStatistics.md)
+
+## Type Aliases
+
+- [LifecycleCacheState](type-aliases/LifecycleCacheState.md)
 
 ## Variables
 
@@ -24,6 +29,7 @@
 - [emptyLifecycleStatisticsModel](functions/emptyLifecycleStatisticsModel.md)
 - [fetchEventsBounded](functions/fetchEventsBounded.md)
 - [getCachedLifecycleStatistics](functions/getCachedLifecycleStatistics.md)
+- [getLifecycleCacheStatus](functions/getLifecycleCacheStatus.md)
 - [getLifecycleStatistics](functions/getLifecycleStatistics.md)
 - [lifecycleKey](functions/lifecycleKey.md)
 - [lookupStageStatistics](functions/lookupStageStatistics.md)

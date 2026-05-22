@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_RATE\_LIMIT\_TOKENS**: `100` = `DEFAULT_RATE_LIMIT_PER_MINUTE`
 
-Defined in: [clients/ep/baseClient.ts:116](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L116)
+Defined in: [clients/ep/baseClient.ts:118](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L118)
 
 Default rate limit token bucket size (requests per interval) — derived from centralized config

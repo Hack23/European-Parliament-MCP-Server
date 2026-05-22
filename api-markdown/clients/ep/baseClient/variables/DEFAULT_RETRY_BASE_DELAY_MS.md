@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **DEFAULT\_RETRY\_BASE\_DELAY\_MS**: `1000` = `1_000`
 
-Defined in: [clients/ep/baseClient.ts:108](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L108)
+Defined in: [clients/ep/baseClient.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L110)
 
 Default base retry delay in milliseconds (exponential backoff starting point)

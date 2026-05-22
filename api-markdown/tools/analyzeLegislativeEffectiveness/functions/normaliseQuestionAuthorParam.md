@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **normaliseQuestionAuthorParam**(`subjectId`): `string`
 
-Defined in: [tools/analyzeLegislativeEffectiveness.ts:549](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L549)
+Defined in: [tools/analyzeLegislativeEffectiveness.ts:550](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeLegislativeEffectiveness.ts#L550)
 
 **`Internal`**
 

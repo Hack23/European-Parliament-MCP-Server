@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../README.md)
+[**European Parliament MCP Server API v1.3.10**](../README.md)
 
 ***
 
@@ -122,8 +122,26 @@ e.g. `RCV-10-2026-01-15-001`) returned by `get_latest_votes` — use them to
 drill down to the contributing roll-call records. Thresholds:
 defection-rate z ≥ 1.5, abstention-rate z ≥ 1.5, week-over-week defection
 delta ≥ 20pp, non-home-group alignment share ≥ 60% in a weekly sub-window
-(min 3 decisive RCVs). Confidence reflects RCV coverage: HIGH ≥50, MEDIUM
-10–49, LOW <10 RCVs inspected.
+(min 3 decisive RCVs). Confidence reflects RCV coverage AND multi-week
+dispersion: HIGH requires ≥50 RCVs AND ≥3 contributing weeks; otherwise
+MEDIUM (10–49 RCVs, or ≥50 but <3 weeks) or LOW (<10 RCVs).
+
+The `VotingAnomalyAnalysis` response envelope exposes additional fields for
+the multi-week DOCEO fetch loop:
+
+```typescript
+interface VotingAnomalyAnalysis {
+  // ...existing fields...
+  /** Distinct plenary weeks that contributed RCV records to the corpus. */
+  weeksInspected: number;
+  /**
+   * `true` when the requested `[dateFrom, dateTo]` window spans more than the
+   * server-side cap of 26 plenary weeks and the fetch was truncated to the
+   * 26 most recent weeks in scope. Accompanied by a `dataQualityWarning`.
+   */
+  weeksTruncated?: boolean;
+}
+```
 
 ---
 

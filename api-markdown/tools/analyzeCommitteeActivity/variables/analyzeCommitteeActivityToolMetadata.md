@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **analyzeCommitteeActivityToolMetadata**: `object`
 
-Defined in: [tools/analyzeCommitteeActivity.ts:752](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L752)
+Defined in: [tools/analyzeCommitteeActivity.ts:755](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L755)
 
 Tool metadata for MCP listing
 

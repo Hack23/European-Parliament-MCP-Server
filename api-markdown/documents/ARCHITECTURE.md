@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../README.md)
+[**European Parliament MCP Server API v1.3.10**](../README.md)
 
 ***
 
@@ -334,6 +334,10 @@ The following five tools extend the OSINT capability with network analysis, sent
 - Standardized error handling via `ToolError` (toolName, operation, isRetryable) and `buildToolResponse()` for consistent response building
 
 **Contract enforcement:** All 15 OSINT tools are validated against the shared envelope by a registry-driven contract suite at [`tests/integration/osint/contract.test.ts`](../_media/contract.test.ts). The suite drives off `getToolMetadataArray().filter(t => t.category === 'osint')`, parses every response against [`OsintStandardOutputSchema`](../schemas/ep/analysis/README.md), and enforces the **no-silent-zero policy** (numeric fields must never be silently zero when data is unavailable — a `dataQualityWarnings` entry must explain the unavailability) plus a determinism guard. See `INTEGRATION_TESTING.md` § "OSINT QA Harness".
+
+**Regression detection — golden snapshots:** Beyond the envelope contract, every OSINT tool has per-tool golden snapshots at [`tests/integration/osint/__snapshots__/<tool>.<variant>.json`](../_media/__snapshots__) (`empty-path` + `hot-path` variants — 30 snapshots total) driven by the shared fixture factory at [`tests/fixtures/osint/index.ts`](../_media/index.ts). The snapshot suite ([`tests/integration/osint/snapshots.test.ts`](../_media/snapshots.test.ts)) is the regression-detection point for OSINT scoring weights, classification thresholds, alignment buckets and attribution lists — any methodology change that moves a numeric value or re-orders a ranked list produces a reviewer-visible JSON diff. Refresh procedure and reviewer acknowledgement: see `CONTRIBUTING.md` § "Refreshing OSINT golden snapshots".
+
+**Test-quality enforcement (defence in depth):** Structural contracts catch envelope drift but not logic regressions in scoring/anomaly methodology. The dedicated [`osint-qa.yml`](../_media/osint-qa.yml) CI workflow runs three sequential jobs on every PR touching OSINT surface area: (1) the contract suite above, (2) a per-file coverage gate (non-DOCEO tools: lines ≥90/branches ≥78/functions ≥90/statements ≥88; DOCEO-touching tools: lines ≥92/branches ≥78/functions ≥95/statements ≥90 — `assessMepInfluence`, `detectVotingAnomalies`, `sentimentTracker`, `networkAnalysis`, `analyzeCoalitionDynamics` — configured in `vitest.config.ts:thresholds`), and (3) [Stryker](https://stryker-mutator.io/) mutation testing scoped via [`stryker.config.json`](../_media/stryker.config.json) to the same 15 OSINT tool files plus their seven shared utilities. Mutation testing is the test-quality enforcement point that prevents silently-broken assertions in the OSINT correctness surface. See `INTEGRATION_TESTING.md` § "Mutation testing (Stryker)" and `CONTRIBUTING.md` § "Mutation testing (OSINT)".
 
 #### EP Data Access Tools (8)
 
@@ -728,6 +732,68 @@ See [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) for full details. For O
 
 ---
 
+## ⏱️ Lifecycle-Statistics Cache Warmup
+
+`monitor_legislative_pipeline` reads the corpus-wide lifecycle-statistics
+model from cache only on the request path (rebuilding the corpus inline
+would race the request's own rate-limited `/events` fan-out and degrade
+to a timeout envelope). To keep the 30-minute cache from ever expiring,
+the server runs an out-of-band warmup scheduler.
+
+```mermaid
+flowchart LR
+    Bootstrap["MCP server bootstrap<br/>(src/index.ts)"]
+    Scheduler["LifecycleWarmupScheduler<br/>(src/services/)"]
+    Stats["getLifecycleStatistics<br/>(src/utils/lifecycleStatistics.ts)"]
+    Cache[("memoCacheByCorpusSize<br/>(30-min TTL)")]
+    Tool["monitor_legislative_pipeline<br/>(cache-only read)"]
+    Health["get_server_health<br/>(lifecycleCache block)"]
+    Cron["GitHub Actions cron<br/>lifecycle-warmup.yml<br/>(*/25 * * * *)"]
+    CLI["npm run warmup:lifecycle<br/>(scripts/warmup-lifecycle.ts)"]
+
+    Bootstrap -->|start + refreshNow| Scheduler
+    Scheduler -->|forceRefresh| Stats
+    Stats -->|populate| Cache
+    Cron -->|invoke| CLI
+    CLI -->|forceRefresh| Stats
+    Tool -->|getCachedLifecycleStatistics| Cache
+    Health -->|getLifecycleCacheStatus + scheduler.getStatus| Scheduler
+    Health -->|read state| Cache
+```
+
+**Mechanics:**
+
+- The bootstrap (`src/index.ts`) calls `lifecycleWarmupScheduler.refreshNow()`
+  to prime the cache after the MCP transport binds, then starts the
+  periodic `setInterval` (`unref()`'d so it never blocks exit).
+- The interval defaults to **25 minutes** (5 minutes shy of the
+  `CACHE_TTL_MS`). Operators can override via
+  `EP_LIFECYCLE_WARMUP_INTERVAL_MS`, clamped to `[60_000, 3_600_000]`.
+- Concurrent calls share the existing in-flight mutex inside
+  `getLifecycleStatistics`, so a warmup tick that overlaps with a
+  request-path build never doubles the EP-API load.
+- Failures are logged but non-fatal; the scheduler keeps firing on the
+  next tick. The most recent failure timestamp is exposed via
+  `get_server_health.lifecycleCache.lastRefreshErrorAt`.
+- For ephemeral / container deployments, the GitHub Actions workflow
+  `.github/workflows/lifecycle-warmup.yml` (cron `*/25 * * * *`) and the
+  `npm run warmup:lifecycle` CLI script (`scripts/warmup-lifecycle.ts`)
+  provide external priming with the same audit-log surface.
+- Unit tests pass `{ disable: true }` to `start()` to opt out of the
+  background timer and stay hermetic.
+
+When a request lands before the first warmup completes,
+`monitor_legislative_pipeline` returns an `INSUFFICIENT_DATA` forecast
+*and* a `dataQualityWarnings` entry pointing consumers at
+`get_server_health.lifecycleCache` so the cold-start condition is
+observable rather than silent.
+
+ISMS references: A.8.16 (Monitoring activities), A.8.32 (Change
+management), AU-002 (Audit Logging), SC-002 (Input Validation),
+AC-003 (Least Privilege).
+
+---
+
 ## ✅ ISMS Compliance Mapping
 
 | Control | Standard | Clause | Implementation |
@@ -741,6 +807,37 @@ See [SECURITY_ARCHITECTURE.md](SECURITY_ARCHITECTURE.md) for full details. For O
 | Protect: Data | NIST CSF 2.0 | PR.DS | Encryption in transit (HTTPS to EP API) |
 | Software Inventory | CIS Controls v8.1 | 2.1 | package.json, SBOM via npm |
 | Secure Config | CIS Controls v8.1 | 16.1 | TypeScript strict, no dangerous defaults |
+
+---
+
+## 🛑 Cancellation Contract (Client Layer)
+
+Every method on `EuropeanParliamentClient` and its underlying typed clients
+(`mepClient`, `plenaryClient`, `votingClient`, `documentClient`,
+`legislativeClient`, `questionClient`, `vocabularyClient`, `committeeClient`,
+`doceoClient`) accepts an **optional** `abortSignal?: AbortSignal`. Inside
+`BaseEPClient.get()` the external signal is composed with the per-request
+timeout controller via `createLinkedAbortController()` so that:
+
+- **Pre-request**: an already-aborted signal short-circuits to `APIError(0)`
+  *before* any rate-limiter token or cache slot is consumed; no `fetch` is
+  issued. The abort is audit-logged with `phase: 'pre-request'`.
+- **In-flight**: aborting mid-flight cancels the underlying `undici` `fetch`
+  via the linked controller, surfaces a typed `APIError('… aborted', 0,
+  { cause: signal.reason })`, and is audit-logged with `phase: 'in-flight'`.
+- **No retry on abort**: aborted requests are never retried, even when
+  `enableRetry: true`.
+- **Listener hygiene**: `cleanup()` removes the external-signal listener in a
+  `finally` block to prevent leaks on long-lived OSINT budget signals.
+
+This contract unlocks **pre-emptive cancellation** across every OSINT tool
+that wraps its work in `withTimeoutAndAbort` — a single slow EP endpoint can
+no longer pin its per-source budget past expiry and starve sibling fan-out
+sources.
+
+**Backward compatibility**: `abortSignal` is optional everywhere; callers
+that omit it observe identical behaviour to the prior cooperative
+`throwIfAborted` pattern.
 
 ---
 

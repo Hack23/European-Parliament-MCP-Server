@@ -1,0 +1,313 @@
+name: OSINT QA Harness
+
+# Dedicated CI workflow for the OSINT Quality Assurance harness — three sequential
+# jobs that protect the 15 OSINT tools and their shared utilities from regressions
+# the general unit / integration suites cannot catch:
+#
+#   1. osint-contract  — structural envelope + no-silent-zero + determinism
+#                        (tests/integration/osint/contract.test.ts).
+#   2. osint-coverage  — per-file coverage gate (non-DOCEO: lines ≥90/branches ≥78/
+#                        functions ≥90/statements ≥88; DOCEO-touching: lines ≥92/
+#                        branches ≥78/functions ≥95/statements ≥90) enforced via
+#                        vitest.config.ts thresholds map.
+#   3. osint-mutation  — Stryker mutation testing on the 15 OSINT tool files +
+#                        7 shared utilities (stryker.config.json). Initially
+#                        non-blocking (`continue-on-error: true`) until baseline
+#                        mutation score is observed on main; promote `break: 70`
+#                        in stryker.config.json once the baseline is stable.
+#
+# Follow-up to closed issue #461 / PR #474. ISMS Compliance:
+#   • ISO 27001 Annex A.8.29 (Security testing in development and acceptance)
+#   • ISO 27001 Annex A.8.34 (Protection during audit testing)
+#   • CIS Controls v8.1 Control 16 (Application Software Security)
+#   • Hack23 ISMS Secure Development Policy §4.4 (Testing), §4.5 (QA)
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      # 15 OSINT tool files (5 DOCEO-touching + 10 non-DOCEO)
+      - "src/tools/assessMepInfluence.ts"
+      - "src/tools/detectVotingAnomalies.ts"
+      - "src/tools/sentimentTracker.ts"
+      - "src/tools/networkAnalysis.ts"
+      - "src/tools/analyzeCoalitionDynamics.ts"
+      - "src/tools/analyzeCommitteeActivity.ts"
+      - "src/tools/analyzeCountryDelegation.ts"
+      - "src/tools/analyzeLegislativeEffectiveness.ts"
+      - "src/tools/comparativeIntelligence.ts"
+      - "src/tools/comparePoliticalGroups.ts"
+      - "src/tools/correlateIntelligence.ts"
+      - "src/tools/earlyWarningSystem.ts"
+      - "src/tools/generatePoliticalLandscape.ts"
+      - "src/tools/monitorLegislativePipeline.ts"
+      - "src/tools/trackMepAttendance.ts"
+      # Shared utils the OSINT tools depend on
+      - "src/utils/votingBaseline.ts"
+      - "src/utils/graphAlgorithms.ts"
+      - "src/utils/networkVotingSimilarity.ts"
+      - "src/utils/effectivenessAggregator.ts"
+      - "src/utils/lifecycleStatistics.ts"
+      - "src/utils/doceoMepAggregator.ts"
+      - "src/utils/politicalGroupNormalization.ts"
+      - "src/utils/timeout.ts"
+      - "src/utils/auditLogger.ts"
+      - "src/schemas/europeanParliament.ts"
+      # Registry and envelope files the contract suite depends on
+      - "src/server/toolRegistry.ts"
+      - "src/tools/shared/responseBuilder.ts"
+      - "src/tools/shared/errors.ts"
+      # Test and config infrastructure
+      - "tests/integration/osint/**"
+      - "stryker.config.json"
+      - "vitest.config.ts"
+      - "vitest.stryker.config.ts"
+      - ".github/workflows/osint-qa.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      # 15 OSINT tool files (5 DOCEO-touching + 10 non-DOCEO)
+      - "src/tools/assessMepInfluence.ts"
+      - "src/tools/detectVotingAnomalies.ts"
+      - "src/tools/sentimentTracker.ts"
+      - "src/tools/networkAnalysis.ts"
+      - "src/tools/analyzeCoalitionDynamics.ts"
+      - "src/tools/analyzeCommitteeActivity.ts"
+      - "src/tools/analyzeCountryDelegation.ts"
+      - "src/tools/analyzeLegislativeEffectiveness.ts"
+      - "src/tools/comparativeIntelligence.ts"
+      - "src/tools/comparePoliticalGroups.ts"
+      - "src/tools/correlateIntelligence.ts"
+      - "src/tools/earlyWarningSystem.ts"
+      - "src/tools/generatePoliticalLandscape.ts"
+      - "src/tools/monitorLegislativePipeline.ts"
+      - "src/tools/trackMepAttendance.ts"
+      # Shared utils the OSINT tools depend on
+      - "src/utils/votingBaseline.ts"
+      - "src/utils/graphAlgorithms.ts"
+      - "src/utils/networkVotingSimilarity.ts"
+      - "src/utils/effectivenessAggregator.ts"
+      - "src/utils/lifecycleStatistics.ts"
+      - "src/utils/doceoMepAggregator.ts"
+      - "src/utils/politicalGroupNormalization.ts"
+      - "src/utils/timeout.ts"
+      - "src/utils/auditLogger.ts"
+      - "src/schemas/europeanParliament.ts"
+      # Registry and envelope files the contract suite depends on
+      - "src/server/toolRegistry.ts"
+      - "src/tools/shared/responseBuilder.ts"
+      - "src/tools/shared/errors.ts"
+      # Test and config infrastructure
+      - "tests/integration/osint/**"
+      - "stryker.config.json"
+      - "vitest.config.ts"
+      - "vitest.stryker.config.ts"
+      - ".github/workflows/osint-qa.yml"
+  workflow_dispatch:
+
+# Default to read-only permissions; jobs upgrade individually.
+permissions: read-all
+
+# Cancel any in-progress run for the same ref to save CI minutes.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "26"
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_FETCH_TIMEOUT: "300000"
+
+jobs:
+  osint-contract:
+    name: OSINT Contract Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run OSINT contract suite
+        # Iterates every tool registered with `category: 'osint'` in toolRegistry
+        # and asserts envelope, no-silent-zero policy, and determinism.
+        run: npx vitest run tests/integration/osint/contract.test.ts --reporter=verbose
+
+      - name: Contract summary
+        if: always()
+        run: |
+          echo "## OSINT Contract Suite" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ All 15 OSINT tools satisfy the structural envelope, no-silent-zero, and determinism contracts." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ OSINT contract violations detected — see logs for the offending tool(s)." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "See INTEGRATION_TESTING.md § 'OSINT QA Harness — Cross-Tool Contract Suite' for the policy." >> $GITHUB_STEP_SUMMARY
+          fi
+
+  osint-coverage:
+    name: OSINT Per-File Coverage Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: osint-contract
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests with per-file coverage gate
+        # The per-file thresholds in vitest.config.ts (non-DOCEO: lines ≥90/branches ≥78/
+        # functions ≥90/statements ≥88; DOCEO-touching: lines ≥92/branches ≥78/functions ≥95/
+        # statements ≥90) cause Vitest to exit non-zero if any OSINT tool drops
+        # below its assigned threshold. Offending files are printed in the
+        # standard Vitest threshold-failure table.
+        run: npm run test:coverage
+
+      - name: Surface OSINT coverage offenders
+        if: always()
+        run: |
+          echo "## OSINT Per-File Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f "coverage/coverage-summary.json" ]; then
+            echo "| File | Lines % | Branches % | Functions % | Statements % |" >> $GITHUB_STEP_SUMMARY
+            echo "|------|--------:|-----------:|------------:|-------------:|" >> $GITHUB_STEP_SUMMARY
+            for f in \
+              src/tools/assessMepInfluence.ts \
+              src/tools/detectVotingAnomalies.ts \
+              src/tools/sentimentTracker.ts \
+              src/tools/networkAnalysis.ts \
+              src/tools/analyzeCoalitionDynamics.ts \
+              src/tools/analyzeCommitteeActivity.ts \
+              src/tools/analyzeCountryDelegation.ts \
+              src/tools/analyzeLegislativeEffectiveness.ts \
+              src/tools/comparativeIntelligence.ts \
+              src/tools/comparePoliticalGroups.ts \
+              src/tools/correlateIntelligence.ts \
+              src/tools/earlyWarningSystem.ts \
+              src/tools/generatePoliticalLandscape.ts \
+              src/tools/monitorLegislativePipeline.ts \
+              src/tools/trackMepAttendance.ts; do
+              row=$(jq -r --arg p "$f" '
+                .[$p] as $m |
+                if $m == null then
+                  "| \($p) | n/a | n/a | n/a | n/a |"
+                else
+                  "| \($p) | \($m.lines.pct) | \($m.branches.pct) | \($m.functions.pct) | \($m.statements.pct) |"
+                end
+              ' coverage/coverage-summary.json 2>/dev/null || echo "| $f | err | err | err | err |")
+              echo "$row" >> $GITHUB_STEP_SUMMARY
+            done
+          else
+            echo "⚠️ coverage-summary.json missing — coverage step may have failed early." >> $GITHUB_STEP_SUMMARY
+          fi
+        continue-on-error: true
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: osint-coverage-report
+          path: coverage
+          if-no-files-found: warn
+
+  osint-mutation:
+    name: OSINT Mutation Testing (Stryker)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: osint-coverage
+    # Non-blocking for the first 30 days while the baseline mutation score
+    # stabilises on `main`. Promote to a required check (remove this flag
+    # and set `thresholds.break: 70` in stryker.config.json) in a follow-up
+    # PR once a green run is observed.
+    continue-on-error: true
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Stryker mutation suite (scoped to OSINT tools + shared utils)
+        # `stryker run` reads stryker.config.json — mutate glob is scoped to
+        # the 15 OSINT tool files and the 7 shared utility files listed in
+        # the issue. Vitest runner reuses the existing test infrastructure
+        # with no per-test fork overhead. Concurrency 4 keeps total runtime
+        # within the 15-min CI budget on GitHub-hosted runners.
+        run: npm run test:mutation:ci
+
+      - name: Mutation summary
+        if: always()
+        run: |
+          echo "## OSINT Mutation Testing" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f "builds/stryker/mutation-report.json" ]; then
+            score=$(jq -r '.. | objects | .mutationScore? // empty' builds/stryker/mutation-report.json 2>/dev/null | head -n1)
+            if [ -n "$score" ]; then
+              echo "**Mutation score:** ${score}%" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Baseline run — non-blocking until \`thresholds.break\` is promoted to 70 in \`stryker.config.json\`." >> $GITHUB_STEP_SUMMARY
+          echo "See CONTRIBUTING.md § 'Mutation testing (OSINT)' for surviving-mutant triage." >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Stryker reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: osint-mutation-report
+          path: |
+            builds/stryker
+            reports/mutation
+          if-no-files-found: warn

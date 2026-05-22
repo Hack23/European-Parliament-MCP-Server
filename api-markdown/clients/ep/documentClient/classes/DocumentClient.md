@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../../README.md)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [clients/ep/documentClient.ts:35](https://github.com/Hack23/European
 
 > `protected` `readonly` **baseURL**: `string`
 
-Defined in: [clients/ep/baseClient.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L217)
+Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
 
 European Parliament API base URL.
 
@@ -60,7 +60,7 @@ European Parliament API base URL.
 
 > `protected` `readonly` **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
-Defined in: [clients/ep/baseClient.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L215)
+Defined in: [clients/ep/baseClient.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L217)
 
 LRU cache for API responses.
 
@@ -74,7 +74,7 @@ LRU cache for API responses.
 
 > `protected` `readonly` **enableRetry**: `boolean`
 
-Defined in: [clients/ep/baseClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L223)
+Defined in: [clients/ep/baseClient.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L225)
 
 Enable automatic retry on transient failures.
 
@@ -88,7 +88,7 @@ Enable automatic retry on transient failures.
 
 > `protected` `readonly` **maxResponseBytes**: `number`
 
-Defined in: [clients/ep/baseClient.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L227)
+Defined in: [clients/ep/baseClient.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L229)
 
 Maximum allowed response body size in bytes.
 
@@ -102,7 +102,7 @@ Maximum allowed response body size in bytes.
 
 > `protected` `readonly` **maxRetries**: `number`
 
-Defined in: [clients/ep/baseClient.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L225)
+Defined in: [clients/ep/baseClient.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L227)
 
 Maximum number of retry attempts.
 
@@ -116,7 +116,7 @@ Maximum number of retry attempts.
 
 > `protected` `readonly` **rateLimiter**: [`RateLimiter`](../../../../utils/rateLimiter/classes/RateLimiter.md)
 
-Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
+Defined in: [clients/ep/baseClient.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L221)
 
 Token bucket rate limiter.
 
@@ -130,7 +130,7 @@ Token bucket rate limiter.
 
 > `protected` `readonly` **timeoutMs**: `number`
 
-Defined in: [clients/ep/baseClient.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L221)
+Defined in: [clients/ep/baseClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L223)
 
 Request timeout in milliseconds.
 
@@ -180,7 +180,7 @@ Builds EP API parameters for document search.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:666](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L666)
+Defined in: [clients/ep/baseClient.ts:768](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L768)
 
 Clears all entries from the LRU cache.
 
@@ -198,7 +198,7 @@ Clears all entries from the LRU cache.
 
 > `protected` **evictFromCache**(`endpoint`, `params?`): `void`
 
-Defined in: [clients/ep/baseClient.ts:681](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L681)
+Defined in: [clients/ep/baseClient.ts:783](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L783)
 
 Evicts a single cache entry matching the given endpoint and params.
 Sub-clients use this when they detect that a successfully-fetched payload
@@ -270,9 +270,9 @@ Applies client-side keyword, committee, and date-range filters to documents.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:606](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L606)
+Defined in: [clients/ep/baseClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L685)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -308,6 +308,16 @@ Optional per-request minimum timeout in milliseconds.
   extend it beyond the per-endpoint minimum.
   Use for known slow EP API endpoints such as `procedures/feed`.
 
+##### abortSignal?
+
+`AbortSignal`
+
+Optional caller-provided cancellation signal. When
+  already aborted on entry the request is rejected immediately *before*
+  consuming a rate-limiter token (so a cancelled fan-out does not starve
+  the bucket). When aborted mid-flight, the underlying fetch is
+  cancelled and the rejection is surfaced as `APIError(..., 0, { cause })`.
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
@@ -316,7 +326,8 @@ Promise resolving to the typed API response
 
 #### Throws
 
-On HTTP errors, network failures, or parse failures
+On HTTP errors, network failures, parse failures, or
+  cancellation (statusCode 0). Aborts are NOT retried.
 
 #### Protected
 
@@ -330,7 +341,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:690](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L690)
+Defined in: [clients/ep/baseClient.ts:792](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L792)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -368,9 +379,9 @@ Returns cache statistics for monitoring and debugging.
 
 ### getCommitteeDocumentById()
 
-> **getCommitteeDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getCommitteeDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/ep/documentClient.ts:409](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L409)
+Defined in: [clients/ep/documentClient.ts:424](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L424)
 
 Returns a single committee document by ID.
 **EP API Endpoint:** `GET /committee-documents/{doc-id}`
@@ -380,6 +391,12 @@ Returns a single committee document by ID.
 ##### docId
 
 `string`
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -391,7 +408,7 @@ Returns a single committee document by ID.
 
 > **getCommitteeDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/documentClient.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L197)
+Defined in: [clients/ep/documentClient.ts:199](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L199)
 
 Returns committee documents.
 **EP API Endpoint:** `GET /committee-documents`
@@ -403,6 +420,10 @@ Only pagination (limit/offset) is supported.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -420,15 +441,23 @@ Only pagination (limit/offset) is supported.
 
 ### getCommitteeDocumentsFeed()
 
-> **getCommitteeDocumentsFeed**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getCommitteeDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/documentClient.ts:323](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L323)
+Defined in: [clients/ep/documentClient.ts:331](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L331)
 
 Retrieves recently updated committee documents via the feed endpoint.
 **EP API Endpoint:** `GET /committee-documents/feed`
 
 Fixed-window feed — no `timeframe` parameter.
 Extended timeout applied (120 s minimum).
+
+#### Parameters
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -438,9 +467,9 @@ Extended timeout applied (120 s minimum).
 
 ### getDocumentById()
 
-> **getDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/ep/documentClient.ts:370](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L370)
+Defined in: [clients/ep/documentClient.ts:379](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L379)
 
 Returns a single document by ID.
 **EP API Endpoint:** `GET /documents/{doc-id}`
@@ -451,6 +480,12 @@ Returns a single document by ID.
 
 `string`
 
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
@@ -459,9 +494,9 @@ Returns a single document by ID.
 
 ### getDocumentsFeed()
 
-> **getDocumentsFeed**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/documentClient.ts:297](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L297)
+Defined in: [clients/ep/documentClient.ts:305](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L305)
 
 Retrieves recently updated documents via the feed endpoint.
 **EP API Endpoint:** `GET /documents/feed`
@@ -471,6 +506,14 @@ This is a **fixed-window feed** — the EP API does NOT accept a
 default window (typically one month).  Response times can exceed
 120 s, so an extended minimum timeout is applied automatically.
 
+#### Parameters
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
@@ -479,9 +522,9 @@ default window (typically one month).  Response times can exceed
 
 ### getExternalDocumentById()
 
-> **getExternalDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getExternalDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/ep/documentClient.ts:422](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L422)
+Defined in: [clients/ep/documentClient.ts:439](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L439)
 
 Returns a single external document by ID.
 **EP API Endpoint:** `GET /external-documents/{doc-id}`
@@ -491,6 +534,12 @@ Returns a single external document by ID.
 ##### docId
 
 `string`
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -502,7 +551,7 @@ Returns a single external document by ID.
 
 > **getExternalDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/documentClient.ts:269](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L269)
+Defined in: [clients/ep/documentClient.ts:276](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L276)
 
 Returns all External Documents.
 **EP API Endpoint:** `GET /external-documents`
@@ -514,6 +563,10 @@ Only pagination (limit/offset) is supported.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -533,7 +586,7 @@ Only pagination (limit/offset) is supported.
 
 > **getExternalDocumentsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/documentClient.ts:350](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L350)
+Defined in: [clients/ep/documentClient.ts:358](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L358)
 
 Retrieves recently updated external documents via the feed endpoint.
 **EP API Endpoint:** `GET /external-documents/feed`
@@ -545,6 +598,10 @@ Extended timeout applied for `one-month` timeframe.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### startDate?
 
@@ -566,9 +623,9 @@ Extended timeout applied for `one-month` timeframe.
 
 ### getPlenaryDocumentById()
 
-> **getPlenaryDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getPlenaryDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/ep/documentClient.ts:383](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L383)
+Defined in: [clients/ep/documentClient.ts:394](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L394)
 
 Returns a single plenary document by ID.
 **EP API Endpoint:** `GET /plenary-documents/{doc-id}`
@@ -578,6 +635,12 @@ Returns a single plenary document by ID.
 ##### docId
 
 `string`
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -589,7 +652,7 @@ Returns a single plenary document by ID.
 
 > **getPlenaryDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/documentClient.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L168)
+Defined in: [clients/ep/documentClient.ts:169](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L169)
 
 Returns plenary documents.
 **EP API Endpoint:** `GET /plenary-documents`
@@ -597,6 +660,10 @@ Returns plenary documents.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -618,15 +685,23 @@ Returns plenary documents.
 
 ### getPlenaryDocumentsFeed()
 
-> **getPlenaryDocumentsFeed**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getPlenaryDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/documentClient.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L310)
+Defined in: [clients/ep/documentClient.ts:318](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L318)
 
 Retrieves recently updated plenary documents via the feed endpoint.
 **EP API Endpoint:** `GET /plenary-documents/feed`
 
 Fixed-window feed — no `timeframe` parameter.
 Extended timeout applied (120 s minimum).
+
+#### Parameters
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -636,9 +711,9 @@ Extended timeout applied (120 s minimum).
 
 ### getPlenarySessionDocumentById()
 
-> **getPlenarySessionDocumentById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getPlenarySessionDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/ep/documentClient.ts:396](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L396)
+Defined in: [clients/ep/documentClient.ts:409](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L409)
 
 Returns a single plenary session document by ID.
 **EP API Endpoint:** `GET /plenary-session-documents/{doc-id}`
@@ -648,6 +723,12 @@ Returns a single plenary session document by ID.
 ##### docId
 
 `string`
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -659,7 +740,7 @@ Returns a single plenary session document by ID.
 
 > **getPlenarySessionDocumentItems**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/documentClient.ts:243](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L243)
+Defined in: [clients/ep/documentClient.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L247)
 
 Returns all Plenary Session Document Items.
 **EP API Endpoint:** `GET /plenary-session-documents-items`
@@ -667,6 +748,10 @@ Returns all Plenary Session Document Items.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -686,7 +771,7 @@ Returns all Plenary Session Document Items.
 
 > **getPlenarySessionDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/ep/documentClient.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L220)
+Defined in: [clients/ep/documentClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L223)
 
 Returns plenary session documents.
 **EP API Endpoint:** `GET /plenary-session-documents`
@@ -694,6 +779,10 @@ Returns plenary session documents.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -711,15 +800,23 @@ Returns plenary session documents.
 
 ### getPlenarySessionDocumentsFeed()
 
-> **getPlenarySessionDocumentsFeed**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getPlenarySessionDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/documentClient.ts:336](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L336)
+Defined in: [clients/ep/documentClient.ts:344](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/documentClient.ts#L344)
 
 Retrieves recently updated plenary session documents via the feed endpoint.
 **EP API Endpoint:** `GET /plenary-session-documents/feed`
 
 Fixed-window feed — no `timeframe` parameter.
 Extended timeout applied (120 s minimum).
+
+#### Parameters
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -746,6 +843,10 @@ keyword, documentType, dateFrom, dateTo, committee, limit, offset
 ###### keyword
 
 `string`
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### committee?
 

@@ -1,0 +1,80 @@
+{
+  "computedAttributes": {
+    "absenteeismRisk": "LOW",
+    "attendanceTrend": "STABLE",
+    "overallEngagement": "HIGH"
+  },
+  "confidenceLevel": "HIGH",
+  "dataQualityWarnings": [],
+  "methodology": "Group attendance analysis using EP Open Data voting statistics. Individual attendance rates derived from plenary vote participation. Data source: European Parliament Open Data Portal.",
+  "period": {
+    "from": "2023-06-15",
+    "to": "2024-06-15"
+  },
+  "records": [
+    {
+      "attendanceRate": 94,
+      "category": "HIGH",
+      "country": "SE",
+      "mepId": "105",
+      "mepName": "Lars Svensson (synthetic)",
+      "politicalGroup": "Greens/EFA",
+      "sessionsAttended": 244,
+      "totalSessions": 260,
+      "trend": "STABLE_HIGH"
+    },
+    {
+      "attendanceRate": 92,
+      "category": "HIGH",
+      "country": "DE",
+      "mepId": "101",
+      "mepName": "Thomas Weber (synthetic)",
+      "politicalGroup": "EPP",
+      "sessionsAttended": 294,
+      "totalSessions": 320,
+      "trend": "STABLE_HIGH"
+    },
+    {
+      "attendanceRate": 91,
+      "category": "HIGH",
+      "country": "GR",
+      "mepId": "104",
+      "mepName": "Elena Papadaki (synthetic)",
+      "politicalGroup": "Renew",
+      "sessionsAttended": 282,
+      "totalSessions": 310,
+      "trend": "STABLE_HIGH"
+    },
+    {
+      "attendanceRate": 88,
+      "category": "HIGH",
+      "country": "FR",
+      "mepId": "102",
+      "mepName": "Marie Leclerc (synthetic)",
+      "politicalGroup": "S&D",
+      "sessionsAttended": 255,
+      "totalSessions": 290,
+      "trend": "STABLE_HIGH"
+    },
+    {
+      "attendanceRate": 85,
+      "category": "HIGH",
+      "country": "PL",
+      "mepId": "103",
+      "mepName": "Piotr Kowalski (synthetic)",
+      "politicalGroup": "ECR",
+      "sessionsAttended": 238,
+      "totalSessions": 280,
+      "trend": "STABLE_HIGH"
+    }
+  ],
+  "scope": "All MEPs",
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "summary": {
+    "averageAttendance": 90,
+    "highAttendance": 5,
+    "lowAttendance": 0,
+    "mediumAttendance": 0,
+    "totalMEPs": 5
+  }
+}

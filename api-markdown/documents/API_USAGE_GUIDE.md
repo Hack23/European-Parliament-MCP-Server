@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../README.md)
+[**European Parliament MCP Server API v1.3.10**](../README.md)
 
 ***
 
@@ -1356,8 +1356,15 @@ Analyze coalition dynamics between EPP and S&D over the last 6 months
 #### Methodology
 
 Each anomaly is detected against the MEP's *own* rolling baseline derived from
-DOCEO roll-call (RCV) records bounded to **up to 200** votes (2×100 paged
-fetching) in the requested period:
+DOCEO roll-call (RCV) records. The fetch loop **iterates every plenary week
+between `dateFrom` and `dateTo`** (Monday–Friday), aggregates records into a
+deduplicated corpus (by record `id`), and caps it at **up to 200 votes** after
+sort. A hard server-side cap of **26 plenary weeks** (≈6 months) per request
+bounds the fan-out — wider windows are truncated to the most recent 26 weeks
+and surface a `weeksTruncated: true` flag together with an explicit
+`dataQualityWarnings` entry. Corpus results are cached for **5 minutes** keyed by
+`${mepId ?? groupId ?? 'all'}|${dateFrom}|${dateTo}` so back-to-back calls reuse
+the multi-week fetch.
 
 | Anomaly Type | Trigger |
 |--------------|---------|
@@ -1388,14 +1395,21 @@ FOR) for deterministic results. Each MEP vote is classified as `aligned`,
 
 #### Confidence Level
 
-Reflects RCV coverage (votes inspected on which the MEP appeared on the roll):
+Reflects RCV coverage (votes inspected on which the MEP appeared on the roll)
+*and* multi-week dispersion of the corpus:
 
-- `HIGH` for ≥ **50** RCVs
-- `MEDIUM` for **10–49** RCVs
+- `HIGH` for ≥ **50** RCVs inspected **AND** ≥ **3** distinct plenary weeks contributing votes
+- `MEDIUM` for **10–49** RCVs, **or** ≥50 RCVs but < 3 contributing weeks (no multi-week dispersion)
 - `LOW` for **< 10** RCVs, or when DOCEO is unreachable
 
+The `weeksInspected` envelope field reports the number of distinct plenary
+weeks that contributed RCV records to the analysed corpus. `weeksTruncated`
+is `true` when the requested window exceeded the 26-week server cap.
+
 When DOCEO supplies at least one record with a sitting date within the last
-**72 hours**, `dataFreshness` is reported as `NEAR_REALTIME`.
+**72 hours**, `dataFreshness` is reported as `NEAR_REALTIME`. Multi-week
+corpora additionally surface the **oldest contributing week** so callers can
+see the span actually covered.
 
 #### Example Usage
 
@@ -3898,6 +3912,50 @@ The European Parliament MCP Server is the **most feature-rich political MCP serv
 
 **Security Issues**:
 - See [SECURITY.md](../SECURITY.md) for vulnerability reporting
+
+---
+
+## 🛑 Cancelling Requests with `abortSignal`
+
+Every public method on the typed EP clients accepts an optional
+`abortSignal?: AbortSignal` field that is forwarded to the underlying
+`fetch` call. Use it to cancel long-running requests pre-emptively — for
+example, when a parent deadline expires or a user navigates away.
+
+```typescript
+import { epClient } from '@hack23/european-parliament-mcp-server';
+
+const controller = new AbortController();
+setTimeout(() => controller.abort(new Error('5s budget')), 5_000);
+
+try {
+  const procedures = await epClient.getProcedures({
+    limit: 100,
+    abortSignal: controller.signal,
+  });
+  // …use procedures
+} catch (err) {
+  // APIError with statusCode === 0 indicates a cancellation
+  if ((err as { statusCode?: number }).statusCode === 0) {
+    console.log('Request was cancelled');
+  } else {
+    throw err;
+  }
+}
+```
+
+**Semantics:**
+- Signal **already aborted** when the call starts → rejects immediately with
+  `APIError(0)` and **no** HTTP request is issued (rate-limit token preserved).
+- Signal aborts **mid-flight** → underlying `fetch` is cancelled and the call
+  rejects with `APIError(0, { cause: signal.reason })`.
+- Signal **omitted** → behaviour is identical to all prior client versions.
+- Aborted requests are **never retried** even when `enableRetry: true`.
+
+The same parameter is accepted by every public method on
+`EuropeanParliamentClient` (`getMEPs`, `getProcedures`, `getAdoptedTexts`,
+`getCommitteeDocuments`, `getParliamentaryQuestions`, the `*Feed` helpers,
+the `*ById` helpers, etc.) and by `doceoClient.getLatestVotes`.
 
 ---
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: EuropeanParliamentMCPServer
 
-Defined in: [index.ts:127](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L127)
+Defined in: [index.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L128)
 
 Main MCP Server class for European Parliament data access
 
@@ -45,7 +45,7 @@ await server.start();
 
 > **new EuropeanParliamentMCPServer**(): `EuropeanParliamentMCPServer`
 
-Defined in: [index.ts:131](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L131)
+Defined in: [index.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L132)
 
 #### Returns
 
@@ -57,7 +57,7 @@ Defined in: [index.ts:131](https://github.com/Hack23/European-Parliament-MCP-Ser
 
 > `private` `readonly` **server**: `Server`
 
-Defined in: [index.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L129)
+Defined in: [index.ts:130](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L130)
 
 ## Methods
 
@@ -65,7 +65,7 @@ Defined in: [index.ts:129](https://github.com/Hack23/European-Parliament-MCP-Ser
 
 > `private` **dispatchToolCall**(`name`, `args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
 
-Defined in: [index.ts:234](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L234)
+Defined in: [index.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L235)
 
 **`Internal`**
 
@@ -97,7 +97,7 @@ Tool execution result
 
 > `private` **setupHandlers**(): `void`
 
-Defined in: [index.ts:167](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L167)
+Defined in: [index.ts:168](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L168)
 
 **`Internal`**
 
@@ -127,7 +127,7 @@ If handler registration fails
 
 > **start**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [index.ts:267](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L267)
+Defined in: [index.ts:268](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L268)
 
 Start the MCP server
 

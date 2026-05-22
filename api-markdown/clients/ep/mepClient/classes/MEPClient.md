@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../../README.md)
 
 ***
 
@@ -49,7 +49,7 @@ Defined in: [clients/ep/mepClient.ts:44](https://github.com/Hack23/European-Parl
 
 > `protected` `readonly` **baseURL**: `string`
 
-Defined in: [clients/ep/baseClient.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L217)
+Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
 
 European Parliament API base URL.
 
@@ -63,7 +63,7 @@ European Parliament API base URL.
 
 > `protected` `readonly` **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
-Defined in: [clients/ep/baseClient.ts:215](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L215)
+Defined in: [clients/ep/baseClient.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L217)
 
 LRU cache for API responses.
 
@@ -77,7 +77,7 @@ LRU cache for API responses.
 
 > `protected` `readonly` **enableRetry**: `boolean`
 
-Defined in: [clients/ep/baseClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L223)
+Defined in: [clients/ep/baseClient.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L225)
 
 Enable automatic retry on transient failures.
 
@@ -91,7 +91,7 @@ Enable automatic retry on transient failures.
 
 > `protected` `readonly` **maxResponseBytes**: `number`
 
-Defined in: [clients/ep/baseClient.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L227)
+Defined in: [clients/ep/baseClient.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L229)
 
 Maximum allowed response body size in bytes.
 
@@ -105,7 +105,7 @@ Maximum allowed response body size in bytes.
 
 > `protected` `readonly` **maxRetries**: `number`
 
-Defined in: [clients/ep/baseClient.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L225)
+Defined in: [clients/ep/baseClient.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L227)
 
 Maximum number of retry attempts.
 
@@ -119,7 +119,7 @@ Maximum number of retry attempts.
 
 > `protected` `readonly` **rateLimiter**: [`RateLimiter`](../../../../utils/rateLimiter/classes/RateLimiter.md)
 
-Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
+Defined in: [clients/ep/baseClient.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L221)
 
 Token bucket rate limiter.
 
@@ -133,7 +133,7 @@ Token bucket rate limiter.
 
 > `protected` `readonly` **timeoutMs**: `number`
 
-Defined in: [clients/ep/baseClient.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L221)
+Defined in: [clients/ep/baseClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L223)
 
 Request timeout in milliseconds.
 
@@ -191,7 +191,7 @@ Maps getMEPs params to EP API query parameters.
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:666](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L666)
+Defined in: [clients/ep/baseClient.ts:768](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L768)
 
 Clears all entries from the LRU cache.
 
@@ -209,7 +209,7 @@ Clears all entries from the LRU cache.
 
 > `protected` **evictFromCache**(`endpoint`, `params?`): `void`
 
-Defined in: [clients/ep/baseClient.ts:681](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L681)
+Defined in: [clients/ep/baseClient.ts:783](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L783)
 
 Evicts a single cache entry matching the given endpoint and params.
 Sub-clients use this when they detect that a successfully-fetched payload
@@ -245,11 +245,17 @@ Optional query parameters (same value passed to [get](../../baseClient/classes/B
 
 ### fetchAllCurrentMEPs()
 
-> `private` **fetchAllCurrentMEPs**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)[]\>
+> `private` **fetchAllCurrentMEPs**(`abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)[]\>
 
 Defined in: [clients/ep/mepClient.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L103)
 
 Fetch all current MEPs in paginated batches (max 100 per request).
+
+#### Parameters
+
+##### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -287,9 +293,9 @@ Apply optional client-side country and group filters to an MEP array.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:606](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L606)
+Defined in: [clients/ep/baseClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L685)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -325,6 +331,16 @@ Optional per-request minimum timeout in milliseconds.
   extend it beyond the per-endpoint minimum.
   Use for known slow EP API endpoints such as `procedures/feed`.
 
+##### abortSignal?
+
+`AbortSignal`
+
+Optional caller-provided cancellation signal. When
+  already aborted on entry the request is rejected immediately *before*
+  consuming a rate-limiter token (so a cancelled fan-out does not starve
+  the bucket). When aborted mid-flight, the underlying fetch is
+  cancelled and the rejection is surfaced as `APIError(..., 0, { cause })`.
+
 #### Returns
 
 [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
@@ -333,7 +349,8 @@ Promise resolving to the typed API response
 
 #### Throws
 
-On HTTP errors, network failures, or parse failures
+On HTTP errors, network failures, parse failures, or
+  cancellation (statusCode 0). Aborts are NOT retried.
 
 #### Protected
 
@@ -347,7 +364,7 @@ On HTTP errors, network failures, or parse failures
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:690](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L690)
+Defined in: [clients/ep/baseClient.ts:792](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L792)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -387,7 +404,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getCurrentMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:240](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L240)
+Defined in: [clients/ep/mepClient.ts:241](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L241)
 
 Returns all currently active MEPs for today's date.
 
@@ -402,6 +419,10 @@ Optional `country` and `group` filters are applied client-side after fetch.
 ##### params?
 
 Optional filters and pagination
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### country?
 
@@ -437,7 +458,7 @@ Pagination offset (default 0)
 
 > **getHomonymMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:317](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L317)
+Defined in: [clients/ep/mepClient.ts:321](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L321)
 
 Returns homonym MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-homonyms`
@@ -445,6 +466,10 @@ Returns homonym MEPs for the current parliamentary term.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -464,7 +489,7 @@ Returns homonym MEPs for the current parliamentary term.
 
 > **getIncomingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:271](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L271)
+Defined in: [clients/ep/mepClient.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L273)
 
 Returns all incoming MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-incoming`
@@ -472,6 +497,10 @@ Returns all incoming MEPs for the current parliamentary term.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -489,9 +518,9 @@ Returns all incoming MEPs for the current parliamentary term.
 
 ### getMEPDeclarationById()
 
-> **getMEPDeclarationById**(`docId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDeclaration`](../../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
+> **getMEPDeclarationById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDeclaration`](../../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
 
-Defined in: [clients/ep/mepClient.ts:412](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L412)
+Defined in: [clients/ep/mepClient.ts:420](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L420)
 
 Returns a single MEP declaration by document ID.
 **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
@@ -501,6 +530,12 @@ Returns a single MEP declaration by document ID.
 ##### docId
 
 `string`
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -516,7 +551,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarations**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:341](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L341)
+Defined in: [clients/ep/mepClient.ts:346](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L346)
 
 Returns MEP declarations of financial interests.
 **EP API Endpoint:** `GET /meps-declarations`
@@ -524,6 +559,10 @@ Returns MEP declarations of financial interests.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 
@@ -551,7 +590,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarationsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/mepClient.ts:391](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L391)
+Defined in: [clients/ep/mepClient.ts:398](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L398)
 
 Retrieves recently updated MEP declarations via the feed endpoint.
 **EP API Endpoint:** `GET /meps-declarations/feed`
@@ -561,6 +600,10 @@ Configurable-window feed.  Extended timeout applied for `one-month`.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### startDate?
 
@@ -582,9 +625,9 @@ Configurable-window feed.  Extended timeout applied for `one-month`.
 
 ### getMEPDetails()
 
-> **getMEPDetails**(`id`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDetails`](../../../../types/ep/mep/interfaces/MEPDetails.md)\>
+> **getMEPDetails**(`id`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDetails`](../../../../types/ep/mep/interfaces/MEPDetails.md)\>
 
-Defined in: [clients/ep/mepClient.ts:196](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L196)
+Defined in: [clients/ep/mepClient.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L197)
 
 Retrieves detailed information about a specific MEP.
 
@@ -598,6 +641,12 @@ or MEP-prefixed ID ("MEP-124936").
 `string`
 
 MEP identifier in any supported format
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
 
 #### Returns
 
@@ -624,6 +673,10 @@ Retrieves Members of the European Parliament with filtering and pagination.
 ##### params
 
 Country, group, committee, active status, limit, offset
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### active?
 
@@ -665,7 +718,7 @@ Personal data access logged per GDPR Article 30
 
 > **getMEPsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/mepClient.ts:371](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L371)
+Defined in: [clients/ep/mepClient.ts:377](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L377)
 
 Retrieves recently updated MEPs via the feed endpoint.
 **EP API Endpoint:** `GET /meps/feed`
@@ -675,6 +728,10 @@ Configurable-window feed.  Extended timeout applied for `one-month`.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### startDate?
 
@@ -694,7 +751,7 @@ Configurable-window feed.  Extended timeout applied for `one-month`.
 
 > **getOutgoingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L294)
+Defined in: [clients/ep/mepClient.ts:297](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L297)
 
 Returns all outgoing MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-outgoing`
@@ -702,6 +759,10 @@ Returns all outgoing MEPs for the current parliamentary term.
 #### Parameters
 
 ##### params?
+
+###### abortSignal?
+
+`AbortSignal`
 
 ###### limit?
 

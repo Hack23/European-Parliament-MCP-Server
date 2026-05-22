@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **DEFAULT\_REQUEST\_TIMEOUT\_MS**: `60000` = `DEFAULT_TIMEOUTS.EP_API_REQUEST_MS`
 
-Defined in: [clients/ep/baseClient.ts:102](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L102)
+Defined in: [clients/ep/baseClient.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L104)
 
 Default HTTP request timeout in milliseconds — derived from the centralized
 [DEFAULT\_TIMEOUTS.EP\_API\_REQUEST\_MS](../../../../utils/timeout/variables/DEFAULT_TIMEOUTS.md#ep_api_request_ms) constant in `timeout.ts` so there

@@ -1,0 +1,56 @@
+{
+  "computedAttributes": {
+    "criticalWarnings": 0,
+    "highWarnings": 0,
+    "keyRiskFactor": "NONE",
+    "overallStabilityTrend": "STABLE",
+    "totalWarnings": 1
+  },
+  "confidenceLevel": "LOW",
+  "dataAvailable": true,
+  "dataQualityWarnings": [
+    "Warnings based on group size composition only — voting cohesion and attendance data unavailable from EP API"
+  ],
+  "focusArea": "all",
+  "lastAssessmentTime": "2024-06-15T12:00:00.000Z",
+  "methodology": "Early warning assessment combining fragmentation analysis and coalition stability metrics. Warnings generated from: group size distribution (fragmentation), dominant group detection, minority group quorum risk, and coalition viability thresholds. Stability score = 100 - (25*critical + 10*high + 3*medium warnings). NOTE: Voting cohesion and attendance data not available from EP API — warnings are derived from structural group composition only. Data source: https://data.europarl.europa.eu/api/v2/meps",
+  "riskLevel": "LOW",
+  "sensitivity": "medium",
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "stabilityScore": 97,
+  "trendIndicators": [
+    {
+      "confidence": 0.7,
+      "description": "Effective number of parties: 4.5 (moderate fragmentation)",
+      "direction": "NEUTRAL",
+      "indicator": "parliamentary_fragmentation"
+    },
+    {
+      "confidence": 0.65,
+      "description": "Top-2 groups hold 57.1% of seats — grand coalition viable",
+      "direction": "POSITIVE",
+      "indicator": "grand_coalition_viability"
+    },
+    {
+      "confidence": 0.6,
+      "description": "0.0% of MEPs in minority groups (<5% seat share) — healthy distribution",
+      "direction": "POSITIVE",
+      "indicator": "minority_representation"
+    }
+  ],
+  "warnings": [
+    {
+      "affectedEntities": [
+        "EPP",
+        "S&D",
+        "ECR",
+        "Renew",
+        "Greens/EFA"
+      ],
+      "description": "5 political group(s) with ≤5 members may struggle to maintain quorum",
+      "recommendedAction": "Monitor small group participation rates to ensure quorum requirements are met",
+      "severity": "LOW",
+      "type": "SMALL_GROUP_QUORUM_RISK"
+    }
+  ]
+}

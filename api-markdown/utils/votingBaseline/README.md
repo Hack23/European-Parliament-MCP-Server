@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.9**](../../README.md)
+[**European Parliament MCP Server API v1.3.10**](../../README.md)
 
 ***
 
@@ -61,6 +61,7 @@ ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege),
 - [DEFAULT\_CROSS\_PARTY\_SHARE](variables/DEFAULT_CROSS_PARTY_SHARE.md)
 - [DEFAULT\_WOW\_THRESHOLD\_PP](variables/DEFAULT_WOW_THRESHOLD_PP.md)
 - [DEFAULT\_Z\_SCORE\_THRESHOLD](variables/DEFAULT_Z_SCORE_THRESHOLD.md)
+- [MAX\_PLENARY\_WEEKS](variables/MAX_PLENARY_WEEKS.md)
 - [MIN\_SUBWINDOW\_DECISIVE\_VOTES](variables/MIN_SUBWINDOW_DECISIVE_VOTES.md)
 
 ## Functions
@@ -73,6 +74,7 @@ ISMS Policy: SC-002 (Input Validation), AC-003 (Least Privilege),
 - [findOutlierWeeks](functions/findOutlierWeeks.md)
 - [findWoWShifts](functions/findWoWShifts.md)
 - [isoWeekStart](functions/isoWeekStart.md)
+- [iteratePlenaryWeeks](functions/iteratePlenaryWeeks.md)
 - [resolveGroupBreakdownRow](functions/resolveGroupBreakdownRow.md)
 - [resolveGroupMajority](functions/resolveGroupMajority.md)
 - [zScore](functions/zScore.md)
