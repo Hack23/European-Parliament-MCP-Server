@@ -1,0 +1,67 @@
+{
+  "activityMetrics": {
+    "averageAttendance": 0,
+    "recentSessionCount": 3
+  },
+  "computedAttributes": {
+    "fragmentationIndex": "MODERATE",
+    "majorityType": "MULTI_COALITION_REQUIRED",
+    "overallEngagement": "LOW",
+    "politicalBalance": "PROGRESSIVE_LEANING"
+  },
+  "confidenceLevel": "LOW",
+  "dataQualityWarnings": [
+    "Bloc classification (progressive/conservative/centre) uses hardcoded group mapping — NI members classified as centre by default",
+    "Attendance data unavailable from EP API — average attendance reported as zero"
+  ],
+  "groups": [
+    {
+      "countries": 2,
+      "memberCount": 2,
+      "name": "EPP",
+      "seatShare": 28.57
+    },
+    {
+      "countries": 2,
+      "memberCount": 2,
+      "name": "S&D",
+      "seatShare": 28.57
+    },
+    {
+      "countries": 1,
+      "memberCount": 1,
+      "name": "ECR",
+      "seatShare": 14.29
+    },
+    {
+      "countries": 1,
+      "memberCount": 1,
+      "name": "Renew",
+      "seatShare": 14.29
+    },
+    {
+      "countries": 1,
+      "memberCount": 1,
+      "name": "Greens/EFA",
+      "seatShare": 14.29
+    }
+  ],
+  "methodology": "Political landscape analysis using real EP Open Data: full paginated MEP roster (typically ~720 MEPs in EP10), group composition mapping with native-language acronym normalisation (e.g. PPE → EPP, Verts-ALE → Greens/EFA, ID → PfE), bloc classification, coalition threshold calculation, fragmentation indexing, and plenary session counts (fetched page count, lower bound). Attendance data is not available from the EP API and is reported as zero. Data source: European Parliament Open Data Portal.",
+  "parliament": {
+    "countriesRepresented": 7,
+    "politicalGroups": 5,
+    "totalMEPs": 7
+  },
+  "period": {
+    "from": "2023-06-15",
+    "to": "2024-06-15"
+  },
+  "powerDynamics": {
+    "conservativeBloc": 1,
+    "grandCoalitionSize": 4,
+    "largestGroup": "EPP",
+    "majorityThreshold": 5,
+    "progressiveBloc": 3
+  },
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu"
+}

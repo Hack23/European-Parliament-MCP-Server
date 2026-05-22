@@ -1,0 +1,580 @@
+{
+  "coalitionPairs": [
+    {
+      "allianceSignal": true,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "S&D",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 1,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": true,
+      "cohesion": null,
+      "groupA": "Renew",
+      "groupB": "Greens/EFA",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 1,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": true,
+      "cohesion": null,
+      "groupA": "Renew",
+      "groupB": "ECR",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 1,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": true,
+      "cohesion": null,
+      "groupA": "Greens/EFA",
+      "groupB": "ECR",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 1,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "Renew",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0.5,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "Greens/EFA",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0.5,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "ECR",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0.5,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "S&D",
+      "groupB": "Renew",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0.5,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "S&D",
+      "groupB": "Greens/EFA",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0.5,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "S&D",
+      "groupB": "ECR",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0.5,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "PfE",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "The Left",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "ESN",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "EPP",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "S&D",
+      "groupB": "PfE",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "S&D",
+      "groupB": "The Left",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "S&D",
+      "groupB": "ESN",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "S&D",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Renew",
+      "groupB": "PfE",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Renew",
+      "groupB": "The Left",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Renew",
+      "groupB": "ESN",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Renew",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Greens/EFA",
+      "groupB": "PfE",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Greens/EFA",
+      "groupB": "The Left",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Greens/EFA",
+      "groupB": "ESN",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "Greens/EFA",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "ECR",
+      "groupB": "PfE",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "ECR",
+      "groupB": "The Left",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "ECR",
+      "groupB": "ESN",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "ECR",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "PfE",
+      "groupB": "The Left",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "PfE",
+      "groupB": "ESN",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "PfE",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "The Left",
+      "groupB": "ESN",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "The Left",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    },
+    {
+      "allianceSignal": false,
+      "cohesion": null,
+      "groupA": "ESN",
+      "groupB": "NI",
+      "sharedVotes": null,
+      "sizeSimilarityScore": 0,
+      "totalVotes": null,
+      "trend": null
+    }
+  ],
+  "computedAttributes": {
+    "effectiveNumberOfParties": null,
+    "grandCoalitionViability": null,
+    "oppositionStrength": 0,
+    "parliamentaryFragmentation": null
+  },
+  "confidenceLevel": "LOW",
+  "coverage": {
+    "groupsKnown": 5,
+    "groupsTotal": 9,
+    "unrecognizedGroups": []
+  },
+  "dataQualityWarnings": [
+    "Per-MEP voting statistics unavailable from EP API — cohesion, defection, and attendance metrics are null",
+    "coalitionPairs[].cohesion and coalitionPairs[].trend are populated from recent DOCEO XML group-level roll-call alignment when available; otherwise they are null and only coalitionPairs[].sizeSimilarityScore (group-size ratio proxy) is populated",
+    "Incomplete group coverage — 4/9 target group(s) returned memberCount: 0 (PfE, The Left, ESN, NI); derived fragmentation/ENP set to null. No out-of-target EP API group labels observed — groups may have zero seats or the lookup table may be stale."
+  ],
+  "dominantCoalition": {
+    "cohesion": null,
+    "combinedStrength": null,
+    "groups": [
+      "EPP",
+      "S&D"
+    ],
+    "sizeSimilarityScore": 1
+  },
+  "groupMetrics": [
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "EPP",
+      "internalCohesion": null,
+      "memberCount": 2,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "S&D",
+      "internalCohesion": null,
+      "memberCount": 2,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "Renew",
+      "internalCohesion": null,
+      "memberCount": 1,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "Greens/EFA",
+      "internalCohesion": null,
+      "memberCount": 1,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "ECR",
+      "internalCohesion": null,
+      "memberCount": 1,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "PfE",
+      "internalCohesion": null,
+      "memberCount": 0,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "The Left",
+      "internalCohesion": null,
+      "memberCount": 0,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "ESN",
+      "internalCohesion": null,
+      "memberCount": 0,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    },
+    {
+      "avgAttendance": null,
+      "computedAttributes": {
+        "activeParticipationRate": null,
+        "disciplineScore": null,
+        "fragmentationRisk": null,
+        "unityTrend": "UNKNOWN"
+      },
+      "dataAvailability": "UNAVAILABLE",
+      "defectionRate": null,
+      "groupId": "NI",
+      "internalCohesion": null,
+      "memberCount": 0,
+      "stressIndicator": {
+        "availability": "UNAVAILABLE",
+        "confidence": "LOW",
+        "reason": "Per-MEP voting statistics not available from EP API",
+        "value": null
+      }
+    }
+  ],
+  "methodology": "CIA Coalition Analysis — group composition from real EP Open Data MEP records. Raw political-group labels from the EP API are normalized to canonical short codes (e.g. full names, URI suffixes, and EP9→EP10 successions such as ID→PfE are mapped). Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; each group metric has dataAvailability: UNAVAILABLE with null cohesion/defection/attendance. coalitionPairs[].cohesion, coalitionPairs[].trend, coalitionPairs[].sharedVotes, and coalitionPairs[].totalVotes are null (vote-alignment data not available — DOCEO XML fetch returned no data). coalitionPairs[].sizeSimilarityScore is a group-size ratio proxy (min/max member counts), NOT vote-level cohesion. When any target group returns memberCount: 0 the parliamentaryFragmentation and effectiveNumberOfParties fields are emitted as null to avoid a plausible-but-wrong score. Data source: European Parliament Open Data Portal.",
+  "methodologyNote": "coalitionPairs[].sizeSimilarityScore is derived from group-size ratios (min(sizeA, sizeB) / max(sizeA, sizeB)) and is NOT vote-level cohesion (Hix/Noury/Roland sense). coalitionPairs[].cohesion and coalitionPairs[].trend are emitted as null because DOCEO XML vote data was unavailable at query time. The public input parameter `minimumCohesion` is preserved for backward compatibility but is currently applied as a threshold on coalitionPairs[].sizeSimilarityScore until vote-level cohesion data becomes available.",
+  "period": {
+    "from": "2024-01-01",
+    "to": "2024-12-31"
+  },
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu",
+  "stressIndicators": []
+}

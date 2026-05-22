@@ -267,7 +267,7 @@ Create `src/tools/myNewTool.test.ts` covering:
 - ✅ Invalid/empty input → `ZodError` thrown
 - ✅ Default parameter values applied
 
-**OSINT tools only**: any tool registered with `category: 'osint'` is automatically enrolled in the cross-tool contract suite ([`tests/integration/osint/contract.test.ts`](tests/integration/osint/contract.test.ts)). Add a minimal-valid input entry to `TOOL_INPUTS` in that file, and ensure your tool follows the **no-silent-zero policy** (see below).
+**OSINT tools only**: any tool registered with `category: 'osint'` is automatically enrolled in the cross-tool contract suite ([`tests/integration/osint/contract.test.ts`](tests/integration/osint/contract.test.ts)) **and** the per-tool golden-snapshot suite ([`tests/integration/osint/snapshots.test.ts`](tests/integration/osint/snapshots.test.ts)). Add a minimal-valid input entry to `OSINT_TOOL_INPUTS` in [`tests/fixtures/osint/index.ts`](tests/fixtures/osint/index.ts) (single source of truth — both suites import from it), and ensure your tool follows the **no-silent-zero policy** (see below).
 
 #### No-silent-zero policy (OSINT tools)
 
@@ -276,7 +276,26 @@ Every OSINT tool returns the [`OsintStandardOutput`](src/tools/shared/types.ts) 
 1. Degrade `confidenceLevel` to `LOW` or `MEDIUM` **and** push a human-readable entry into `dataQualityWarnings` explaining the unavailability, OR
 2. Keep `confidenceLevel = HIGH` only when the remaining data is sufficient to fully back every non-warning numeric metric in the payload.
 
-The contract test enforces the observable invariant: if `confidenceLevel` is `LOW`/`MEDIUM`, `dataQualityWarnings` MUST be non-empty. A degraded confidence level with no warning fails the test. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy and golden-snapshot refresh procedure.
+The contract test enforces the observable invariant: if `confidenceLevel` is `LOW`/`MEDIUM`, `dataQualityWarnings` MUST be non-empty. A degraded confidence level with no warning fails the test. See `INTEGRATION_TESTING.md` § "OSINT QA Harness" for the full policy.
+
+#### Refreshing OSINT golden snapshots
+
+The golden-snapshot suite ([`tests/integration/osint/snapshots.test.ts`](tests/integration/osint/snapshots.test.ts)) diff-asserts every OSINT tool's response against a checked-in snapshot for two fixture variants (`empty-path`, `hot-path`) — 30 snapshots total. A diff means a methodology change has occurred (scoring weight moved, classification bucket changed, attribution list re-ordered).
+
+If the diff is intentional:
+
+```bash
+# Regenerate the affected snapshots
+npm run test:osint:snapshots -- -u
+
+# Inspect every diff (snapshots live at tests/integration/osint/__snapshots__/)
+git diff tests/integration/osint/__snapshots__/
+
+# Acknowledge the refresh in your PR
+#   → tick "OSINT snapshot refresh acknowledged" in PULL_REQUEST_TEMPLATE.md
+```
+
+**Reviewer guidance:** never approve a PR that touches `tests/integration/osint/__snapshots__/` without the acknowledgement checkbox ticked AND a justification for the methodology change in the PR description. Snapshot diffs are the regression-detection line for OSINT scoring; silently rubber-stamping them defeats the purpose of the suite. See `INTEGRATION_TESTING.md` § "OSINT QA Harness — Golden Snapshots" for the full workflow.
 
 #### Mutation testing (OSINT)
 

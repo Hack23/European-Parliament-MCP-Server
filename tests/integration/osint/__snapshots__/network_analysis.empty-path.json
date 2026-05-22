@@ -1,0 +1,273 @@
+{
+  "analysisType": "combined",
+  "bridgingMEPs": [],
+  "centralMEPs": [
+    {
+      "centralityScore": 7.4,
+      "mepId": "101",
+      "mepName": "Thomas Weber (synthetic)"
+    },
+    {
+      "centralityScore": 4.55,
+      "mepId": "102",
+      "mepName": "Marie Leclerc (synthetic)"
+    },
+    {
+      "centralityScore": 3.48,
+      "mepId": "106",
+      "mepName": "Ana Costa (synthetic)"
+    },
+    {
+      "centralityScore": 2.77,
+      "mepId": "107",
+      "mepName": "Henrik Nielsen (synthetic)"
+    },
+    {
+      "centralityScore": 2.33,
+      "mepId": "103",
+      "mepName": "Piotr Kowalski (synthetic)"
+    },
+    {
+      "centralityScore": 2.33,
+      "mepId": "105",
+      "mepName": "Lars Svensson (synthetic)"
+    },
+    {
+      "centralityScore": 1.52,
+      "mepId": "104",
+      "mepName": "Elena Papadaki (synthetic)"
+    }
+  ],
+  "clusterCount": 1,
+  "computedAttributes": {
+    "avgDegree": 5.43,
+    "clusteringCoefficient": 1.36,
+    "networkType": "DENSE",
+    "totalEdges": 19,
+    "totalNodes": 7
+  },
+  "confidenceLevel": "LOW",
+  "dataAvailable": true,
+  "dataQualityWarnings": [],
+  "depth": 2,
+  "isolatedMEPs": 0,
+  "methodology": "Analysis type: combined. Edges: union of committee + DOCEO voting similarity. Shared pairs use the mean of the two normalised weights. Centrality = 0.6 × weighted-degree + 0.4 × 100 × betweenness (Brandes, weighted shortest paths via 1/weight). Communities detected via deterministic asynchronous label propagation; modularityScore is Newman Q. BFS depth-bounded ego network when mepId is supplied. DOCEO RCV records inspected: 0. Data source: https://data.europarl.europa.eu/api/v2/meps + DOCEO XML.",
+  "minSimilarity": 0.7,
+  "modularityScore": 0,
+  "networkDensity": 0.9048,
+  "networkEdges": [
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "101",
+      "targetId": "102"
+    },
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "101",
+      "targetId": "103"
+    },
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "101",
+      "targetId": "105"
+    },
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "101",
+      "targetId": "107"
+    },
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "102",
+      "targetId": "106"
+    },
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "103",
+      "targetId": "107"
+    },
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "104",
+      "targetId": "106"
+    },
+    {
+      "relationshipStrength": 0.6,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 2,
+      "sourceId": "105",
+      "targetId": "107"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "101",
+      "targetId": "106"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "102",
+      "targetId": "103"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "102",
+      "targetId": "104"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "102",
+      "targetId": "105"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "102",
+      "targetId": "107"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "103",
+      "targetId": "104"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "103",
+      "targetId": "105"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "103",
+      "targetId": "106"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "104",
+      "targetId": "105"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "104",
+      "targetId": "107"
+    },
+    {
+      "relationshipStrength": 0.3,
+      "relationshipType": "committee_co_membership",
+      "sharedCommittees": 1,
+      "sourceId": "105",
+      "targetId": "106"
+    }
+  ],
+  "networkNodes": [
+    {
+      "betweennessCentrality": 0.1444,
+      "centralityScore": 7.4,
+      "clusterLabel": "102",
+      "country": "DE",
+      "degree": 5,
+      "mepId": "101",
+      "mepName": "Thomas Weber (synthetic)",
+      "politicalGroup": "EPP",
+      "weightedDegree": 2.7
+    },
+    {
+      "betweennessCentrality": 0.0778,
+      "centralityScore": 4.55,
+      "clusterLabel": "102",
+      "country": "FR",
+      "degree": 6,
+      "mepId": "102",
+      "mepName": "Marie Leclerc (synthetic)",
+      "politicalGroup": "S&D",
+      "weightedDegree": 2.4
+    },
+    {
+      "betweennessCentrality": 0.0222,
+      "centralityScore": 2.33,
+      "clusterLabel": "102",
+      "country": "PL",
+      "degree": 6,
+      "mepId": "103",
+      "mepName": "Piotr Kowalski (synthetic)",
+      "politicalGroup": "ECR",
+      "weightedDegree": 2.4
+    },
+    {
+      "betweennessCentrality": 0.0111,
+      "centralityScore": 1.52,
+      "clusterLabel": "102",
+      "country": "GR",
+      "degree": 5,
+      "mepId": "104",
+      "mepName": "Elena Papadaki (synthetic)",
+      "politicalGroup": "Renew",
+      "weightedDegree": 1.8
+    },
+    {
+      "betweennessCentrality": 0.0222,
+      "centralityScore": 2.33,
+      "clusterLabel": "102",
+      "country": "SE",
+      "degree": 6,
+      "mepId": "105",
+      "mepName": "Lars Svensson (synthetic)",
+      "politicalGroup": "Greens/EFA",
+      "weightedDegree": 2.4
+    },
+    {
+      "betweennessCentrality": 0.0556,
+      "centralityScore": 3.48,
+      "clusterLabel": "102",
+      "country": "PT",
+      "degree": 5,
+      "mepId": "106",
+      "mepName": "Ana Costa (synthetic)",
+      "politicalGroup": "S&D",
+      "weightedDegree": 2.1
+    },
+    {
+      "betweennessCentrality": 0.0333,
+      "centralityScore": 2.77,
+      "clusterLabel": "102",
+      "country": "DK",
+      "degree": 5,
+      "mepId": "107",
+      "mepName": "Henrik Nielsen (synthetic)",
+      "politicalGroup": "EPP",
+      "weightedDegree": 2.4
+    }
+  ],
+  "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu"
+}

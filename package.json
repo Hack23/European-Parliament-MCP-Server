@@ -79,6 +79,7 @@
     "test": "vitest",
     "test:unit": "vitest run src",
     "test:integration": "vitest run tests/integration",
+    "test:osint:snapshots": "vitest run tests/integration/osint/snapshots.test.ts",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:performance": "vitest run tests/performance",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e && npm run test:performance",

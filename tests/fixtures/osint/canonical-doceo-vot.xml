@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Canonical synthetic DOCEO Vote (VOT) sample fixture.
+
+  Companion to `canonical-doceo-rcv.xml`. Shape mirrors the aggregate VOT
+  envelope EP returns for a plenary day (no per-MEP breakdown — only group
+  totals and the final outcome).
+
+  Aligns with the second vote in `hotPathDoceoVotes`
+  (`RCV-2024-04-09-002` — "Digital Economy Package").
+
+  Names, IDs and vote counts are intentionally synthetic and clearly marked.
+-->
+<PV.VoteResult Sitting.Date="2024-04-09" Sitting.Number="09">
+  <Vote.Result Identifier="VOT-2024-04-09-002" Number="2" Type="single" For="3" Against="2" Abst="1">
+    <Vote.Description.Text>Digital Economy Package (synthetic)</Vote.Description.Text>
+    <Vote.Reference>A10-0099/2024</Vote.Reference>
+    <Vote.Outcome>ADOPTED</Vote.Outcome>
+  </Vote.Result>
+</PV.VoteResult>
