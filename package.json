@@ -86,6 +86,8 @@
     "test:coverage": "vitest run src --coverage",
     "test:ci": "vitest run --coverage --reporter=junit --reporter=json --outputFile=coverage/junit.xml",
     "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0;BlueOak-1.0.0'",
+    "test:mutation": "stryker run",
+    "test:mutation:ci": "stryker run --concurrency 4 --logLevel info",
     "knip": "knip",
     "clean": "rm -rf dist coverage builds",
     "verify-package": "npm run build && npx tsx scripts/verify-package.ts",
@@ -163,6 +165,8 @@
     "vite": "8.0.10"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "9.6.1",
+    "@stryker-mutator/vitest-runner": "9.6.1",
     "@types/node": "25.9.1",
     "@typescript-eslint/eslint-plugin": "8.59.4",
     "@typescript-eslint/parser": "8.59.4",
