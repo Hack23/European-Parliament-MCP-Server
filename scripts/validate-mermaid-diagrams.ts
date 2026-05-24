@@ -199,6 +199,180 @@ function normalizeColorsInPlace(files: readonly string[]): number {
 }
 
 // ---------------------------------------------------------------------------
+// Label auto-quoting (optional)
+// ---------------------------------------------------------------------------
+
+/**
+ * Shape pairs supported by Mermaid flowchart syntax, **ordered by opener
+ * length descending** so the longer variants match before their shorter
+ * prefixes (e.g. `[[` before `[`).
+ */
+const SHAPE_PAIRS: ReadonlyArray<readonly [string, string]> = [
+  ['[[', ']]'],
+  ['((', '))'],
+  ['{{', '}}'],
+  ['([', '])'],
+  ['[(', ')]'],
+  ['[/', '/]'],
+  ['[\\', '\\]'],
+  ['[', ']'],
+  ['(', ')'],
+  ['{', '}'],
+  ['>', ']'],
+];
+
+/** Characters that force quoting of a Mermaid node label. */
+const NEEDS_QUOTE_RE = /[^\x00-\x7F]|[@:&;]|\(|\)|\{|\}/;
+
+function labelNeedsQuoting(content: string): boolean {
+  if (!content.trim()) return false;
+  return NEEDS_QUOTE_RE.test(content);
+}
+
+/**
+ * Walk a single mermaid block and wrap every unquoted node label that
+ * contains an icon (any non-ASCII character) or other special punctuation
+ * in double quotes.
+ *
+ * Examples:
+ *   `N[📡 Sources]`   → `N["📡 Sources"]`
+ *   `N(MEPs (716))`   → `N("MEPs (716)")`
+ *   `N["already"]`    → unchanged
+ *   `N --> M`         → unchanged (no shape opener after the identifier)
+ */
+function quoteIconsInBlock(code: string): string {
+  const out: string[] = [];
+  let i = 0;
+  let atLineStart = true;
+  const len = code.length;
+  while (i < len) {
+    const ch = code[i] ?? '';
+    if (ch === '\n') {
+      out.push(ch);
+      i++;
+      atLineStart = true;
+      continue;
+    }
+    // Try to detect a node label after an identifier OR at the start of a
+    // mindmap/timeline line (after pure whitespace).
+    const afterIdentifier = /[A-Za-z_]/.test(ch);
+    if (afterIdentifier || atLineStart) {
+      let j = i;
+      if (afterIdentifier) {
+        while (j < len && /[A-Za-z0-9_]/.test(code[j] ?? '')) j++;
+      } else {
+        // skip leading whitespace
+        while (j < len && (code[j] === ' ' || code[j] === '\t')) j++;
+        if (j === i) {
+          // no whitespace skipped — fall through
+        }
+      }
+      // After identifier (or leading WS), attempt to match a shape opener
+      let matched: { open: string; close: string; content: string; end: number } | null = null;
+      for (const [open, close] of SHAPE_PAIRS) {
+        if (code.slice(j, j + open.length) !== open) continue;
+        // Find the matching close on the same line
+        const contentStart = j + open.length;
+        let k = contentStart;
+        while (k < len) {
+          const c = code[k] ?? '';
+          if (c === '\n') break;
+          if (c === '"') {
+            // Skip over already-quoted segment
+            k++;
+            while (k < len && code[k] !== '"') {
+              if (code[k] === '\\') k++;
+              k++;
+            }
+            k++; // consume closing quote
+            continue;
+          }
+          if (code.slice(k, k + close.length) === close) {
+            matched = { open, close, content: code.slice(contentStart, k), end: k + close.length };
+            break;
+          }
+          k++;
+        }
+        if (matched) break;
+      }
+      if (matched) {
+        const { open, close, content, end } = matched;
+        const trimmed = content.trim();
+        const alreadyQuoted = trimmed.startsWith('"') && trimmed.endsWith('"');
+        let newContent = content;
+        if (!alreadyQuoted && labelNeedsQuoting(content)) {
+          // Escape any embedded double quotes via the Mermaid #quot; entity.
+          newContent = `"${content.replace(/"/g, '#quot;')}"`;
+        }
+        out.push(code.slice(i, j));
+        out.push(open);
+        out.push(newContent);
+        out.push(close);
+        i = end;
+        atLineStart = false;
+        continue;
+      }
+      // Not a label start; emit verbatim and move on
+      if (afterIdentifier) {
+        out.push(code.slice(i, j));
+        i = j;
+      } else {
+        out.push(ch);
+        i++;
+      }
+      atLineStart = false;
+      continue;
+    }
+    if (ch !== ' ' && ch !== '\t') atLineStart = false;
+    out.push(ch);
+    i++;
+  }
+  return out.join('');
+}
+
+/**
+ * Apply {@link quoteIconsInBlock} to every ```mermaid block in the file.
+ *
+ * @returns the number of files that were modified.
+ */
+function quoteIconsInPlace(files: readonly string[]): number {
+  let modified = 0;
+  for (const file of files) {
+    const original = readFileSync(file, 'utf8');
+    const lines = original.split('\n');
+    let inBlock = false;
+    let blockStart = -1;
+    let changed = false;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i] ?? '';
+      if (!inBlock && /^```mermaid\s*$/.test(line)) {
+        inBlock = true;
+        blockStart = i + 1;
+        continue;
+      }
+      if (inBlock && /^```\s*$/.test(line)) {
+        const block = lines.slice(blockStart, i).join('\n');
+        const transformed = quoteIconsInBlock(block);
+        if (transformed !== block) {
+          const newLines = transformed.split('\n');
+          lines.splice(blockStart, i - blockStart, ...newLines);
+          // Adjust `i` if number of lines changed (rare; quoting preserves line count).
+          i = blockStart + newLines.length;
+          changed = true;
+        }
+        inBlock = false;
+        continue;
+      }
+    }
+    if (changed) {
+      writeFileSync(file, lines.join('\n'), 'utf8');
+      modified++;
+    }
+  }
+  return modified;
+}
+
+// ---------------------------------------------------------------------------
 // Mermaid bootstrap (jsdom shim)
 // ---------------------------------------------------------------------------
 
@@ -227,9 +401,14 @@ async function bootstrapMermaid(): Promise<{ parse: (s: string) => Promise<unkno
 
 async function main(): Promise<void> {
   const args = new Set(process.argv.slice(2));
-  const doNormalize = args.has('--normalize-colors');
+  const doNormalize = args.has('--normalize-colors') || args.has('--fix');
+  const doQuoteIcons = args.has('--quote-icons') || args.has('--fix');
 
   const files = discoverMarkdownFiles();
+  if (doQuoteIcons) {
+    const n = quoteIconsInPlace(files);
+    console.log(`Icon quoting: wrapped icon/special-char node labels in ${n} file(s).`);
+  }
   if (doNormalize) {
     const n = normalizeColorsInPlace(files);
     console.log(`Color normalization: lowercased hex colors in ${n} file(s).`);

@@ -99,18 +99,18 @@ Performance validation ensures:
 
 ```mermaid
 graph TB
-    A[👨‍💻 Code Changes] --> B[🔨 Build: npm run build]
-    B --> C[🧪 Unit Tests: npx vitest run src]
-    C --> D[⚡ Performance Tests: npm run test:performance]
-    D --> E{📊 Meets Targets?}
-    E -->|❌ Below Target| F[🔧 Optimize & Re-Test]
+    A["👨‍💻 Code Changes"] --> B["🔨 Build: npm run build"]
+    B --> C["🧪 Unit Tests: npx vitest run src"]
+    C --> D["⚡ Performance Tests: npm run test:performance"]
+    D --> E{"📊 Meets Targets?"}
+    E -->|❌ Below Target| F["🔧 Optimize & Re-Test"]
     F --> B
-    E -->|✅ Pass| G[📦 Publish npm Package]
+    E -->|✅ Pass| G["📦 Publish npm Package"]
     
     subgraph "Performance Test Suite"
-        D --> D1[📈 API Latency Tests]
-        D --> D2[🔄 Concurrency Tests]
-        D --> D3[📊 Benchmark Tests]
+        D --> D1["📈 API Latency Tests"]
+        D --> D2["🔄 Concurrency Tests"]
+        D --> D3["📊 Benchmark Tests"]
     end
 
     style A fill:#e3f2fd,stroke:#9ea9b1,stroke-width:2px,color:#000000

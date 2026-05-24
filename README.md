@@ -691,9 +691,9 @@ graph TB
 
     subgraph "MCP Server (src/)"
         direction TB
-        Tools[🔧 61 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Tools["🔧 61 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …"]
         Resources["📦 9 Resources<br/>ep://meps/\{mepId\}<br/>ep://procedures/\{procedureId\} · …"]
-        Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
+        Prompts["💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …"]
     end
 
     Server --> Tools
@@ -701,12 +701,12 @@ graph TB
     Server --> Prompts
 
     subgraph "Infrastructure"
-        Cache[LRU Cache<br/>500 entries · 15 min TTL]
+        Cache["LRU Cache<br/>500 entries · 15 min TTL"]
         RateLimiter[Rate Limiter<br/>100 req/min]
         AuditLog[Audit Logger<br/>GDPR Article 30]
     end
 
-    Tools --> EPClient[EuropeanParliamentClient<br/>Facade → 8 sub-clients]
+    Tools --> EPClient["EuropeanParliamentClient<br/>Facade → 8 sub-clients"]
     Resources --> EPClient
     EPClient --> Cache
     EPClient --> RateLimiter
@@ -1583,7 +1583,7 @@ timeline
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#a855f7', 'primaryTextColor': '#fff', 'lineColor': '#c084fc', 'secondaryColor': '#f59e0b', 'tertiaryColor': '#ec4899'}}}%%
 mindmap
-  root((🌐 AGI Era\n2034–2037))
+  root(("🌐 AGI Era\n2034–2037"))
     🤖 AGI-Enhanced Intelligence
       Autonomous real-time analysis
         All 195 parliamentary systems

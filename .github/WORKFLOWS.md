@@ -81,10 +81,10 @@ All workflows follow **SLSA Level 3** supply chain security requirements:
 ```mermaid
 graph LR
     subgraph "Security Layers"
-        SL1[🔒 Step Security<br/>Harden Runner]
-        SL2[📌 Pinned Actions<br/>SHA256 Hashes]
-        SL3[🔑 Minimal Permissions<br/>Least Privilege]
-        SL4[📝 Audit Logging<br/>Egress Tracking]
+        SL1["🔒 Step Security<br/>Harden Runner"]
+        SL2["📌 Pinned Actions<br/>SHA256 Hashes"]
+        SL3["🔑 Minimal Permissions<br/>Least Privilege"]
+        SL4["📝 Audit Logging<br/>Egress Tracking"]
     end
     
     subgraph "Compliance"
@@ -142,31 +142,31 @@ The repository maintains **11 automated workflows** providing comprehensive CI/C
 ```mermaid
 graph TB
     subgraph "Developer Activity"
-        DEV1[👨‍💻 Code Changes]
-        DEV2[🔀 Create PR]
-        DEV3[✅ Merge to Main]
+        DEV1["👨‍💻 Code Changes"]
+        DEV2["🔀 Create PR"]
+        DEV3["✅ Merge to Main"]
     end
     
     subgraph "Automated Checks"
-        AC1[🏷️ Auto Labeling]
-        AC2[🔍 Dependency Review]
-        AC3[🧪 Test & Report]
-        AC4[🔒 CodeQL SAST]
-        AC5[📦 SBOM Generation]
+        AC1["🏷️ Auto Labeling"]
+        AC2["🔍 Dependency Review"]
+        AC3["🧪 Test & Report"]
+        AC4["🔒 CodeQL SAST"]
+        AC5["📦 SBOM Generation"]
     end
     
     subgraph "Quality Gates"
-        QG1{Coverage ≥80%?}
-        QG2{SBOM Quality ≥7.0?}
+        QG1{"Coverage ≥80%?"}
+        QG2{"SBOM Quality ≥7.0?"}
         QG3{CodeQL Pass?}
         QG4{Tests Pass?}
     end
     
     subgraph "Release Process"
-        RP1[📝 Draft Release]
-        RP2[🏷️ Create Tag]
-        RP3[📦 Publish npm]
-        RP4[📚 Deploy Docs]
+        RP1["📝 Draft Release"]
+        RP2["🏷️ Create Tag"]
+        RP3["📦 Publish npm"]
+        RP4["📚 Deploy Docs"]
     end
     
     DEV1 --> DEV2

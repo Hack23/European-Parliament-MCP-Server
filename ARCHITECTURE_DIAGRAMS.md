@@ -118,7 +118,7 @@ graph TB
     end
     
     subgraph "MCP Server [Node.js 25.x]"
-        SERVER[MCP Protocol Handler<br/><i>@modelcontextprotocol/sdk</i>]
+        SERVER["MCP Protocol Handler<br/><i>@modelcontextprotocol/sdk</i>"]
         
         subgraph "Business Logic"
             TOOLS[Tool Registry<br/><i>62 MCP Tools</i>]
@@ -332,13 +332,13 @@ sequenceDiagram
     participant EPAPI as EP API
     participant Metrics as Metrics Service
     
-    Client->>Server: callTool('get_meps', {country: 'SE'})
+    Client->>Server: callTool("'get_meps', {country: 'SE'}")
     activate Server
     
     Server->>Registry: lookupTool('get_meps')
     Registry-->>Server: handleGetMEPs
     
-    Server->>Tool: handleGetMEPs({country: 'SE'})
+    Server->>Tool: handleGetMEPs("{country: 'SE'}")
     activate Tool
     
     Tool->>Validation: GetMEPsSchema.parse(args)
@@ -348,10 +348,10 @@ sequenceDiagram
     
     Tool->>Metrics: incrementCounter('tool_invocations')
     
-    Tool->>EPClient: getMEPs({country: 'SE'})
+    Tool->>EPClient: getMEPs("{country: 'SE'}")
     activate EPClient
     
-    EPClient->>Cache: get('meps:SE')
+    EPClient->>Cache: get("'meps:SE'")
     Cache-->>EPClient: null (cache miss)
     
     EPClient->>RateLimit: tryRemoveTokens(1)
@@ -362,7 +362,7 @@ sequenceDiagram
     EPAPI-->>EPClient: 200 OK {data: [...]}
     deactivate EPAPI
     
-    EPClient->>Cache: set('meps:SE', data, ttl: 900s)
+    EPClient->>Cache: set("'meps:SE', data, ttl: 900s")
     EPClient-->>Tool: {data: [...], total: 20}
     deactivate EPClient
     
@@ -405,7 +405,7 @@ sequenceDiagram
     
     Note over Client,OAuth: Future Authentication Flow (OAuth 2.0)
     
-    Client->>Server: callTool('get_meps', {country: 'SE'})
+    Client->>Server: callTool("'get_meps', {country: 'SE'}")
     Server->>Auth: validateToken(request.headers.authorization)
     activate Auth
     
@@ -451,10 +451,10 @@ sequenceDiagram
     participant EPAPI as EP API
     participant Logger as Audit Logger
     
-    Client->>Server: callTool('get_meps', {country: 'INVALID'})
+    Client->>Server: callTool("'get_meps', {country: 'INVALID'}")
     activate Server
     
-    Server->>Tool: handleGetMEPs({country: 'INVALID'})
+    Server->>Tool: handleGetMEPs("{country: 'INVALID'}")
     activate Tool
     
     Tool->>Validation: GetMEPsSchema.parse(args)
@@ -474,18 +474,18 @@ sequenceDiagram
     
     Note over Client,Logger: Alternative: API Error Flow
     
-    Client->>Server: callTool('get_meps', {country: 'SE'})
+    Client->>Server: callTool("'get_meps', {country: 'SE'}")
     activate Server
-    Server->>Tool: handleGetMEPs({country: 'SE'})
+    Server->>Tool: handleGetMEPs("{country: 'SE'}")
     activate Tool
     Tool->>Validation: Validate input ✓
-    Tool->>EPClient: getMEPs({country: 'SE'})
+    Tool->>EPClient: getMEPs("{country: 'SE'}")
     activate EPClient
     
     EPClient->>EPAPI: GET /api/v2/meps?country=SE
     EPAPI-->>EPClient: 503 Service Unavailable
     
-    EPClient->>Logger: logError('APIError', {status: 503})
+    EPClient->>Logger: logError("'APIError', {status: 503}")
     EPClient-->>Tool: throw APIError('EP API unavailable')
     deactivate EPClient
     
@@ -522,7 +522,7 @@ graph LR
     subgraph "MCP Server"
         RATE[Rate Limiter<br/>100/15min]
         CACHE[Cache Layer<br/>15min TTL]
-        TRANSFORM[Data Transform<br/>JSON-LD → JSON]
+        TRANSFORM["Data Transform<br/>JSON-LD → JSON"]
         VALIDATE[Output Validation<br/>Zod Schema]
         MCP_HANDLER[MCP Protocol<br/>Handler]
     end
@@ -574,7 +574,7 @@ graph TB
     CHECK_RATE -->|No| RATE_ERROR[Return RateLimitError]
     
     API_CALL --> API_SUCCESS{Success?}
-    API_SUCCESS -->|Yes| CACHE_UPDATE[Update Cache<br/>TTL: 15min]
+    API_SUCCESS -->|Yes| CACHE_UPDATE["Update Cache<br/>TTL: 15min"]
     API_SUCCESS -->|No| API_ERROR[Return APIError]
     
     CACHE_UPDATE --> RETURN_FRESH[Return Fresh Data]

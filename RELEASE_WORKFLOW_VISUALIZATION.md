@@ -7,7 +7,7 @@ flowchart TB
     Start([Release Trigger<br/>Tag Push or Manual]) --> Prepare
     
     subgraph Prepare["📋 Prepare Job"]
-        P1[Checkout & Setup] --> P2[Get Version]
+        P1["Checkout & Setup"] --> P2[Get Version]
         P2 --> P3[Install Dependencies]
         P3 --> P4[Build TypeScript]
         P4 --> P5[Run Tests]
@@ -59,9 +59,9 @@ flowchart TB
         N5 --> N6[Verify Publication]
     end
     
-    PublishNPM --> End([✅ Release Complete])
+    PublishNPM --> End(["✅ Release Complete"])
     
-    P9 -.->|Deploys to| Pages[📄 GitHub Pages<br/>gh-pages branch]
+    P9 -.->|Deploys to| Pages["📄 GitHub Pages<br/>gh-pages branch"]
     
     style Start fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
@@ -81,15 +81,15 @@ flowchart TB
 
 ```mermaid
 graph TD
-    Root[docs/] --> Index[index.html<br/>🌐 Landing Page]
-    Root --> API[api/<br/>📖 TypeDoc]
-    Root --> Coverage[coverage/<br/>📊 Coverage]
-    Root --> Tests[test-results/<br/>✅ Unit Tests]
-    Root --> E2E[e2e-results/<br/>🔄 E2E Tests]
-    Root --> SBOM[SBOM.md<br/>📦 Bill of Materials]
-    Root --> Attest[ATTESTATIONS.md<br/>🔐 Provenance]
-    Root --> EPDoc[EP_API_INTEGRATION.md<br/>🏛️ EP Guide]
-    Root --> TestDoc[TESTING_GUIDE.md<br/>🧪 Testing]
+    Root[docs/] --> Index["index.html<br/>🌐 Landing Page"]
+    Root --> API["api/<br/>📖 TypeDoc"]
+    Root --> Coverage["coverage/<br/>📊 Coverage"]
+    Root --> Tests["test-results/<br/>✅ Unit Tests"]
+    Root --> E2E["e2e-results/<br/>🔄 E2E Tests"]
+    Root --> SBOM["SBOM.md<br/>📦 Bill of Materials"]
+    Root --> Attest["ATTESTATIONS.md<br/>🔐 Provenance"]
+    Root --> EPDoc["EP_API_INTEGRATION.md<br/>🏛️ EP Guide"]
+    Root --> TestDoc["TESTING_GUIDE.md<br/>🧪 Testing"]
     
     API --> Classes[classes/]
     API --> Functions[functions/]

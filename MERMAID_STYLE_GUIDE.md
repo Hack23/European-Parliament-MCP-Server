@@ -17,7 +17,7 @@ that keeps the codebase free of `#FFA726` vs `#ffa726` noise.
 
 | Rule | Rationale |
 | --- | --- |
-| Wrap node labels containing `@`, `:`, `{`, `}`, `(`, `)`, `,`, `/` or hyphenated technical terms in **double quotes** (e.g. `N["foo@bar/baz"]`). | Mermaid 11 reserves `@` for link IDs and `{ }` for shape DSL; unquoted labels can produce `Expecting … got 'LINK_ID' / 'DIAMOND_START'` parse errors. |
+| **Always wrap node labels that contain an icon (emoji), `@`, `:`, `(`, `)`, `{`, `}`, `&`, or `;` in double quotes** (e.g. `N["📡 Sources"]`, `N["foo@bar"]`, `N["resource/{id}"]`). | Mermaid 11's flowchart grammar reserves `@` for link IDs and `{ }` for shape DSL; unquoted icons/punctuation can either fail to parse or render with corrupted text. The `--quote-icons` flag auto-fixes this. |
 | Use **lowercase** hex literals (`#1565c0`, not `#1565C0`). | Single canonical form; enforced by `--normalize-colors`. |
 | Prefer the [canonical palette](#2-canonical-palette) below over ad-hoc colours. | Cross-document consistency, accessibility, dark-mode friendliness. |
 | Use **3-letter direction tokens** (`graph TB`, `graph LR`) consistently. | Avoids confusing mixed `TD`/`TB` styles. |
@@ -68,6 +68,14 @@ npm run test:mermaid
 
 # Lowercase hex literals across all source mermaid blocks (idempotent)
 npx tsx scripts/validate-mermaid-diagrams.ts --normalize-colors
+
+# Wrap every unquoted node label that contains an icon (emoji) or
+# Mermaid-special punctuation (`@`, `:`, `(`, `)`, `{`, `}`, `&`, `;`) in
+# double quotes — fixes the most common GitHub-rendered-but-fragile diagrams.
+npx tsx scripts/validate-mermaid-diagrams.ts --quote-icons
+
+# Both transforms in one pass
+npx tsx scripts/validate-mermaid-diagrams.ts --fix
 ```
 
 The validator skips generated mirrors (`docs/api*`, `docs/api-markdown/_media/`)
