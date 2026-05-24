@@ -332,13 +332,13 @@ sequenceDiagram
     participant EPAPI as EP API
     participant Metrics as Metrics Service
     
-    Client->>Server: callTool("'get_meps', {country: 'SE'}")
+    Client->>Server: callTool('get_meps', {country: 'SE'})
     activate Server
     
     Server->>Registry: lookupTool('get_meps')
     Registry-->>Server: handleGetMEPs
     
-    Server->>Tool: handleGetMEPs("{country: 'SE'}")
+    Server->>Tool: handleGetMEPs({country: 'SE'})
     activate Tool
     
     Tool->>Validation: GetMEPsSchema.parse(args)
@@ -348,10 +348,10 @@ sequenceDiagram
     
     Tool->>Metrics: incrementCounter('tool_invocations')
     
-    Tool->>EPClient: getMEPs("{country: 'SE'}")
+    Tool->>EPClient: getMEPs({country: 'SE'})
     activate EPClient
     
-    EPClient->>Cache: get("'meps:SE'")
+    EPClient->>Cache: get('meps:SE')
     Cache-->>EPClient: null (cache miss)
     
     EPClient->>RateLimit: tryRemoveTokens(1)
@@ -362,7 +362,7 @@ sequenceDiagram
     EPAPI-->>EPClient: 200 OK {data: [...]}
     deactivate EPAPI
     
-    EPClient->>Cache: set("'meps:SE', data, ttl: 900s")
+    EPClient->>Cache: set('meps:SE', data, ttl: 900s)
     EPClient-->>Tool: {data: [...], total: 20}
     deactivate EPClient
     

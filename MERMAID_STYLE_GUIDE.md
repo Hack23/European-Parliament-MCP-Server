@@ -20,7 +20,7 @@ that keeps the codebase free of `#FFA726` vs `#ffa726` noise.
 | **Always wrap node labels that contain an icon (emoji), `@`, `:`, `(`, `)`, `{`, `}`, `&`, or `;` in double quotes** (e.g. `N["📡 Sources"]`, `N["foo@bar"]`, `N["resource/{id}"]`). | Mermaid 11's flowchart grammar reserves `@` for link IDs and `{ }` for shape DSL; unquoted icons/punctuation can either fail to parse or render with corrupted text. The `--quote-icons` flag auto-fixes this. |
 | Use **lowercase** hex literals (`#1565c0`, not `#1565C0`). | Single canonical form; enforced by `--normalize-colors`. |
 | Prefer the [canonical palette](#2-canonical-palette) below over ad-hoc colours. | Cross-document consistency, accessibility, dark-mode friendliness. |
-| Use **3-letter direction tokens** (`graph TB`, `graph LR`) consistently. | Avoids confusing mixed `TD`/`TB` styles. |
+| Use **direction tokens** (`graph TB`, `graph LR`) consistently. | Avoids confusing mixed `TD`/`TB` styles. |
 | Add `%%{init: {...}}%%` directives only when the default Mermaid theme is insufficient. | Keeps diagrams portable across GitHub, TypeDoc and PDF renderers. |
 
 ## 2. Canonical palette

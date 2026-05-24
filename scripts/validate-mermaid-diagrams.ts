@@ -17,11 +17,20 @@
  * - --normalize-colors     → in-place lowercase all `#RRGGBB`/`#RGB` hex
  *                            colors inside mermaid blocks (cosmetic; the
  *                            rendered diagram is unchanged) then validate
+ * - --quote-icons          → in-place wrap unquoted node labels that contain
+ *                            an icon (non-ASCII/emoji) or special punctuation
+ *                            (@, :, (, ), {, }, &, ;) in double quotes for
+ *                            graph/flowchart/mindmap/timeline diagrams, then
+ *                            validate
+ * - --fix                  → runs both --normalize-colors and --quote-icons
+ *                            in one pass, then validate
  *
  * **Usage**
  * ```bash
  * npm run test:mermaid                       # validate
  * npx tsx scripts/validate-mermaid-diagrams.ts --normalize-colors
+ * npx tsx scripts/validate-mermaid-diagrams.ts --quote-icons
+ * npx tsx scripts/validate-mermaid-diagrams.ts --fix
  * ```
  *
  * **ISMS Compliance**
@@ -31,7 +40,8 @@
  */
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, resolve, dirname } from 'node:path';
+import type { Stats } from 'node:fs';
+import { join, relative, resolve, dirname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 
@@ -60,7 +70,7 @@ const SKIP_DIR_NAMES = new Set([
   // TypeDoc places everything below docs/ — skip the whole tree.
 ]);
 
-const SKIP_PATH_PREFIXES = [join(REPO_ROOT, 'docs') + '/'];
+const SKIP_PATH_PREFIXES = [join(REPO_ROOT, 'docs') + sep];
 
 interface MermaidBlock {
   readonly file: string;
@@ -91,7 +101,7 @@ function walkMarkdownFiles(root: string, out: string[] = []): string[] {
     const full = join(root, name);
     const skipped = SKIP_PATH_PREFIXES.some((p) => full.startsWith(p));
     if (skipped) continue;
-    let stat;
+    let stat: Stats;
     try {
       stat = statSync(full);
     } catch {
@@ -121,7 +131,7 @@ function discoverMarkdownFiles(): string[] {
 /** Extract every ```mermaid ... ``` fenced block from a markdown file. */
 function extractBlocks(file: string): MermaidBlock[] {
   const text = readFileSync(file, 'utf8');
-  const lines = text.split('\n');
+  const lines = text.split(/\r?\n/);
   const blocks: MermaidBlock[] = [];
   let inBlock = false;
   let openIndex = -1;
@@ -169,7 +179,7 @@ function normalizeColorsInPlace(files: readonly string[]): number {
   let modified = 0;
   for (const file of files) {
     const original = readFileSync(file, 'utf8');
-    const lines = original.split('\n');
+    const lines = original.split(/\r?\n/);
     let inBlock = false;
     let changed = false;
     for (let i = 0; i < lines.length; i++) {
@@ -330,8 +340,16 @@ function quoteIconsInBlock(code: string): string {
   return out.join('');
 }
 
+/** Diagram types for which icon/special-char label quoting is safe to apply. */
+const QUOTABLE_DIAGRAM_TYPES = new Set(['graph', 'flowchart', 'mindmap', 'timeline']);
+
 /**
  * Apply {@link quoteIconsInBlock} to every ```mermaid block in the file.
+ *
+ * Only blocks whose first (non-empty) token is one of `graph`, `flowchart`,
+ * `mindmap`, or `timeline` are transformed.  Sequence diagrams and other
+ * types use free-form message text where parentheses/braces are not shape
+ * DSL and must not be quoted.
  *
  * @returns the number of files that were modified.
  */
@@ -339,7 +357,7 @@ function quoteIconsInPlace(files: readonly string[]): number {
   let modified = 0;
   for (const file of files) {
     const original = readFileSync(file, 'utf8');
-    const lines = original.split('\n');
+    const lines = original.split(/\r?\n/);
     let inBlock = false;
     let blockStart = -1;
     let changed = false;
@@ -352,13 +370,17 @@ function quoteIconsInPlace(files: readonly string[]): number {
       }
       if (inBlock && /^```\s*$/.test(line)) {
         const block = lines.slice(blockStart, i).join('\n');
-        const transformed = quoteIconsInBlock(block);
-        if (transformed !== block) {
-          const newLines = transformed.split('\n');
-          lines.splice(blockStart, i - blockStart, ...newLines);
-          // Adjust `i` if number of lines changed (rare; quoting preserves line count).
-          i = blockStart + newLines.length;
-          changed = true;
+        // Only quote labels in diagram types where shape-pair DSL applies.
+        const firstToken = (block.trimStart().split(/[\s{([]/)[0] ?? '').toLowerCase();
+        if (QUOTABLE_DIAGRAM_TYPES.has(firstToken)) {
+          const transformed = quoteIconsInBlock(block);
+          if (transformed !== block) {
+            const newLines = transformed.split('\n');
+            lines.splice(blockStart, i - blockStart, ...newLines);
+            // Adjust `i` if number of lines changed (rare; quoting preserves line count).
+            i = blockStart + newLines.length;
+            changed = true;
+          }
         }
         inBlock = false;
         continue;
