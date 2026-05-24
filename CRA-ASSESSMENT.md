@@ -129,7 +129,7 @@ graph LR
     end
     subgraph "🛡️ Implementation"
         A3 --> B1[Security Controls]
-        B1 --> B2[Testing & Validation]
+        B1 --> B2["Testing & Validation"]
         B2 --> B3[Evidence Collection]
     end
     subgraph "📦 Maintenance"

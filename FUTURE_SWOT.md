@@ -56,10 +56,10 @@
 %%{init: {
   "theme": "neutral",
   "themeVariables": {
-    "quadrant1Fill": "#1565C0",
-    "quadrant2Fill": "#2E7D32",
-    "quadrant3Fill": "#D32F2F",
-    "quadrant4Fill": "#FF9800",
+    "quadrant1Fill": "#1565c0",
+    "quadrant2Fill": "#2e7d32",
+    "quadrant3Fill": "#d32f2f",
+    "quadrant4Fill": "#ff9800",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#000000",

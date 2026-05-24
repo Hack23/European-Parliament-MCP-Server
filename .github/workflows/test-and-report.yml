@@ -90,6 +90,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Validate Mermaid diagrams in markdown files
+      - name: Validate Mermaid diagrams
+        run: npm run test:mermaid
+
       # Check for unused dependencies with knip
       - name: Check for unused dependencies
         run: npm run knip

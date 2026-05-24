@@ -230,6 +230,7 @@ npm run type-check         # TypeScript type checking
 npm run dev                # Development server
 npm run knip               # Find unused exports
 npm run test:licenses      # Check license compliance
+npm run test:mermaid       # Validate every ```mermaid block in *.md (see MERMAID_STYLE_GUIDE.md)
 ```
 
 ---

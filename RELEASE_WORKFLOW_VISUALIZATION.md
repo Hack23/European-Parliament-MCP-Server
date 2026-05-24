@@ -7,7 +7,7 @@ flowchart TB
     Start([Release Trigger<br/>Tag Push or Manual]) --> Prepare
     
     subgraph Prepare["📋 Prepare Job"]
-        P1[Checkout & Setup] --> P2[Get Version]
+        P1["Checkout & Setup"] --> P2[Get Version]
         P2 --> P3[Install Dependencies]
         P3 --> P4[Build TypeScript]
         P4 --> P5[Run Tests]
@@ -59,20 +59,20 @@ flowchart TB
         N5 --> N6[Verify Publication]
     end
     
-    PublishNPM --> End([✅ Release Complete])
+    PublishNPM --> End(["✅ Release Complete"])
     
-    P9 -.->|Deploys to| Pages[📄 GitHub Pages<br/>gh-pages branch]
+    P9 -.->|Deploys to| Pages["📄 GitHub Pages<br/>gh-pages branch"]
     
-    style Start fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style Start fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style End fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style End fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style DocGen fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style DocGen fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style Pages fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1f1f1f
+    style Pages fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1f1f1f
 
 
 ```
@@ -81,15 +81,15 @@ flowchart TB
 
 ```mermaid
 graph TD
-    Root[docs/] --> Index[index.html<br/>🌐 Landing Page]
-    Root --> API[api/<br/>📖 TypeDoc]
-    Root --> Coverage[coverage/<br/>📊 Coverage]
-    Root --> Tests[test-results/<br/>✅ Unit Tests]
-    Root --> E2E[e2e-results/<br/>🔄 E2E Tests]
-    Root --> SBOM[SBOM.md<br/>📦 Bill of Materials]
-    Root --> Attest[ATTESTATIONS.md<br/>🔐 Provenance]
-    Root --> EPDoc[EP_API_INTEGRATION.md<br/>🏛️ EP Guide]
-    Root --> TestDoc[TESTING_GUIDE.md<br/>🧪 Testing]
+    Root[docs/] --> Index["index.html<br/>🌐 Landing Page"]
+    Root --> API["api/<br/>📖 TypeDoc"]
+    Root --> Coverage["coverage/<br/>📊 Coverage"]
+    Root --> Tests["test-results/<br/>✅ Unit Tests"]
+    Root --> E2E["e2e-results/<br/>🔄 E2E Tests"]
+    Root --> SBOM["SBOM.md<br/>📦 Bill of Materials"]
+    Root --> Attest["ATTESTATIONS.md<br/>🔐 Provenance"]
+    Root --> EPDoc["EP_API_INTEGRATION.md<br/>🏛️ EP Guide"]
+    Root --> TestDoc["TESTING_GUIDE.md<br/>🧪 Testing"]
     
     API --> Classes[classes/]
     API --> Functions[functions/]
@@ -105,17 +105,17 @@ graph TD
     E2E --> E2EHTML[report.html]
     E2E --> E2EJSON[results.json]
     
-    style Root fill:#673AB7,stroke:#482880,stroke-width:2px,color:#fff
+    style Root fill:#673ab7,stroke:#482880,stroke-width:2px,color:#fff
 
-    style Index fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#fff
+    style Index fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#fff
 
-    style API fill:#00C853,stroke:#008c3a,stroke-width:2px,color:#fff
+    style API fill:#00c853,stroke:#008c3a,stroke-width:2px,color:#fff
 
-    style Coverage fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1f1f1f
+    style Coverage fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1f1f1f
 
-    style Tests fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#fff
+    style Tests fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#fff
 
-    style E2E fill:#03A9F4,stroke:#0276aa,stroke-width:2px,color:#fff
+    style E2E fill:#03a9f4,stroke:#0276aa,stroke-width:2px,color:#fff
 
 ```
 
@@ -223,13 +223,13 @@ flowchart LR
     Attest --> Public
     Prov --> Public
     
-    style Code fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style Code fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style Public fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style Public fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style Security fill:#FF3D00,stroke:#b22a00,stroke-width:2px,color:#fff
+    style Security fill:#ff3d00,stroke:#b22a00,stroke-width:2px,color:#fff
 
 ```
 

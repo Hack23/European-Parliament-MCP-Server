@@ -73,6 +73,9 @@ npm audit
 
 # License compliance check
 npm run test:licenses
+
+# Validate mermaid diagrams in *.md (see MERMAID_STYLE_GUIDE.md)
+npm run test:mermaid
 ```
 
 ### Environment Variables

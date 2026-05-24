@@ -157,29 +157,29 @@ This threat model implements the **five integrated threat modeling strategies** 
 
 ```mermaid
 mindmap
-  root((🎯 EP MCP Server<br/>Threat Modeling<br/>Strategies))
-    (🎖️ Attacker-Centric)
+  root(("🎯 EP MCP Server<br/>Threat Modeling<br/>Strategies"))
+    ("🎖️ Attacker-Centric")
       MITRE ATT&CK Mapping
       Kill Chain Analysis
       Threat Agent Classification
       Attack Tree Analysis
-    (🏗️ Asset-Centric)
+    ("🏗️ Asset-Centric")
       Crown Jewel Analysis
       Critical Asset Inventory
       Data Flow Threat Analysis
       GDPR Data Classification
-    (🏛️ Architecture-Centric)
+    ("🏛️ Architecture-Centric")
       STRIDE per Component
       Trust Boundary Analysis
       Data Flow Diagrams
       Defense-in-Depth Layers
-    (🎯 Scenario-Centric)
+    ("🎯 Scenario-Centric")
       Parliamentary Data Manipulation
       MEP Personal Data Abuse
       Electoral Disinformation
       Supply Chain Compromise
       MCP Protocol Injection
-    (⚖️ Risk-Centric)
+    ("⚖️ Risk-Centric")
       Quantitative Risk Matrix
       Business Impact Analysis
       Likelihood Assessment
@@ -239,7 +239,7 @@ mindmap
 
 ```mermaid
 mindmap
-  root((🏛️ EP MCP<br/>Crown Jewels))
+  root(("🏛️ EP MCP<br/>Crown Jewels"))
     🔒 EP Parliamentary<br/>Data Integrity
       Voting Records
       MEP Profiles
@@ -677,12 +677,12 @@ This section maps the **Cyber Kill Chain** phases to the EP MCP Server's defensi
 
 ```mermaid
 graph LR
-    R[1️⃣ Recon] -->|Public project| W[2️⃣ Weaponize]
-    W -->|Supply chain| D[3️⃣ Deliver]
-    D -->|Malicious code| E[4️⃣ Exploit]
-    E -->|Code execution| I[5️⃣ Install]
-    I -->|Persistence| C[6️⃣ C2]
-    C -->|Control| A[7️⃣ Actions]
+    R["1️⃣ Recon"] -->|Public project| W["2️⃣ Weaponize"]
+    W -->|Supply chain| D["3️⃣ Deliver"]
+    D -->|Malicious code| E["4️⃣ Exploit"]
+    E -->|Code execution| I["5️⃣ Install"]
+    I -->|Persistence| C["6️⃣ C2"]
+    C -->|Control| A["7️⃣ Actions"]
 
     R -.->|🛡️ Generic errors| RD[Disrupted]
     W -.->|🛡️ SLSA + Dependabot| WD[Disrupted]
@@ -695,19 +695,19 @@ graph LR
     style RD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
-    style WD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style WD fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style DD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style DD fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style ED fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style ED fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style ID fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style ID fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style CD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style CD fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
     style AD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
@@ -814,10 +814,10 @@ Understanding potential adversaries is critical for proportionate security inves
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#D32F2F",
-    "quadrant2Fill": "#FF9800",
-    "quadrant3Fill": "#4CAF50",
-    "quadrant4Fill": "#1565C0",
+    "quadrant1Fill": "#d32f2f",
+    "quadrant2Fill": "#ff9800",
+    "quadrant3Fill": "#4caf50",
+    "quadrant4Fill": "#1565c0",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#ffffff",
@@ -941,10 +941,10 @@ This section applies scenario-based threat modeling to European Parliament-speci
 
 ```mermaid
 graph LR
-    A[1️⃣ Compromise npm dependency] --> B[2️⃣ Inject response manipulation code]
-    B --> C[3️⃣ MCP server returns altered vote data]
-    C --> D[4️⃣ AI assistant provides false analysis]
-    D --> E[5️⃣ Political decisions based on false data]
+    A["1️⃣ Compromise npm dependency"] --> B["2️⃣ Inject response manipulation code"]
+    B --> C["3️⃣ MCP server returns altered vote data"]
+    C --> D["4️⃣ AI assistant provides false analysis"]
+    D --> E["5️⃣ Political decisions based on false data"]
     
     style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
@@ -997,10 +997,10 @@ graph LR
 
 ```mermaid
 graph LR
-    A[1️⃣ Automated MCP client] --> B[2️⃣ Systematic MEP data queries]
-    B --> C[3️⃣ Bulk export of GDPR-protected data]
-    C --> D[4️⃣ Commercial database sale]
-    D --> E[5️⃣ GDPR Article 6 violation]
+    A["1️⃣ Automated MCP client"] --> B["2️⃣ Systematic MEP data queries"]
+    B --> C["3️⃣ Bulk export of GDPR-protected data"]
+    C --> D["4️⃣ Commercial database sale"]
+    D --> E["5️⃣ GDPR Article 6 violation"]
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
@@ -1053,10 +1053,10 @@ graph LR
 
 ```mermaid
 graph LR
-    A[1️⃣ Supply chain compromise] --> B[2️⃣ Inject disinformation logic]
-    B --> C[3️⃣ AI assistants use false data]
-    C --> D[4️⃣ News articles published]
-    D --> E[5️⃣ Electoral influence achieved]
+    A["1️⃣ Supply chain compromise"] --> B["2️⃣ Inject disinformation logic"]
+    B --> C["3️⃣ AI assistants use false data"]
+    C --> D["4️⃣ News articles published"]
+    D --> E["5️⃣ Electoral influence achieved"]
     
     style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
@@ -1109,10 +1109,10 @@ graph LR
 
 ```mermaid
 graph LR
-    A[1️⃣ Maintainer account phishing] --> B[2️⃣ 2FA bypass via session hijacking]
-    B --> C[3️⃣ Malicious npm publish]
-    C --> D[4️⃣ Automatic updates infect users]
-    D --> E[5️⃣ Widespread MCP server compromise]
+    A["1️⃣ Maintainer account phishing"] --> B["2️⃣ 2FA bypass via session hijacking"]
+    B --> C["3️⃣ Malicious npm publish"]
+    C --> D["4️⃣ Automatic updates infect users"]
+    D --> E["5️⃣ Widespread MCP server compromise"]
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
@@ -1165,10 +1165,10 @@ graph LR
 
 ```mermaid
 graph LR
-    A[1️⃣ Craft malicious tool parameters] --> B[2️⃣ Exploit Zod schema weakness]
-    B --> C[3️⃣ Inject code execution payload]
-    C --> D[4️⃣ MCP server executes attacker code]
-    D --> E[5️⃣ AI assistant compromise]
+    A["1️⃣ Craft malicious tool parameters"] --> B["2️⃣ Exploit Zod schema weakness"]
+    B --> C["3️⃣ Inject code execution payload"]
+    C --> D["4️⃣ MCP server executes attacker code"]
+    D --> E["5️⃣ AI assistant compromise"]
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
@@ -1221,30 +1221,30 @@ Following [Hack23 AB Workshop Framework](https://github.com/Hack23/ISMS-PUBLIC/b
 
 ```mermaid
 graph LR
-    PRE[🔍 PRE<br/>Preparation] --> ENUM[📋 ENUM<br/>Enumeration]
-    ENUM --> THREATS[⚠️ THREATS<br/>Identification]
-    THREATS --> MAP[🗺️ MAP<br/>ATT&CK Mapping]
-    MAP --> PLAN[📝 PLAN<br/>Mitigation]
-    PLAN --> VALIDATE[✅ VALIDATE<br/>Verification]
-    VALIDATE --> MONITOR[📊 MONITOR<br/>Continuous]
+    PRE["🔍 PRE<br/>Preparation"] --> ENUM["📋 ENUM<br/>Enumeration"]
+    ENUM --> THREATS["⚠️ THREATS<br/>Identification"]
+    THREATS --> MAP["🗺️ MAP<br/>ATT&CK Mapping"]
+    MAP --> PLAN["📝 PLAN<br/>Mitigation"]
+    PLAN --> VALIDATE["✅ VALIDATE<br/>Verification"]
+    VALIDATE --> MONITOR["📊 MONITOR<br/>Continuous"]
     MONITOR -.->|Next Cycle| PRE
 
-    style PRE fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style PRE fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style ENUM fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style ENUM fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style THREATS fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+    style THREATS fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
-    style MAP fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+    style MAP fill:#9c27b0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
 
 
-    style PLAN fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
+    style PLAN fill:#f44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
 
 
-    style VALIDATE fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
+    style VALIDATE fill:#00bcd4,stroke:#008394,stroke-width:2px,color:#ffffff
 
 
     style MONITOR fill:#795548,stroke:#543b32,stroke-width:2px,color:#ffffff
@@ -1337,29 +1337,29 @@ The threat model must be reviewed **immediately** when any of the following even
 
 ```mermaid
 graph LR
-    A[🔍 Monitor Threat<br/>Landscape] --> B[📊 Identify New<br/>Threats]
-    B --> C[🎯 Assess Impact &<br/>Likelihood]
-    C --> D[🛡️ Design/Update<br/>Mitigations]
-    D --> E[✅ Implement<br/>Controls]
-    E --> F[📈 Measure<br/>Effectiveness]
+    A["🔍 Monitor Threat<br/>Landscape"] --> B["📊 Identify New<br/>Threats"]
+    B --> C["🎯 Assess Impact &<br/>Likelihood"]
+    C --> D["🛡️ Design/Update<br/>Mitigations"]
+    D --> E["✅ Implement<br/>Controls"]
+    E --> F["📈 Measure<br/>Effectiveness"]
     F --> A
     
-    style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style A fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style B fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style C fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+    style C fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
-    style D fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+    style D fill:#9c27b0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
 
 
-    style E fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
+    style E fill:#f44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
 
 
-    style F fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
+    style F fill:#00bcd4,stroke:#008394,stroke-width:2px,color:#ffffff
 
 
 ```
@@ -1421,7 +1421,7 @@ This section defines the **structured cadence** for threat model reviews, ensuri
 
 ```mermaid
 graph TD
-    A[📅 Scheduled Review<br/>or Trigger Event] --> B{Review Type?}
+    A["📅 Scheduled Review<br/>or Trigger Event"] --> B{Review Type?}
     B -->|Monthly| C[Dependency Scan<br/>Review]
     B -->|Quarterly| D[Full Threat Model<br/>Workshop]
     B -->|Annual| E[Comprehensive<br/>Revision]
@@ -1438,19 +1438,19 @@ graph TD
     J --> K
     
     K --> L[Commit to GitHub]
-    L --> M[📢 Communicate Updates]
-    M --> N[✅ Review Complete]
+    L --> M["📢 Communicate Updates"]
+    M --> N["✅ Review Complete"]
     
-    style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style A fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style B fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style K fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+    style K fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
-    style N fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+    style N fill:#9c27b0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
 
 
 ```
@@ -1682,10 +1682,10 @@ To objectively measure progression, the following criteria are used for annual m
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#D32F2F",
-    "quadrant2Fill": "#4CAF50",
-    "quadrant3Fill": "#2E7D32",
-    "quadrant4Fill": "#FF9800",
+    "quadrant1Fill": "#d32f2f",
+    "quadrant2Fill": "#4caf50",
+    "quadrant3Fill": "#2e7d32",
+    "quadrant4Fill": "#ff9800",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#ffffff",
@@ -2122,44 +2122,44 @@ Comprehensive mapping of each STRIDE threat category to preventive, detective, a
 ```mermaid
 graph TB
     subgraph "🏰 Layer 1: Perimeter Security"
-        L1A[🌐 HTTPS/TLS 1.3]
-        L1B[⏱️ Rate Limiting]
-        L1C[🔒 Certificate Validation]
-        L1D[🚫 No HTTP Fallback]
+        L1A["🌐 HTTPS/TLS 1.3"]
+        L1B["⏱️ Rate Limiting"]
+        L1C["🔒 Certificate Validation"]
+        L1D["🚫 No HTTP Fallback"]
     end
     
     subgraph "🏗️ Layer 2: Application Security"
-        L2A[✅ Zod Input Validation]
-        L2B[📝 TypeScript Strict Mode]
-        L2C[🛡️ Parameter Sanitization]
-        L2D[🚫 No Shell Execution]
-        L2E[🔍 Response Validation]
+        L2A["✅ Zod Input Validation"]
+        L2B["📝 TypeScript Strict Mode"]
+        L2C["🛡️ Parameter Sanitization"]
+        L2D["🚫 No Shell Execution"]
+        L2E["🔍 Response Validation"]
     end
     
     subgraph "💾 Layer 3: Data Security"
-        L3A[✅ Public Data Only]
-        L3B[⏳ TTL-Based Caching]
-        L3C[🔒 Immutable Cache Entries]
-        L3D[🧹 Sanitized Error Messages]
-        L3E[📊 Structured Logging]
+        L3A["✅ Public Data Only"]
+        L3B["⏳ TTL-Based Caching"]
+        L3C["🔒 Immutable Cache Entries"]
+        L3D["🧹 Sanitized Error Messages"]
+        L3E["📊 Structured Logging"]
     end
     
     subgraph "📦 Layer 4: Supply Chain Security"
-        L4A[🏅 SLSA Level 3]
-        L4B[🤖 Dependabot Alerts]
-        L4C[📋 SBOM CycloneDX]
-        L4D[🔐 npm 2FA Publishing]
-        L4E[🔒 package-lock.json]
-        L4F[🎯 npm Provenance]
+        L4A["🏅 SLSA Level 3"]
+        L4B["🤖 Dependabot Alerts"]
+        L4C["📋 SBOM CycloneDX"]
+        L4D["🔐 npm 2FA Publishing"]
+        L4E["🔒 package-lock.json"]
+        L4F["🎯 npm Provenance"]
     end
     
     subgraph "🔍 Layer 5: Operational Security"
-        L5A[📊 OpenSSF Scorecard]
-        L5B[📋 Audit Logging stderr]
-        L5C[🎖️ Security Badges]
-        L5D[🔄 Automated Testing]
-        L5E[🛡️ CodeQL SAST]
-        L5F[🔍 Snyk Scanning]
+        L5A["📊 OpenSSF Scorecard"]
+        L5B["📋 Audit Logging stderr"]
+        L5C["🎖️ Security Badges"]
+        L5D["🔄 Automated Testing"]
+        L5E["🛡️ CodeQL SAST"]
+        L5F["🔍 Snyk Scanning"]
     end
     
     L1A --> L2A

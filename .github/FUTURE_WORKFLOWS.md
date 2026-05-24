@@ -222,23 +222,23 @@ Implement automated deployment to multiple environments (development, staging, p
 ```mermaid
 graph LR
     subgraph "Deployment Pipeline"
-        D1[🔨 Build] --> D2[🧪 Test Dev]
+        D1["🔨 Build"] --> D2["🧪 Test Dev"]
         D2 --> D3{Approval?}
-        D3 -->|Yes| D4[🎭 Deploy Staging]
-        D4 --> D5[🧪 Test Staging]
+        D3 -->|Yes| D4["🎭 Deploy Staging"]
+        D4 --> D5["🧪 Test Staging"]
         D5 --> D6{Approval?}
-        D6 -->|Yes| D7[🚀 Deploy Prod]
-        D7 --> D8[🏥 Health Check]
+        D6 -->|Yes| D7["🚀 Deploy Prod"]
+        D7 --> D8["🏥 Health Check"]
         D8 --> D9{Healthy?}
-        D9 -->|No| D10[↩️ Rollback]
-        D9 -->|Yes| D11[✅ Complete]
+        D9 -->|No| D10["↩️ Rollback"]
+        D9 -->|Yes| D11["✅ Complete"]
     end
     
-    style D1 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
-    style D4 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
-    style D7 fill:#00C853,stroke:#00695C,stroke-width:2px,color:white
-    style D10 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
-    style D11 fill:#00C853,stroke:#00695C,stroke-width:2px,color:white
+    style D1 fill:#2979ff,stroke:#1565c0,stroke-width:2px,color:white
+    style D4 fill:#673ab7,stroke:#4527a0,stroke-width:2px,color:white
+    style D7 fill:#00c853,stroke:#00695c,stroke-width:2px,color:white
+    style D10 fill:#ff3d00,stroke:#bf360c,stroke-width:2px,color:white
+    style D11 fill:#00c853,stroke:#00695c,stroke-width:2px,color:white
 ```
 
 ### 🔐 ISMS Evidence

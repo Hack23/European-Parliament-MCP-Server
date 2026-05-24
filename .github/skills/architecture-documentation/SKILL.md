@@ -106,9 +106,9 @@ graph TB
     Client[MCP Client<br/>Untrusted]
     
     subgraph "MCP Server Process"
-        Transport[StdioServerTransport<br/>@modelcontextprotocol/sdk]
+        Transport["StdioServerTransport<br/>@modelcontextprotocol/sdk"]
         Tools[Tool Handlers<br/>search_meps, get_mep]
-        Resources[Resource Handlers<br/>ep://meps/{id}]
+        Resources["Resource Handlers<br/>ep://meps/{id}"]
         Prompts[Prompt Templates]
         Validation[Input Validation<br/>Zod Schemas]
         Cache[LRU Cache<br/>In-Memory]
@@ -148,7 +148,7 @@ graph TB
         RateLimit[Rate Limiter<br/>60 req/min]
         CacheCheck[Cache Check<br/>LRU]
         APIClient[EP API Client<br/>Undici]
-        Transform[Data Transform<br/>EP → MCP Format]
+        Transform["Data Transform<br/>EP → MCP Format"]
         AuditLog[GDPR Audit Log]
     end
     
@@ -285,11 +285,11 @@ graph TB
 ```mermaid
 graph TB
     subgraph "Defense Layers"
-        L1[Layer 1: Input Validation<br/>Zod schemas, whitelist validation]
-        L2[Layer 2: Rate Limiting<br/>60 req/min per client]
-        L3[Layer 3: Caching<br/>LRU with TTL limits]
-        L4[Layer 4: Audit Logging<br/>All data access logged]
-        L5[Layer 5: Error Handling<br/>Safe errors, no data exposure]
+        L1["Layer 1: Input Validation<br/>Zod schemas, whitelist validation"]
+        L2["Layer 2: Rate Limiting<br/>60 req/min per client"]
+        L3["Layer 3: Caching<br/>LRU with TTL limits"]
+        L4["Layer 4: Audit Logging<br/>All data access logged"]
+        L5["Layer 5: Error Handling<br/>Safe errors, no data exposure"]
     end
     
     Request[Incoming Request] --> L1
