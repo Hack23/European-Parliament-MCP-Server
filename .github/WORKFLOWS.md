@@ -103,14 +103,14 @@ graph LR
     SL4 -.Evidence.-> C3
     SL4 -.Evidence.-> C4
     
-    style SL1 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
-    style SL2 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
-    style SL3 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
-    style SL4 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
-    style C1 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
-    style C2 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
-    style C3 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
-    style C4 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style SL1 fill:#ff3d00,stroke:#bf360c,stroke-width:2px,color:white
+    style SL2 fill:#ff3d00,stroke:#bf360c,stroke-width:2px,color:white
+    style SL3 fill:#ff3d00,stroke:#bf360c,stroke-width:2px,color:white
+    style SL4 fill:#ff3d00,stroke:#bf360c,stroke-width:2px,color:white
+    style C1 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
+    style C2 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
+    style C3 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
+    style C4 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
 ```
 
 ### 📊 Workflow Portfolio
@@ -187,22 +187,22 @@ graph TB
     RP2 --> RP3
     RP3 --> RP4
     
-    style DEV1 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
-    style DEV2 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
-    style DEV3 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
-    style AC1 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
-    style AC2 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
-    style AC3 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
-    style AC4 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
-    style AC5 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
-    style QG1 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
-    style QG2 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
-    style QG3 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
-    style QG4 fill:#FDD835,stroke:#F9A825,stroke-width:2px,color:black
-    style RP1 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
-    style RP2 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
-    style RP3 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
-    style RP4 fill:#00C853,stroke:#00C853,stroke-width:2px,color:white
+    style DEV1 fill:#2979ff,stroke:#1565c0,stroke-width:2px,color:white
+    style DEV2 fill:#2979ff,stroke:#1565c0,stroke-width:2px,color:white
+    style DEV3 fill:#2979ff,stroke:#1565c0,stroke-width:2px,color:white
+    style AC1 fill:#673ab7,stroke:#4527a0,stroke-width:2px,color:white
+    style AC2 fill:#673ab7,stroke:#4527a0,stroke-width:2px,color:white
+    style AC3 fill:#673ab7,stroke:#4527a0,stroke-width:2px,color:white
+    style AC4 fill:#673ab7,stroke:#4527a0,stroke-width:2px,color:white
+    style AC5 fill:#673ab7,stroke:#4527a0,stroke-width:2px,color:white
+    style QG1 fill:#fdd835,stroke:#f9a825,stroke-width:2px,color:black
+    style QG2 fill:#fdd835,stroke:#f9a825,stroke-width:2px,color:black
+    style QG3 fill:#fdd835,stroke:#f9a825,stroke-width:2px,color:black
+    style QG4 fill:#fdd835,stroke:#f9a825,stroke-width:2px,color:black
+    style RP1 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
+    style RP2 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
+    style RP3 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
+    style RP4 fill:#00c853,stroke:#00c853,stroke-width:2px,color:white
 ```
 
 ---

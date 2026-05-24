@@ -695,19 +695,19 @@ graph LR
     style RD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
 
-    style WD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style WD fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style DD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style DD fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style ED fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style ED fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style ID fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style ID fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style CD fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style CD fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
     style AD fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
@@ -814,10 +814,10 @@ Understanding potential adversaries is critical for proportionate security inves
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#D32F2F",
-    "quadrant2Fill": "#FF9800",
-    "quadrant3Fill": "#4CAF50",
-    "quadrant4Fill": "#1565C0",
+    "quadrant1Fill": "#d32f2f",
+    "quadrant2Fill": "#ff9800",
+    "quadrant3Fill": "#4caf50",
+    "quadrant4Fill": "#1565c0",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#ffffff",
@@ -1229,22 +1229,22 @@ graph LR
     VALIDATE --> MONITOR[📊 MONITOR<br/>Continuous]
     MONITOR -.->|Next Cycle| PRE
 
-    style PRE fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style PRE fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style ENUM fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style ENUM fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style THREATS fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+    style THREATS fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
-    style MAP fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+    style MAP fill:#9c27b0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
 
 
-    style PLAN fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
+    style PLAN fill:#f44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
 
 
-    style VALIDATE fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
+    style VALIDATE fill:#00bcd4,stroke:#008394,stroke-width:2px,color:#ffffff
 
 
     style MONITOR fill:#795548,stroke:#543b32,stroke-width:2px,color:#ffffff
@@ -1344,22 +1344,22 @@ graph LR
     E --> F[📈 Measure<br/>Effectiveness]
     F --> A
     
-    style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style A fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style B fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style C fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+    style C fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
-    style D fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+    style D fill:#9c27b0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
 
 
-    style E fill:#F44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
+    style E fill:#f44336,stroke:#aa2e25,stroke-width:2px,color:#ffffff
 
 
-    style F fill:#00BCD4,stroke:#008394,stroke-width:2px,color:#ffffff
+    style F fill:#00bcd4,stroke:#008394,stroke-width:2px,color:#ffffff
 
 
 ```
@@ -1441,16 +1441,16 @@ graph TD
     L --> M[📢 Communicate Updates]
     M --> N[✅ Review Complete]
     
-    style A fill:#4CAF50,stroke:#357a38,stroke-width:2px,color:#ffffff
+    style A fill:#4caf50,stroke:#357a38,stroke-width:2px,color:#ffffff
 
 
-    style B fill:#2196F3,stroke:#1769aa,stroke-width:2px,color:#ffffff
+    style B fill:#2196f3,stroke:#1769aa,stroke-width:2px,color:#ffffff
 
 
-    style K fill:#FF9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
+    style K fill:#ff9800,stroke:#b26a00,stroke-width:2px,color:#1a1a1a
 
 
-    style N fill:#9C27B0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
+    style N fill:#9c27b0,stroke:#6d1b7b,stroke-width:2px,color:#ffffff
 
 
 ```
@@ -1682,10 +1682,10 @@ To objectively measure progression, the following criteria are used for annual m
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#D32F2F",
-    "quadrant2Fill": "#4CAF50",
-    "quadrant3Fill": "#2E7D32",
-    "quadrant4Fill": "#FF9800",
+    "quadrant1Fill": "#d32f2f",
+    "quadrant2Fill": "#4caf50",
+    "quadrant3Fill": "#2e7d32",
+    "quadrant4Fill": "#ff9800",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#ffffff",

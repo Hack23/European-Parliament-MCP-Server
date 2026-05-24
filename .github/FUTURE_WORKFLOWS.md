@@ -234,11 +234,11 @@ graph LR
         D9 -->|Yes| D11[✅ Complete]
     end
     
-    style D1 fill:#2979FF,stroke:#1565C0,stroke-width:2px,color:white
-    style D4 fill:#673AB7,stroke:#4527A0,stroke-width:2px,color:white
-    style D7 fill:#00C853,stroke:#00695C,stroke-width:2px,color:white
-    style D10 fill:#FF3D00,stroke:#BF360C,stroke-width:2px,color:white
-    style D11 fill:#00C853,stroke:#00695C,stroke-width:2px,color:white
+    style D1 fill:#2979ff,stroke:#1565c0,stroke-width:2px,color:white
+    style D4 fill:#673ab7,stroke:#4527a0,stroke-width:2px,color:white
+    style D7 fill:#00c853,stroke:#00695c,stroke-width:2px,color:white
+    style D10 fill:#ff3d00,stroke:#bf360c,stroke-width:2px,color:white
+    style D11 fill:#00c853,stroke:#00695c,stroke-width:2px,color:white
 ```
 
 ### 🔐 ISMS Evidence

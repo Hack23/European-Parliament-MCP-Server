@@ -383,10 +383,10 @@ graph LR
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#D32F2F",
-    "quadrant2Fill": "#4CAF50",
-    "quadrant3Fill": "#2E7D32",
-    "quadrant4Fill": "#FF9800",
+    "quadrant1Fill": "#d32f2f",
+    "quadrant2Fill": "#4caf50",
+    "quadrant3Fill": "#2e7d32",
+    "quadrant4Fill": "#ff9800",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#ffffff",

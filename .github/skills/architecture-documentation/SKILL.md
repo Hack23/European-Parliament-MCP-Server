@@ -106,9 +106,9 @@ graph TB
     Client[MCP Client<br/>Untrusted]
     
     subgraph "MCP Server Process"
-        Transport[StdioServerTransport<br/>@modelcontextprotocol/sdk]
+        Transport["StdioServerTransport<br/>@modelcontextprotocol/sdk"]
         Tools[Tool Handlers<br/>search_meps, get_mep]
-        Resources[Resource Handlers<br/>ep://meps/{id}]
+        Resources["Resource Handlers<br/>ep://meps/{id}"]
         Prompts[Prompt Templates]
         Validation[Input Validation<br/>Zod Schemas]
         Cache[LRU Cache<br/>In-Memory]

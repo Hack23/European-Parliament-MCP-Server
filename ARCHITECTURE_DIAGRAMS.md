@@ -86,14 +86,14 @@ graph TB
     MCP -->|HTTPS GET/POST<br/>JSON-LD| EP
     MCP -->|Compliance reference| GH
     
-    style MCP fill:#4A90E2,stroke:#2E5C8A,stroke-width:4px,color:#fff
-    style EP fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style GH fill:#24292E,stroke:#000,stroke-width:2px,color:#fff
+    style MCP fill:#4a90e2,stroke:#2e5c8a,stroke-width:4px,color:#fff
+    style EP fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style GH fill:#24292e,stroke:#000,stroke-width:2px,color:#fff
     
-    classDef clientBox fill:#7CB342,stroke:#558B2F,stroke-width:2px,color:#fff
+    classDef clientBox fill:#7cb342,stroke:#558b2f,stroke-width:2px,color:#fff
     class C1,C2,C3 clientBox
     
-    classDef userBox fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
+    classDef userBox fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
     class U1,U2,U3 userBox
 ```
 
@@ -162,10 +162,10 @@ graph TB
     TOOLS --> METRICS
     API_CLIENT --> METRICS
     
-    style SERVER fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#fff
-    style EP_API fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style CACHE fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style VALIDATION fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
+    style SERVER fill:#4a90e2,stroke:#2e5c8a,stroke-width:3px,color:#fff
+    style EP_API fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style CACHE fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style VALIDATION fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
 ```
 
 **Container Descriptions**:
@@ -292,10 +292,10 @@ graph TB
     
     SCHEMAS --> TYPES
     
-    style INDEX fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#fff
-    style EP_CLIENT fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style SCHEMAS fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
-    style CACHE_UTIL fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
+    style INDEX fill:#4a90e2,stroke:#2e5c8a,stroke-width:3px,color:#fff
+    style EP_CLIENT fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style SCHEMAS fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
+    style CACHE_UTIL fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
 ```
 
 **Component Responsibilities**:
@@ -542,10 +542,10 @@ graph LR
     MCP_HANDLER -->|MCP Response<br/>JSON| CLIENT
     CLIENT --> DISPLAY
     
-    style EP_API fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style CACHE fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style TRANSFORM fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
-    style MCP_HANDLER fill:#4A90E2,stroke:#2E5C8A,stroke-width:2px,color:#fff
+    style EP_API fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style CACHE fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style TRANSFORM fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
+    style MCP_HANDLER fill:#4a90e2,stroke:#2e5c8a,stroke-width:2px,color:#fff
 ```
 
 **Data Transformations**:
@@ -584,10 +584,10 @@ graph TB
     RATE_ERROR --> END
     API_ERROR --> END
     
-    style RETURN_CACHED fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style API_CALL fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
-    style RATE_ERROR fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style API_ERROR fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
+    style RETURN_CACHED fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style API_CALL fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
+    style RATE_ERROR fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style API_ERROR fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
 ```
 
 **Cache Configuration**:
@@ -630,8 +630,8 @@ graph TB
     ALLOW --> API_CALL[Process Request]
     RATE_LIMIT --> WAIT[Client Must Wait]
     
-    style REMOVE_TOKEN fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style RATE_LIMIT fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
+    style REMOVE_TOKEN fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style RATE_LIMIT fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
 ```
 
 **Rate Limit Configuration**:
@@ -686,9 +686,9 @@ graph TB
     NODE --> SERVER
     SERVER -->|HTTPS| EP_API
     
-    style CLAUDE fill:#4A90E2,stroke:#2E5C8A,stroke-width:2px,color:#fff
-    style SERVER fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style EP_API fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
+    style CLAUDE fill:#4a90e2,stroke:#2e5c8a,stroke-width:2px,color:#fff
+    style SERVER fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style EP_API fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
 ```
 
 **Configuration** (`~/.config/claude/claude_desktop_config.json`):
@@ -743,9 +743,9 @@ graph TB
     NODE --> SERVER
     SERVER -->|HTTPS| EP_API
     
-    style VSCODE fill:#007ACC,stroke:#005A9C,stroke-width:2px,color:#fff
-    style SERVER fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style EP_API fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
+    style VSCODE fill:#007acc,stroke:#005a9c,stroke-width:2px,color:#fff
+    style SERVER fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style EP_API fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
 ```
 
 **Configuration** (`.vscode/mcp.json`):
@@ -803,9 +803,9 @@ graph TB
     
     SERVER -->|HTTPS| EP_API
     
-    style SERVER fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style DOCKER fill:#2496ED,stroke:#1D7FBD,stroke-width:2px,color:#fff
-    style EP_API fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
+    style SERVER fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style DOCKER fill:#2496ed,stroke:#1d7fbd,stroke-width:2px,color:#fff
+    style EP_API fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
 ```
 
 **Dockerfile**:
@@ -889,16 +889,16 @@ graph TB
     T4 -.->|Logged by| L4
     T5 -.->|Prevented by| L5
     
-    style L1 fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style L2 fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style L3 fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style L4 fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
-    style L5 fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
-    style T1 fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style T2 fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style T3 fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style T4 fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
-    style T5 fill:#E85D75,stroke:#A53F52,stroke-width:2px,color:#fff
+    style L1 fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style L2 fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style L3 fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style L4 fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
+    style L5 fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
+    style T1 fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style T2 fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style T3 fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style T4 fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
+    style T5 fill:#e85d75,stroke:#a53f52,stroke-width:2px,color:#fff
 ```
 
 **Security Controls**:
@@ -932,8 +932,8 @@ graph LR
     CACHED --> RESPONSE[Client Response]
     FRESH --> RESPONSE
     
-    style CACHED fill:#66BB6A,stroke:#43A047,stroke-width:2px,color:#fff
-    style API_CALL fill:#FFA726,stroke:#F57C00,stroke-width:2px,color:#fff
+    style CACHED fill:#66bb6a,stroke:#43a047,stroke-width:2px,color:#fff
+    style API_CALL fill:#ffa726,stroke:#f57c00,stroke-width:2px,color:#fff
 ```
 
 **Performance Metrics**:
