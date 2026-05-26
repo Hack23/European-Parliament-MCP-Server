@@ -296,7 +296,7 @@ E2E test coverage is uploaded to Codecov with the `e2e` flag, enabling separate 
 ```mermaid
 graph TD
     F[E2E Test Failure] --> A{Server starts?}
-    A -->|No| B[Check build: npm run build]
+    A -->|No| B["Check build: npm run build"]
     A -->|Yes| C{Timeout?}
     C -->|Yes| D[Check EP API status]
     C -->|No| E{Validation error?}

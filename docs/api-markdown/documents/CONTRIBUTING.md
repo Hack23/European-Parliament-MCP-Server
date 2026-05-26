@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.10**](../README.md)
+[**European Parliament MCP Server API v1.3.11**](../README.md)
 
 ***
 
@@ -79,6 +79,9 @@ npm audit
 
 # License compliance check
 npm run test:licenses
+
+# Validate mermaid diagrams in *.md (see MERMAID_STYLE_GUIDE.md)
+npm run test:mermaid
 ```
 
 ### Environment Variables

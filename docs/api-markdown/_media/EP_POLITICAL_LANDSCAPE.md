@@ -248,10 +248,10 @@ Groups are classified on three independent axes using the [Chapel Hill Expert Su
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#D32F2F",
-    "quadrant2Fill": "#FF9800",
-    "quadrant3Fill": "#1565C0",
-    "quadrant4Fill": "#2E7D32",
+    "quadrant1Fill": "#d32f2f",
+    "quadrant2Fill": "#ff9800",
+    "quadrant3Fill": "#1565c0",
+    "quadrant4Fill": "#2e7d32",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#ffffff",

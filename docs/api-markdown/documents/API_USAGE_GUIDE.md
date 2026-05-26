@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.10**](../README.md)
+[**European Parliament MCP Server API v1.3.11**](../README.md)
 
 ***
 
@@ -158,15 +158,15 @@ graph TB
     ANALYSIS --> CORE
     CORE --> FEEDS
 
-    style OSINT fill:#D32F2F,stroke:#B71C1C,color:#fff,stroke-width:2px
-    style ANALYSIS fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
-    style CORE fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
-    style FEEDS fill:#FF8F00,stroke:#E65100,color:#000,stroke-width:2px
-    style MEP_INTEL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
-    style COALITION fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
-    style STRATEGIC fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
-    style LEGISLATIVE fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
-    style NATIONAL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style OSINT fill:#d32f2f,stroke:#b71c1c,color:#fff,stroke-width:2px
+    style ANALYSIS fill:#1565c0,stroke:#0d47a1,color:#fff,stroke-width:2px
+    style CORE fill:#2e7d32,stroke:#1b5e20,color:#fff,stroke-width:2px
+    style FEEDS fill:#ff8f00,stroke:#e65100,color:#000,stroke-width:2px
+    style MEP_INTEL fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
+    style COALITION fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
+    style STRATEGIC fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
+    style LEGISLATIVE fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
+    style NATIONAL fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
 ```
 
 ### Tool Category Overview
@@ -203,9 +203,9 @@ graph LR
     Q4 --> T4 --> O4
     Q5 --> T5 --> O5
 
-    style INPUT fill:#4A90E2,stroke:#2171C7,color:#fff,stroke-width:2px
-    style TOOLS fill:#9C27B0,stroke:#7B1FA2,color:#fff,stroke-width:2px
-    style OUTPUT fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
+    style INPUT fill:#4a90e2,stroke:#2171c7,color:#fff,stroke-width:2px
+    style TOOLS fill:#9c27b0,stroke:#7b1fa2,color:#fff,stroke-width:2px
+    style OUTPUT fill:#2e7d32,stroke:#1b5e20,color:#fff,stroke-width:2px
 ```
 
 ### Key Features

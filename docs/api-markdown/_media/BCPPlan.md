@@ -60,7 +60,7 @@ This BCP is published as part of Hack23 AB's commitment to **open source securit
 
 ```mermaid
 mindmap
-  root((🔄 Business<br/>Continuity Plan))
+  root(("🔄 Business<br/>Continuity Plan"))
     📊 Business Impact Analysis
       💰 Financial Impact
       ⚙️ Operational Impact
