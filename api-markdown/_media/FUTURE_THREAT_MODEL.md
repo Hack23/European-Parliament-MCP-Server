@@ -90,20 +90,20 @@ Integrated with:
 ```mermaid
 graph TB
     subgraph "Current Architecture (stdio)"
-        CA[🔌 MCP Server<br/>stdio transport]
-        CB[🏛️ EP API<br/>HTTPS client]
-        CC[💾 In-memory cache]
-        CD[📋 stderr logging]
+        CA["🔌 MCP Server<br/>stdio transport"]
+        CB["🏛️ EP API<br/>HTTPS client"]
+        CC["💾 In-memory cache"]
+        CD["📋 stderr logging"]
     end
 
     subgraph "Future Architecture (Cloud-Native)"
-        FA[🚪 API Gateway<br/>+ WAF]
-        FB[⚡ Lambda Functions<br/>MCP handlers]
-        FC[🔐 Cognito/OAuth2<br/>Authentication]
-        FD[📊 DynamoDB<br/>Cache + State]
-        FE[🔍 CloudWatch<br/>+ GuardDuty]
-        FF[🔑 KMS<br/>Encryption]
-        FG[🌐 CloudFront<br/>CDN]
+        FA["🚪 API Gateway<br/>+ WAF"]
+        FB["⚡ Lambda Functions<br/>MCP handlers"]
+        FC["🔐 Cognito/OAuth2<br/>Authentication"]
+        FD["📊 DynamoDB<br/>Cache + State"]
+        FE["🔍 CloudWatch<br/>+ GuardDuty"]
+        FF["🔑 KMS<br/>Encryption"]
+        FG["🌐 CloudFront<br/>CDN"]
     end
 
     CA -->|Evolution| FA
@@ -141,7 +141,7 @@ The evolution from local stdio to cloud-native introduces significant new attack
 
 ```mermaid
 mindmap
-  root((🎯 Future<br/>Attack Surface))
+  root(("🎯 Future<br/>Attack Surface"))
     🔐 Identity & Access
       OAuth2/OIDC tokens
       API key management
@@ -283,10 +283,10 @@ mindmap
 
 ```mermaid
 graph LR
-    A[1️⃣ Register free tier account] --> B[2️⃣ Discover tenant isolation flaw]
-    B --> C[3️⃣ Craft cross-tenant query]
-    C --> D[4️⃣ Access premium tenant data]
-    D --> E[5️⃣ Exfiltrate competitor intelligence]
+    A["1️⃣ Register free tier account"] --> B["2️⃣ Discover tenant isolation flaw"]
+    B --> C["3️⃣ Craft cross-tenant query"]
+    C --> D["4️⃣ Access premium tenant data"]
+    D --> E["5️⃣ Exfiltrate competitor intelligence"]
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
@@ -315,10 +315,10 @@ graph LR
 
 ```mermaid
 graph LR
-    A[1️⃣ Phishing campaign targeting EP researchers] --> B[2️⃣ Steal OAuth2 refresh token]
-    B --> C[3️⃣ Generate access tokens]
-    C --> D[4️⃣ Systematic MEP data harvesting]
-    D --> E[5️⃣ GDPR violation + data sale]
+    A["1️⃣ Phishing campaign targeting EP researchers"] --> B["2️⃣ Steal OAuth2 refresh token"]
+    B --> C["3️⃣ Generate access tokens"]
+    C --> D["4️⃣ Systematic MEP data harvesting"]
+    D --> E["5️⃣ GDPR violation + data sale"]
     
     style A fill:#ffa726,stroke:#b2741a,stroke-width:2px,color:#1f1f1f
 
@@ -347,10 +347,10 @@ graph LR
 
 ```mermaid
 graph LR
-    A[1️⃣ Exploit Lambda layer vulnerability] --> B[2️⃣ Inject malicious code in runtime]
-    B --> C[3️⃣ Intercept all EP API responses]
-    C --> D[4️⃣ Manipulate voting records at scale]
-    D --> E[5️⃣ Widespread disinformation]
+    A["1️⃣ Exploit Lambda layer vulnerability"] --> B["2️⃣ Inject malicious code in runtime"]
+    B --> C["3️⃣ Intercept all EP API responses"]
+    C --> D["4️⃣ Manipulate voting records at scale"]
+    D --> E["5️⃣ Widespread disinformation"]
     
     style A fill:#ff6b6b,stroke:#b24a4a,stroke-width:2px,color:#ffffff
 
@@ -383,10 +383,10 @@ graph LR
 %%{init: {
   "theme": "dark",
   "themeVariables": {
-    "quadrant1Fill": "#D32F2F",
-    "quadrant2Fill": "#4CAF50",
-    "quadrant3Fill": "#2E7D32",
-    "quadrant4Fill": "#FF9800",
+    "quadrant1Fill": "#d32f2f",
+    "quadrant2Fill": "#4caf50",
+    "quadrant3Fill": "#2e7d32",
+    "quadrant4Fill": "#ff9800",
     "quadrantTitleFill": "#ffffff",
     "quadrantPointFill": "#ffffff",
     "quadrantPointTextFill": "#ffffff",
@@ -441,45 +441,45 @@ quadrantChart
 ```mermaid
 graph TB
     subgraph "🏰 Layer 1: Edge Security (New)"
-        L1A[🌐 CloudFront CDN]
-        L1B[🛡️ AWS WAF v2]
-        L1C[⚡ AWS Shield Advanced]
-        L1D[🔒 TLS 1.3 Termination]
+        L1A["🌐 CloudFront CDN"]
+        L1B["🛡️ AWS WAF v2"]
+        L1C["⚡ AWS Shield Advanced"]
+        L1D["🔒 TLS 1.3 Termination"]
     end
     
     subgraph "🔐 Layer 2: Identity (New)"
-        L2A[👤 Cognito User Pools]
-        L2B[🔑 OAuth2/OIDC]
-        L2C[📱 MFA Enforcement]
-        L2D[🎫 API Key Management]
+        L2A["👤 Cognito User Pools"]
+        L2B["🔑 OAuth2/OIDC"]
+        L2C["📱 MFA Enforcement"]
+        L2D["🎫 API Key Management"]
     end
     
     subgraph "🏗️ Layer 3: Application (Enhanced)"
-        L3A[✅ Zod Input Validation]
-        L3B[📝 TypeScript Strict Mode]
-        L3C[⚡ Lambda Function Isolation]
-        L3D[🔍 Runtime Integrity Checks]
+        L3A["✅ Zod Input Validation"]
+        L3B["📝 TypeScript Strict Mode"]
+        L3C["⚡ Lambda Function Isolation"]
+        L3D["🔍 Runtime Integrity Checks"]
     end
     
     subgraph "💾 Layer 4: Data (New)"
-        L4A[🔐 KMS Encryption at Rest]
-        L4B[🏷️ Tenant Isolation]
-        L4C[📊 DynamoDB Streams Audit]
-        L4D[🗄️ S3 Bucket Policies]
+        L4A["🔐 KMS Encryption at Rest"]
+        L4B["🏷️ Tenant Isolation"]
+        L4C["📊 DynamoDB Streams Audit"]
+        L4D["🗄️ S3 Bucket Policies"]
     end
     
     subgraph "📦 Layer 5: Supply Chain (Maintained)"
-        L5A[🏅 SLSA Level 3]
-        L5B[🤖 Dependabot + Snyk]
-        L5C[📋 SBOM CycloneDX]
-        L5D[🔐 npm Provenance]
+        L5A["🏅 SLSA Level 3"]
+        L5B["🤖 Dependabot + Snyk"]
+        L5C["📋 SBOM CycloneDX"]
+        L5D["🔐 npm Provenance"]
     end
     
     subgraph "🔍 Layer 6: Monitoring (Enhanced)"
-        L6A[🔍 GuardDuty]
-        L6B[📊 Security Hub]
-        L6C[📋 CloudTrail]
-        L6D[🚨 SIEM Integration]
+        L6A["🔍 GuardDuty"]
+        L6B["📊 Security Hub"]
+        L6C["📋 CloudTrail"]
+        L6D["🚨 SIEM Integration"]
     end
     
     L1A --> L2A --> L3A --> L4A --> L5A --> L6A

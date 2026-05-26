@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.3.10**
+**European Parliament MCP Server API v1.3.11**
 
 ***
 
@@ -126,7 +126,7 @@ The portfolio is **non-partisan, fully open-source (Apache-2.0)**, operated unde
 ### 🧭 The Ecosystem at a Glance
 
 ```mermaid
-%%{init: {"theme":"base","themeVariables":{"primaryColor":"#6366F1","primaryTextColor":"#fff","primaryBorderColor":"#4F46E5","lineColor":"#94A3B8","secondaryColor":"#003399","tertiaryColor":"#00338D","background":"#0F172A"}}}%%
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#6366f1","primaryTextColor":"#fff","primaryBorderColor":"#4f46e5","lineColor":"#94a3b8","secondaryColor":"#003399","tertiaryColor":"#00338d","background":"#0f172a"}}}%%
 graph LR
     subgraph SOURCES["📡 Primary Open-Data Sources"]
         EP["🇪🇺 European Parliament<br/>Open Data Portal v2<br/><i>data.europarl.europa.eu</i>"]
@@ -163,14 +163,14 @@ graph LR
     CIA --> AUDIENCE
     EPMCP -.->|"AI assistants<br/>Claude · Cursor · VS Code"| AUDIENCE
 
-    style EPMCP fill:#6366F1,stroke:#4F46E5,color:#fff,stroke-width:3px
-    style EP fill:#003399,stroke:#FFCC00,color:#fff
-    style RD fill:#00338D,stroke:#FECC00,color:#fff
-    style REG fill:#00338D,stroke:#FECC00,color:#fff
-    style EUPM fill:#003399,stroke:#FFCC00,color:#fff
-    style RM fill:#00338D,stroke:#FECC00,color:#fff
-    style CIA fill:#1B5E20,stroke:#43A047,color:#fff
-    style AUDIENCE fill:#7B1FA2,stroke:#9C27B0,color:#fff
+    style EPMCP fill:#6366f1,stroke:#4f46e5,color:#fff,stroke-width:3px
+    style EP fill:#003399,stroke:#ffcc00,color:#fff
+    style RD fill:#00338d,stroke:#fecc00,color:#fff
+    style REG fill:#00338d,stroke:#fecc00,color:#fff
+    style EUPM fill:#003399,stroke:#ffcc00,color:#fff
+    style RM fill:#00338d,stroke:#fecc00,color:#fff
+    style CIA fill:#1b5e20,stroke:#43a047,color:#fff
+    style AUDIENCE fill:#7b1fa2,stroke:#9c27b0,color:#fff
 ```
 
 **This MCP server's role:** the canonical, type-safe TypeScript bridge between the European Parliament Open Data Portal and any MCP-aware AI client (Claude Desktop, VS Code, Cursor, GitHub Copilot) — and the upstream data layer that powers the **EU Parliament Monitor** newsroom. Every tool is Zod-validated, audit-logged, GDPR-aware, and SLSA Level 3 attested.
@@ -693,9 +693,9 @@ graph TB
 
     subgraph "MCP Server (src/)"
         direction TB
-        Tools[🔧 61 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …]
+        Tools["🔧 61 Tools<br/>getMEPs · analyzeCoalition<br/>assessMepInfluence · …"]
         Resources["📦 9 Resources<br/>ep://meps/\{mepId\}<br/>ep://procedures/\{procedureId\} · …"]
-        Prompts[💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …]
+        Prompts["💬 7 Prompts<br/>mep_briefing<br/>coalition_analysis · …"]
     end
 
     Server --> Tools
@@ -703,24 +703,24 @@ graph TB
     Server --> Prompts
 
     subgraph "Infrastructure"
-        Cache[LRU Cache<br/>500 entries · 15 min TTL]
+        Cache["LRU Cache<br/>500 entries · 15 min TTL"]
         RateLimiter[Rate Limiter<br/>100 req/min]
         AuditLog[Audit Logger<br/>GDPR Article 30]
     end
 
-    Tools --> EPClient[EuropeanParliamentClient<br/>Facade → 8 sub-clients]
+    Tools --> EPClient["EuropeanParliamentClient<br/>Facade → 8 sub-clients"]
     Resources --> EPClient
     EPClient --> Cache
     EPClient --> RateLimiter
     EPClient --> AuditLog
     EPClient -->|HTTPS/TLS 1.3| EPAPI[European Parliament<br/>Open Data API v2<br/>data.europarl.europa.eu]
 
-    style Server fill:#4CAF50,stroke:#2E7D32,color:#fff
-    style EPClient fill:#2196F3,stroke:#1565C0,color:#fff
-    style EPAPI fill:#9C27B0,stroke:#6A1B9A,color:#fff
-    style Cache fill:#FF9800,stroke:#E65100,color:#fff
-    style RateLimiter fill:#F44336,stroke:#B71C1C,color:#fff
-    style AuditLog fill:#607D8B,stroke:#37474F,color:#fff
+    style Server fill:#4caf50,stroke:#2e7d32,color:#fff
+    style EPClient fill:#2196f3,stroke:#1565c0,color:#fff
+    style EPAPI fill:#9c27b0,stroke:#6a1b9a,color:#fff
+    style Cache fill:#ff9800,stroke:#e65100,color:#fff
+    style RateLimiter fill:#f44336,stroke:#b71c1c,color:#fff
+    style AuditLog fill:#607d8b,stroke:#37474f,color:#fff
 ```
 
 **Data flow:** MCP client sends a tool call → server validates input (Zod) → EP client
@@ -788,14 +788,14 @@ graph TB
     ANALYTICS -->|"queries"| DATA
     DATA -->|"monitors"| FEEDS
 
-    style OSINT fill:#D32F2F,stroke:#B71C1C,color:#fff,stroke-width:2px
-    style ANALYTICS fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
-    style DATA fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
-    style FEEDS fill:#FF8F00,stroke:#E65100,color:#000,stroke-width:2px
-    style MEP fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
-    style COALITION fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
-    style STRATEGY fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
-    style LEG_INTEL fill:#E53935,stroke:#C62828,color:#fff,stroke-width:2px
+    style OSINT fill:#d32f2f,stroke:#b71c1c,color:#fff,stroke-width:2px
+    style ANALYTICS fill:#1565c0,stroke:#0d47a1,color:#fff,stroke-width:2px
+    style DATA fill:#2e7d32,stroke:#1b5e20,color:#fff,stroke-width:2px
+    style FEEDS fill:#ff8f00,stroke:#e65100,color:#000,stroke-width:2px
+    style MEP fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
+    style COALITION fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
+    style STRATEGY fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
+    style LEG_INTEL fill:#e53935,stroke:#c62828,color:#fff,stroke-width:2px
 ```
 
 ### 🎯 OSINT Intelligence Workflow
@@ -841,10 +841,10 @@ graph LR
     ANALYZE -->|"structured"| ENRICH
     ENRICH -->|"intelligence"| FUSE
 
-    style COLLECT fill:#2E7D32,stroke:#1B5E20,color:#fff,stroke-width:2px
-    style ANALYZE fill:#1565C0,stroke:#0D47A1,color:#fff,stroke-width:2px
-    style ENRICH fill:#9C27B0,stroke:#7B1FA2,color:#fff,stroke-width:2px
-    style FUSE fill:#D32F2F,stroke:#B71C1C,color:#fff,stroke-width:2px
+    style COLLECT fill:#2e7d32,stroke:#1b5e20,color:#fff,stroke-width:2px
+    style ANALYZE fill:#1565c0,stroke:#0d47a1,color:#fff,stroke-width:2px
+    style ENRICH fill:#9c27b0,stroke:#7b1fa2,color:#fff,stroke-width:2px
+    style FUSE fill:#d32f2f,stroke:#b71c1c,color:#fff,stroke-width:2px
 ```
 
 ### 🕵️ OSINT Intelligence Tools (15)
@@ -1322,6 +1322,9 @@ npm audit
 
 # License compliance
 npm run test:licenses
+
+# Mermaid diagram validation (parses every ```mermaid block in *.md)
+npm run test:mermaid
 ```
 
 ---
@@ -1426,7 +1429,7 @@ cat tsconfig.json
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](documents/CONTRIBUTING.md) for details on:
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for details on:
 
 - Code of conduct
 - Development process
@@ -1440,7 +1443,7 @@ This repository includes custom agents and skills for GitHub Copilot:
 
 - **Agents**: Specialized AI assistants for development, testing, security, and documentation
 - **Skills**: Reusable patterns for MCP development, security, testing, and performance
-- See [.github/agents/README.md](_media/README.md) and [.github/skills/README.md](_media/README-1.md)
+- See [.github/agents/README.md](./.github/agents/README.md) and [.github/skills/README.md](./.github/skills/README.md)
 
 ### Release Process
 
@@ -1465,7 +1468,7 @@ We follow [Semantic Versioning](https://semver.org/) and use automated release m
 - ISMS compliance status
 - Full changelog link
 
-For detailed workflow documentation, see [.github/WORKFLOWS.md](_media/WORKFLOWS.md).
+For detailed workflow documentation, see [.github/WORKFLOWS.md](./.github/WORKFLOWS.md).
 
 ---
 
@@ -1482,10 +1485,10 @@ For detailed workflow documentation, see [.github/WORKFLOWS.md](_media/WORKFLOWS
 This repository is powered by a comprehensive AI-augmented development ecosystem — **14 specialized Copilot agents**, **41 reusable skills**, and **11 CI/CD workflows** — working in concert to maintain, analyze, and evolve the most advanced political MCP server in existence.
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4F46E5', 'lineColor': '#94A3B8', 'secondaryColor': '#F59E0B', 'tertiaryColor': '#10B981', 'background': '#0F172A', 'mainBkg': '#1E293B', 'nodeBorder': '#475569'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4f46e5', 'lineColor': '#94a3b8', 'secondaryColor': '#f59e0b', 'tertiaryColor': '#10b981', 'background': '#0f172a', 'mainBkg': '#1e293b', 'nodeBorder': '#475569'}}}%%
 graph TB
     subgraph AGENTS["🤖 14 Copilot Agents"]
-        style AGENTS fill:#1E1B4B,stroke:#6366F1,color:#E0E7FF
+        style AGENTS fill:#1e1b4b,stroke:#6366f1,color:#e0e7ff
         A1["🎯 product-task-agent"]
         A2["📝 documentation-writer"]
         A3["🔧 frontend-specialist"]
@@ -1503,7 +1506,7 @@ graph TB
     end
 
     subgraph SKILLS["🎯 41 Reusable Skills"]
-        style SKILLS fill:#1C1917,stroke:#F59E0B,color:#FEF3C7
+        style SKILLS fill:#1c1917,stroke:#f59e0b,color:#fef3c7
         S1["🔧 10 Core Dev Skills"]
         S2["🛡️ 6 Security Skills"]
         S3["⚙️ 4 DevOps Skills"]
@@ -1514,7 +1517,7 @@ graph TB
     end
 
     subgraph WORKFLOWS["⚙️ 11 CI/CD Workflows"]
-        style WORKFLOWS fill:#022C22,stroke:#10B981,color:#D1FAE5
+        style WORKFLOWS fill:#022c22,stroke:#10b981,color:#d1fae5
         W1["🧪 test-and-report"]
         W2["🔍 codeql"]
         W3["📦 release"]
@@ -1529,7 +1532,7 @@ graph TB
     end
 
     subgraph TOOLS["🔌 62 MCP Tools"]
-        style TOOLS fill:#172554,stroke:#3B82F6,color:#DBEAFE
+        style TOOLS fill:#172554,stroke:#3b82f6,color:#dbeafe
         T1["🕵️ 15 OSINT Intelligence"]
         T2["📊 3 Advanced Analysis + 1 Diagnostics"]
         T3["👤 7 MEP Data"]
@@ -1550,7 +1553,7 @@ graph TB
 #### Phase 5: Advanced Intelligence (2026–2027)
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4F46E5', 'lineColor': '#94A3B8', 'secondaryColor': '#22D3EE', 'tertiaryColor': '#10B981'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4f46e5', 'lineColor': '#94a3b8', 'secondaryColor': '#22d3ee', 'tertiaryColor': '#10b981'}}}%%
 timeline
     title 2026–2027 · Advanced Intelligence Era
     section Q1–Q2 2026
@@ -1580,9 +1583,9 @@ timeline
 > *Scenario: AGI or near-AGI systems become available through Amazon Bedrock or successor platforms*
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#A855F7', 'primaryTextColor': '#fff', 'lineColor': '#C084FC', 'secondaryColor': '#F59E0B', 'tertiaryColor': '#EC4899'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#a855f7', 'primaryTextColor': '#fff', 'lineColor': '#c084fc', 'secondaryColor': '#f59e0b', 'tertiaryColor': '#ec4899'}}}%%
 mindmap
-  root((🌐 AGI Era\n2034–2037))
+  root(("🌐 AGI Era\n2034–2037"))
     🤖 AGI-Enhanced Intelligence
       Autonomous real-time analysis
         All 195 parliamentary systems
@@ -1626,7 +1629,7 @@ mindmap
 > **Assumptions:** Anthropic Opus minor updates every ~2.3 months through 2037 (or until successor paradigm). Major version upgrades annually. Competitors (OpenAI, Google, Meta, EU sovereign AI) evaluated at each major release. Architecture must accommodate potential paradigm shifts (quantum AI, neuromorphic computing).
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4F46E5', 'lineColor': '#94A3B8', 'secondaryColor': '#F59E0B', 'tertiaryColor': '#10B981'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4f46e5', 'lineColor': '#94a3b8', 'secondaryColor': '#f59e0b', 'tertiaryColor': '#10b981'}}}%%
 gantt
     title AI Model Evolution & Platform Capability Growth
     dateFormat YYYY
@@ -1652,7 +1655,7 @@ gantt
 
 #### 📊 Workflow Count & Capability Projection
 
-> **Baseline:** 11 GitHub Actions workflows today. Projected growth includes AI-generated workflows, scheduled intelligence pipelines, multi-environment deployment chains, and automated OSINT processing — see [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) for detailed expansion plans.
+> **Baseline:** 11 GitHub Actions workflows today. Projected growth includes AI-generated workflows, scheduled intelligence pipelines, multi-environment deployment chains, and automated OSINT processing — see [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) for detailed expansion plans.
 
 | Year | Total Workflows | AI Model | Key Capability | Tools |
 |:----:|:---------------:|:--------:|:---------------|:-----:|
@@ -1677,34 +1680,34 @@ gantt
 #### 🗺️ Extended Roadmap Visualization
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366F1', 'primaryTextColor': '#fff', 'lineColor': '#94A3B8'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#6366f1', 'primaryTextColor': '#fff', 'lineColor': '#94a3b8'}}}%%
 graph LR
     subgraph Y2026["2026"]
-        style Y2026 fill:#1E40AF,stroke:#3B82F6,color:#DBEAFE
+        style Y2026 fill:#1e40af,stroke:#3b82f6,color:#dbeafe
         Y26["🤖 Opus 4.6–4.9\n44–50 workflows\nAgentic news gen"]
     end
     subgraph Y2027["2027"]
-        style Y2027 fill:#1E3A8A,stroke:#3B82F6,color:#DBEAFE
+        style Y2027 fill:#1e3a8a,stroke:#3b82f6,color:#dbeafe
         Y27["📈 Opus 5.x\n50–55 workflows\nPredictive analytics"]
     end
     subgraph Y2028["2028"]
-        style Y2028 fill:#312E81,stroke:#6366F1,color:#E0E7FF
+        style Y2028 fill:#312e81,stroke:#6366f1,color:#e0e7ff
         Y28["🎥 Opus 6.x\n55–65 workflows\nMulti-modal content"]
     end
     subgraph Y2029["2029"]
-        style Y2029 fill:#4C1D95,stroke:#8B5CF6,color:#EDE9FE
+        style Y2029 fill:#4c1d95,stroke:#8b5cf6,color:#ede9fe
         Y29["⚡ Opus 7.x\n65–75 workflows\nAutonomous pipeline"]
     end
     subgraph Y2030["2030"]
-        style Y2030 fill:#581C87,stroke:#A855F7,color:#F3E8FF
+        style Y2030 fill:#581c87,stroke:#a855f7,color:#f3e8ff
         Y30["🧠 Opus 8.x\n75–85 workflows\nNear-expert analysis"]
     end
     subgraph Y2031_33["2031–33"]
-        style Y2031_33 fill:#701A75,stroke:#D946EF,color:#FAE8FF
+        style Y2031_33 fill:#701a75,stroke:#d946ef,color:#fae8ff
         Y31["🌍 Pre-AGI\n85–100 workflows\nGlobal coverage"]
     end
     subgraph Y2034_37["2034–37"]
-        style Y2034_37 fill:#831843,stroke:#EC4899,color:#FCE7F3
+        style Y2034_37 fill:#831843,stroke:#ec4899,color:#fce7f3
         Y34["🌐 AGI Era\n100–120+ workflows\nTransformative platform"]
     end
 
@@ -1717,19 +1720,19 @@ For deep dives into specific evolution tracks, see:
 
 | Document | Focus | Link |
 |:---------|:------|:-----|
-| 📊 **EP Political Landscape** | OSINT intelligence dashboard (2004–2026) — seat composition, fragmentation, political compass, coalition dynamics, derived metrics; all years validated against EP API v2 | [EP_POLITICAL_LANDSCAPE.md](_media/EP_POLITICAL_LANDSCAPE.md) |
-| 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](_media/FUTURE_MINDMAP.md) |
-| ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) |
-| 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](_media/FUTURE_ARCHITECTURE.md) |
-| 🛡️ **Future Security** | Security maturity roadmap, quantum-ready encryption | [FUTURE_SECURITY_ARCHITECTURE.md](_media/FUTURE_SECURITY_ARCHITECTURE.md) |
-| 📊 **Future Data Model** | Enhanced data structures, graph databases, temporal models | [FUTURE_DATA_MODEL.md](_media/FUTURE_DATA_MODEL.md) |
-| 💼 **Future SWOT** | Strategic positioning, competitive analysis, market evolution | [FUTURE_SWOT.md](_media/FUTURE_SWOT.md) |
+| 📊 **EP Political Landscape** | OSINT intelligence dashboard (2004–2026) — seat composition, fragmentation, political compass, coalition dynamics, derived metrics; all years validated against EP API v2 | [EP_POLITICAL_LANDSCAPE.md](./EP_POLITICAL_LANDSCAPE.md) |
+| 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) |
+| ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) |
+| 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) |
+| 🛡️ **Future Security** | Security maturity roadmap, quantum-ready encryption | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) |
+| 📊 **Future Data Model** | Enhanced data structures, graph databases, temporal models | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) |
+| 💼 **Future SWOT** | Strategic positioning, competitive analysis, market evolution | [FUTURE_SWOT.md](./FUTURE_SWOT.md) |
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **Apache License 2.0** - see [LICENSE.md](_media/LICENSE.md) for details.
+This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./LICENSE.md) for details.
 
 ---
 
@@ -1739,7 +1742,7 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](_me
 - [GitHub Repository](https://github.com/Hack23/European-Parliament-MCP-Server)
 - [Issue Tracker](https://github.com/Hack23/European-Parliament-MCP-Server/issues)
 - [Discussions](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
-- [Security Policy](documents/SECURITY.md)
+- [Security Policy](./SECURITY.md)
 
 ### Hack23 Ecosystem
 - 🏢 [Hack23 AB](https://hack23.com/) — Swedish cybersecurity & open-source intelligence consultancy ([blog](https://hack23.com/blog.html) · [LinkedIn](https://www.linkedin.com/company/hack23/))

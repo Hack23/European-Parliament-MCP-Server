@@ -51,7 +51,7 @@ The plan demonstrates how systematic security investment creates **competitive a
 
 ```mermaid
 mindmap
-  root((💰 Financial<br>Security Plan))
+  root(("💰 Financial<br>Security Plan"))
     🆓 Free Tier Tools
       GitHub Actions CI/CD
       Dependabot
