@@ -170,8 +170,8 @@
     "@stryker-mutator/vitest-runner": "9.6.1",
     "@types/jsdom": "28.0.3",
     "@types/node": "25.9.1",
-    "@typescript-eslint/eslint-plugin": "8.59.4",
-    "@typescript-eslint/parser": "8.59.4",
+    "@typescript-eslint/eslint-plugin": "8.60.0",
+    "@typescript-eslint/parser": "8.60.0",
     "@vitest/coverage-v8": "4.1.7",
     "@vitest/ui": "4.1.7",
     "eslint": "10.4.0",
@@ -187,7 +187,7 @@
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.4",
+    "typescript-eslint": "8.60.0",
     "vitest": "4.1.7"
   }
 }
