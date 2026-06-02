@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.13**](../../../README.md)
+[**European Parliament MCP Server API v1.3.14**](../../../README.md)
 
 ***
 
@@ -35,10 +35,14 @@ When `requiredAuthToken` is set, `getLogs()`, `queryLogs()`, `clear()`, and
 
 ## Examples
 
+**Basic usage (backward-compatible)**
+
 ```typescript
 auditLogger.logDataAccess('get_meps', { country: 'SE' }, 5, 85);
 const entries = auditLogger.getLogs();
 ```
+
+**With file sink and 30-day retention**
 
 ```typescript
 const requiredAuthToken = process.env['AUDIT_TOKEN'];
