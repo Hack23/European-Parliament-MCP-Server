@@ -29,7 +29,7 @@ env:
 jobs:
   prepare:
     name: Prepare Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Only prepare job needs write permissions for commit and tagging
     permissions:
       contents: write # Required for git auto-commit
@@ -155,7 +155,7 @@ jobs:
   build:
     name: Build Release Package
     needs: [prepare]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Build job needs specific permissions for attestations
     permissions:
       contents: read
@@ -258,7 +258,7 @@ jobs:
   release:
     name: Create Release
     needs: [prepare, build]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Release job needs specific permissions to create GitHub releases
     permissions:
       contents: write # Required to create releases

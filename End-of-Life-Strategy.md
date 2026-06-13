@@ -99,6 +99,7 @@ graph TB
 | **Vitest** | Latest | Active | 🟢 Low | Follow semver updates |
 | **npm** | Registry | Indefinite | 🟢 Low | N/A |
 | **GitHub Actions** | Latest | Indefinite | 🟢 Low | Pin action versions |
+| **GitHub-hosted runner** | ubuntu-26.04 | April 2029+ | 🟢 Low | Migrate to ubuntu-28.04 when available |
 
 > ✅ **Node.js 26 is now the active production runtime.** Node.js 25 (odd-numbered Current-only release) reached EOL on April 22, 2026 when Node.js 26 released. Migration completed.
 > ✅ **TypeScript 6.0.3 is now the active compiler baseline.** TypeScript 5.9.x is retained only as the previous stable line and is no longer part of the active toolchain.
@@ -504,6 +505,7 @@ Step 6: Publish new version
 | 3.0 | 2026-03-18 | CEO | **Node.js 25 migration:** Updated current production runtime to Node.js 25.x (Current); added urgent Node.js 26 upgrade plan (≈ April 22, 2026 — 2-week target); expanded full Node.js roadmap projections 2026–2031; updated Technology Lifecycle Matrix with Node.js 25 EOL risk; added Node.js 25 → 26 transition checklist; updated Gantt chart with Node.js 25 EOL and Node.js 26 LTS timeline |
 | 3.1 | 2026-04-21 | CEO | Documentation review — verified accuracy of current state; confirmed Node.js 25 EOL is imminent (Node.js 26 releasing this week, ≈ April 22, 2026); updated test count references from "2500+/2600+" to "1130+ unit tests and 71 E2E tests"; aligned references with ARCHITECTURE.md and WORKFLOWS.md |
 | 3.2 | 2026-05-05 | CEO | **Node.js 26 migration COMPLETED:** Updated production runtime to Node.js 26.x; retired Node.js 25 (EOL April 22, 2026); updated Technology Lifecycle Matrix, Gantt chart, Key Dates, Version Strategy; added Node.js 27 nightly CI testing to integration-tests.yml matrix (`continue-on-error: true`); marked Node.js 25 → 26 transition checklist as completed |
+| 3.3 | 2026-06-13 | CEO | **Ubuntu 26.04 runner migration COMPLETED:** All 14 GitHub Actions workflows updated from `ubuntu-latest` to `ubuntu-26.04`; added GitHub-hosted runner row to Technology Lifecycle Matrix; updated WORKFLOWS.md SLSA table |
 
 ---
 

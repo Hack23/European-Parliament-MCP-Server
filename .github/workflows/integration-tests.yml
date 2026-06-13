@@ -23,7 +23,7 @@ env:
 jobs:
   integration-tests:
     name: Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 45
     continue-on-error: ${{ matrix.experimental == true }}
     
@@ -108,7 +108,7 @@ jobs:
 
   security-scan:
     name: Security Scan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: integration-tests
     
     # Only needs read permissions
@@ -142,7 +142,7 @@ jobs:
 
   test-summary:
     name: Test Summary
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [integration-tests, security-scan]
     if: always()
 

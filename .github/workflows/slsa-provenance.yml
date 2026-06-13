@@ -23,7 +23,7 @@ env:
 jobs:
   build:
     name: Build and Attest
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       hashes: ${{ steps.hash.outputs.hashes }}
     steps:
@@ -126,7 +126,7 @@ jobs:
   verify:
     name: Verify Attestations
     needs: [build, provenance]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
@@ -166,7 +166,7 @@ jobs:
   publish-npm:
     name: Publish to npm
     needs: [build, provenance, verify]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: github.event_name == 'release'
     permissions:
       contents: read
