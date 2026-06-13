@@ -123,7 +123,7 @@ env:
 jobs:
   osint-contract:
     name: OSINT Contract Suite
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
 
     permissions:
@@ -167,7 +167,7 @@ jobs:
 
   osint-coverage:
     name: OSINT Per-File Coverage Gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     needs: osint-contract
 
@@ -249,7 +249,7 @@ jobs:
 
   osint-mutation:
     name: OSINT Mutation Testing (Stryker)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     needs: osint-coverage
     # Non-blocking for the first 30 days while the baseline mutation score

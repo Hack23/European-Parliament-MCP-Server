@@ -10,7 +10,7 @@ permissions: read-all
 jobs:
   labeler:
     name: Label Pull Request
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Enhanced permissions for label management
     permissions:
       contents: read # Required to check out the code

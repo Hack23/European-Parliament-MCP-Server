@@ -21,7 +21,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Only needs read permissions
     permissions:
       contents: read # Required to check out code
@@ -45,7 +45,7 @@ jobs:
 
   build-validation:
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Needs write permissions to upload artifacts
     permissions:
       contents: write # Required to check out code
@@ -172,7 +172,7 @@ jobs:
 
   unit-tests:
     needs: [prepare, build-validation]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Needs write permissions to upload artifacts
     permissions:
       contents: write # Required to check out code
@@ -238,7 +238,7 @@ jobs:
 
   report:
     needs: [unit-tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: always()
     # Needs write permissions to upload artifacts
     permissions:
