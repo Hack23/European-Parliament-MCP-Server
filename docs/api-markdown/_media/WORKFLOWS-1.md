@@ -528,7 +528,7 @@ build → provenance → verify → publish-npm (release only)
 |------------------|----------------|----------|
 | Build as code | GitHub Actions workflow definition | `.github/workflows/slsa-provenance.yml` |
 | Hermetic build | No network access during build step | Harden-runner egress audit |
-| Isolated build | GitHub-hosted Ubuntu runners | Ephemeral VMs per run |
+| Isolated build | GitHub-hosted Ubuntu 26.04 runners | Ephemeral VMs per run |
 | Parameterless | No user-controlled build parameters | Workflow inputs validated |
 | Provenance | Signed SLSA v1.0 provenance document | `slsa-github-generator` output |
 | Verification | Checksums + attestation verification | `gh attestation verify` |
