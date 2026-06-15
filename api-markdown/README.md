@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.3.21**
+**European Parliament MCP Server API v1.3.22**
 
 ***
 
