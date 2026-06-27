@@ -54,7 +54,7 @@ function isRateLimitOrNetworkError(error: unknown): boolean {
       return true;
     }
     // Also check statusCode (APIError) or httpStatus (ToolError) for 408, 429, 503
-    if (typeof current === 'object' && current !== null) {
+    if (typeof current === 'object') {
       const code = 'statusCode' in current
         ? (current as { statusCode?: unknown }).statusCode
         : 'httpStatus' in current
