@@ -431,7 +431,7 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
   ] as const;
   for (const field of nestedDateFields) {
     const nested: unknown = item[field];
-    if (nested && typeof nested === 'object' && nested !== null) {
+    if (nested && typeof nested === 'object') {
       const value = (nested as Record<string, unknown>)['@value'];
       if (typeof value === 'string' && DATE_PATTERN.test(value)) {
         return value.substring(0, 10);
