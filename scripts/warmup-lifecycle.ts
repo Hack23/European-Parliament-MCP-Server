@@ -6,7 +6,7 @@
  * exits `0` on success or `1` on failure. Intended for:
  *  - Containerised deployments that prime the cache before the first
  *    `monitor_legislative_pipeline` request lands.
- *  - The `.github/workflows/lifecycle-warmup.yml` cron (`*/25 * * * *`)
+ *  - The `.github/workflows/lifecycle-warmup.yml`
  *    that keeps a long-running server warm.
  *  - Operators who want an ad-hoc rebuild without restarting the server.
  *
