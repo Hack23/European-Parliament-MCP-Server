@@ -60,25 +60,9 @@ graph LR
 
 ## 3. Validation workflow
 
-These commands are optional local helpers for keeping Mermaid blocks tidy; the
-repository does not currently enforce them in CI.
-
-```bash
-# Lowercase hex literals across all source mermaid blocks (idempotent)
-npx tsx scripts/validate-mermaid-diagrams.ts --normalize-colors
-
-# Wrap every unquoted node label that contains an icon (emoji) or
-# Mermaid-special punctuation (`@`, `:`, `(`, `)`, `{`, `}`, `&`, `;`) in
-# double quotes — fixes the most common GitHub-rendered-but-fragile diagrams.
-npx tsx scripts/validate-mermaid-diagrams.ts --quote-icons
-
-# Both transforms in one pass
-npx tsx scripts/validate-mermaid-diagrams.ts --fix
-```
-
-The validator skips generated mirrors (`docs/api*`, `docs/api-markdown/_media/`)
-and agent prompts (`.github/agents/`); update `SKIP_DIR_NAMES` in the script
-when adding new generated trees.
+The repository no longer ships a dedicated Mermaid validator script. When you
+edit Mermaid blocks, keep them aligned with this guide and review them in the
+rendered Markdown preview or with your editor's Mermaid support.
 
 ## 4. Common parse failures and fixes
 
