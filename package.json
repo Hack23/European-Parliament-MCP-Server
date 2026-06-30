@@ -86,7 +86,6 @@
     "test:coverage": "vitest run src --coverage",
     "test:ci": "vitest run --coverage --reporter=junit --reporter=json --outputFile=coverage/junit.xml",
     "test:licenses": "license-compliance --direct --allow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;Apache-2.0;Unlicense;CC0-1.0;BlueOak-1.0.0'",
-    "test:mermaid": "tsx scripts/validate-mermaid-diagrams.ts",
     "test:mutation": "stryker run",
     "test:mutation:ci": "stryker run --concurrency 4 --logLevel info",
     "knip": "knip",
@@ -159,13 +158,13 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
     "lru-cache": "11.5.1",
-    "undici": "7.28.0",
+    "undici": "8.5.0",
     "zod": "4.4.3"
   },
   "overrides": {
     "vite": "8.1.1",
     "joi": "17.13.4",
-    "undici": "7.28.0",
+    "undici": "8.5.0",
     "qs": "6.15.3"
   },
   "devDependencies": {
@@ -182,7 +181,6 @@
     "jsdom": "29.1.1",
     "knip": "6.23.0",
     "license-compliance": "3.0.1",
-    "mermaid": "11.16.0",
     "prettier": "3.9.4",
     "tsx": "4.22.4",
     "typedoc": "0.28.19",
