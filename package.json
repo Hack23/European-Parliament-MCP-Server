@@ -163,7 +163,10 @@
     "zod": "4.4.3"
   },
   "overrides": {
-    "vite": "8.0.10"
+    "vite": "8.1.1",
+    "joi": "17.13.4",
+    "undici": "8.5.0",
+    "qs": "6.15.3"
   },
   "devDependencies": {
     "@stryker-mutator/core": "9.6.1",
