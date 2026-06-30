@@ -5,11 +5,9 @@ in this repository. The goal is a consistent visual language across the
 ~200 architecture, security, data-model, threat-model and workflow diagrams
 so readers can recognise meaning from colour at a glance.
 
-Diagrams are machine-validated by `npm run test:mermaid` (see
-[`scripts/validate-mermaid-diagrams.ts`](./scripts/validate-mermaid-diagrams.ts)).
-That script also offers `--normalize-colors`, which lowercases every hex
-literal inside ` ```mermaid ` fences in-place — a purely cosmetic transform
-that keeps the codebase free of `#FFA726` vs `#ffa726` noise.
+The repository no longer runs automated Mermaid validation in CI, but these
+conventions still help keep diagrams readable and portable across GitHub and
+generated docs.
 
 ---
 
@@ -62,10 +60,10 @@ graph LR
 
 ## 3. Validation workflow
 
-```bash
-# Parse every mermaid block under root *.md and .github/*.md
-npm run test:mermaid
+These commands are optional local helpers for keeping Mermaid blocks tidy; the
+repository does not currently enforce them in CI.
 
+```bash
 # Lowercase hex literals across all source mermaid blocks (idempotent)
 npx tsx scripts/validate-mermaid-diagrams.ts --normalize-colors
 
@@ -84,7 +82,7 @@ when adding new generated trees.
 
 ## 4. Common parse failures and fixes
 
-| Symptom (from `npm run test:mermaid`) | Cause | Fix |
+| Symptom (from optional local Mermaid validation) | Cause | Fix |
 | --- | --- | --- |
 | `Expecting … got 'LINK_ID'` | Unquoted `@` inside a `[ ]` node label (Mermaid v11 reads it as an edge ID). | Wrap the label in double quotes: `N["foo@bar"]`. |
 | `Expecting … got 'DIAMOND_START'` | Unquoted `{` / `}` inside a `[ ]` node label. | Wrap in quotes: `N["resource/{id}"]`. |

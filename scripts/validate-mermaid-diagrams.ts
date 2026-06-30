@@ -27,7 +27,7 @@
  *
  * **Usage**
  * ```bash
- * npm run test:mermaid                       # validate
+ * npx tsx scripts/validate-mermaid-diagrams.ts
  * npx tsx scripts/validate-mermaid-diagrams.ts --normalize-colors
  * npx tsx scripts/validate-mermaid-diagrams.ts --quote-icons
  * npx tsx scripts/validate-mermaid-diagrams.ts --fix

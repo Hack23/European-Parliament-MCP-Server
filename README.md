@@ -1321,8 +1321,8 @@ npm audit
 # License compliance
 npm run test:licenses
 
-# Mermaid diagram validation (parses every ```mermaid block in *.md)
-npm run test:mermaid
+# Optional: keep Mermaid diagrams readable while editing
+# (Mermaid validation is not currently enforced in CI)
 ```
 
 ---
