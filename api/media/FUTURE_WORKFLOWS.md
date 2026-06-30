@@ -80,9 +80,9 @@ flowchart LR
     end
     subgraph "🧪 Testing"
         KNIP --> UNIT[Unit Tests]
-        UNIT --> COV{Coverage ≥ 80%?}
+        UNIT --> COV{"Coverage ≥ 80%?"}
         COV -->|Yes| E2E[E2E Tests]
-        COV -->|No| FAIL1[❌ Fail]
+        COV -->|No| FAIL1["❌ Fail"]
         E2E --> PERF[Performance Tests]
     end
     subgraph "🛡️ Security"
@@ -134,8 +134,8 @@ flowchart TB
         SCA2 --> SECRET[Secret Scan]
         SECRET --> LICENSE2[License Check]
         LICENSE2 --> GATE{All Passed?}
-        GATE -->|Yes| APPROVE[✅ Security Approved]
-        GATE -->|No| BLOCK[🚫 Blocked]
+        GATE -->|Yes| APPROVE["✅ Security Approved"]
+        GATE -->|No| BLOCK["🚫 Blocked"]
         BLOCK --> FIX[Fix Required]
         FIX --> PR
     end
@@ -274,8 +274,8 @@ flowchart TB
         WEBHOOK[EP API Webhook] --> VALIDATE[Validate Data]
         VALIDATE --> UPDATE[Update Scores]
         UPDATE --> CHECK{Anomaly?}
-        CHECK -->|Yes| ALERT[🚨 Priority Alert]
-        CHECK -->|No| LOG[📝 Log Update]
+        CHECK -->|Yes| ALERT["🚨 Priority Alert"]
+        CHECK -->|No| LOG["📝 Log Update"]
     end
 ```
 

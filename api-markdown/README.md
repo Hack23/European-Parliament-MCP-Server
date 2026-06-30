@@ -1,4 +1,4 @@
-**European Parliament MCP Server API v1.3.31**
+**European Parliament MCP Server API v1.3.32**
 
 ***
 
@@ -1323,8 +1323,8 @@ npm audit
 # License compliance
 npm run test:licenses
 
-# Mermaid diagram validation (parses every ```mermaid block in *.md)
-npm run test:mermaid
+# Optional: keep Mermaid diagrams readable while editing
+# (Mermaid validation is not currently enforced in CI)
 ```
 
 ---
@@ -1429,7 +1429,7 @@ cat tsconfig.json
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for details on:
+We welcome contributions! Please see [CONTRIBUTING.md](documents/CONTRIBUTING.md) for details on:
 
 - Code of conduct
 - Development process
@@ -1443,7 +1443,7 @@ This repository includes custom agents and skills for GitHub Copilot:
 
 - **Agents**: Specialized AI assistants for development, testing, security, and documentation
 - **Skills**: Reusable patterns for MCP development, security, testing, and performance
-- See [.github/agents/README.md](./.github/agents/README.md) and [.github/skills/README.md](./.github/skills/README.md)
+- See [.github/agents/README.md](_media/README.md) and [.github/skills/README.md](_media/README-1.md)
 
 ### Release Process
 
@@ -1468,7 +1468,7 @@ We follow [Semantic Versioning](https://semver.org/) and use automated release m
 - ISMS compliance status
 - Full changelog link
 
-For detailed workflow documentation, see [.github/WORKFLOWS.md](./.github/WORKFLOWS.md).
+For detailed workflow documentation, see [.github/WORKFLOWS.md](_media/WORKFLOWS.md).
 
 ---
 
@@ -1655,7 +1655,7 @@ gantt
 
 #### 📊 Workflow Count & Capability Projection
 
-> **Baseline:** 11 GitHub Actions workflows today. Projected growth includes AI-generated workflows, scheduled intelligence pipelines, multi-environment deployment chains, and automated OSINT processing — see [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) for detailed expansion plans.
+> **Baseline:** 11 GitHub Actions workflows today. Projected growth includes AI-generated workflows, scheduled intelligence pipelines, multi-environment deployment chains, and automated OSINT processing — see [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) for detailed expansion plans.
 
 | Year | Total Workflows | AI Model | Key Capability | Tools |
 |:----:|:---------------:|:--------:|:---------------|:-----:|
@@ -1720,19 +1720,19 @@ For deep dives into specific evolution tracks, see:
 
 | Document | Focus | Link |
 |:---------|:------|:-----|
-| 📊 **EP Political Landscape** | OSINT intelligence dashboard (2004–2026) — seat composition, fragmentation, political compass, coalition dynamics, derived metrics; all years validated against EP API v2 | [EP_POLITICAL_LANDSCAPE.md](./EP_POLITICAL_LANDSCAPE.md) |
-| 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](./FUTURE_MINDMAP.md) |
-| ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](./FUTURE_WORKFLOWS.md) |
-| 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](./FUTURE_ARCHITECTURE.md) |
-| 🛡️ **Future Security** | Security maturity roadmap, quantum-ready encryption | [FUTURE_SECURITY_ARCHITECTURE.md](./FUTURE_SECURITY_ARCHITECTURE.md) |
-| 📊 **Future Data Model** | Enhanced data structures, graph databases, temporal models | [FUTURE_DATA_MODEL.md](./FUTURE_DATA_MODEL.md) |
-| 💼 **Future SWOT** | Strategic positioning, competitive analysis, market evolution | [FUTURE_SWOT.md](./FUTURE_SWOT.md) |
+| 📊 **EP Political Landscape** | OSINT intelligence dashboard (2004–2026) — seat composition, fragmentation, political compass, coalition dynamics, derived metrics; all years validated against EP API v2 | [EP_POLITICAL_LANDSCAPE.md](_media/EP_POLITICAL_LANDSCAPE.md) |
+| 🧠 **Future Mind Map** | Capability expansion vision, AI analysis, OSINT evolution | [FUTURE_MINDMAP.md](_media/FUTURE_MINDMAP.md) |
+| ⚙️ **Future Workflows** | CI/CD evolution, AI-augmented pipelines, 2027–2037 roadmap | [FUTURE_WORKFLOWS.md](_media/FUTURE_WORKFLOWS.md) |
+| 🏛️ **Future Architecture** | Platform architecture evolution, AWS deployment, federation | [FUTURE_ARCHITECTURE.md](_media/FUTURE_ARCHITECTURE.md) |
+| 🛡️ **Future Security** | Security maturity roadmap, quantum-ready encryption | [FUTURE_SECURITY_ARCHITECTURE.md](_media/FUTURE_SECURITY_ARCHITECTURE.md) |
+| 📊 **Future Data Model** | Enhanced data structures, graph databases, temporal models | [FUTURE_DATA_MODEL.md](_media/FUTURE_DATA_MODEL.md) |
+| 💼 **Future SWOT** | Strategic positioning, competitive analysis, market evolution | [FUTURE_SWOT.md](_media/FUTURE_SWOT.md) |
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./LICENSE.md) for details.
+This project is licensed under the **Apache License 2.0** - see [LICENSE.md](_media/LICENSE.md) for details.
 
 ---
 
@@ -1742,7 +1742,7 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE.md](./L
 - [GitHub Repository](https://github.com/Hack23/European-Parliament-MCP-Server)
 - [Issue Tracker](https://github.com/Hack23/European-Parliament-MCP-Server/issues)
 - [Discussions](https://github.com/Hack23/European-Parliament-MCP-Server/discussions)
-- [Security Policy](./SECURITY.md)
+- [Security Policy](documents/SECURITY.md)
 
 ### Hack23 Ecosystem
 - 🏢 [Hack23 AB](https://hack23.com/) — Swedish cybersecurity & open-source intelligence consultancy ([blog](https://hack23.com/blog.html) · [LinkedIn](https://www.linkedin.com/company/hack23/))

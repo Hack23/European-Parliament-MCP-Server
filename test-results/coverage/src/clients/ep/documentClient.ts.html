@@ -1062,7 +1062,7 @@ export class DocumentClient extends BaseEPClient {
     }
     <span class="missing-if-branch" title="if path not taken" >I</span>if (params.dateTo !== undefined &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >params.dateTo !== '') {</span>
       const dateTo = <span class="cstat-no" title="statement not covered" >params.dateTo;</span>
-<span class="cstat-no" title="statement not covered" >      filtered = filtered.<span class="fstat-no" title="function not covered" >filter((d</span>) =&gt; <span class="cstat-no" title="statement not covered" >d.date &lt;= dateTo);</span></span>
+<span class="cstat-no" title="statement not covered" >      filtered = filtered.<span class="fstat-no" title="function not covered" >filter((d</span>) =&gt; <span class="cstat-no" title="statement not covered" >d.date &lt;= dateTo)</span>;</span>
     }
     return filtered;
   }
@@ -1265,7 +1265,7 @@ export class DocumentClient extends BaseEPClient {
    * default window (typically one month).  Response times can exceed
    * 120 s, so an extended minimum timeout is applied automatically.
    */
-  async <span class="fstat-no" title="function not covered" >getDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+  async <span class="fstat-no" title="function not covered" >getDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{}): Promise&lt;JSONLDResponse&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('documents/feed', {</span>
       format: 'application/ld+json',
     }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
@@ -1278,7 +1278,7 @@ export class DocumentClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter.
    * Extended timeout applied (120 s minimum).
    */
-  async <span class="fstat-no" title="function not covered" >getPlenaryDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+  async <span class="fstat-no" title="function not covered" >getPlenaryDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{}): Promise&lt;JSONLDResponse&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('plenary-documents/feed', {</span>
       format: 'application/ld+json',
     }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
@@ -1291,7 +1291,7 @@ export class DocumentClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter.
    * Extended timeout applied (120 s minimum).
    */
-  async <span class="fstat-no" title="function not covered" >getCommitteeDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+  async <span class="fstat-no" title="function not covered" >getCommitteeDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{}): Promise&lt;JSONLDResponse&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('committee-documents/feed', {</span>
       format: 'application/ld+json',
     }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
@@ -1304,7 +1304,7 @@ export class DocumentClient extends BaseEPClient {
    * Fixed-window feed — no `timeframe` parameter.
    * Extended timeout applied (120 s minimum).
    */
-  async <span class="fstat-no" title="function not covered" >getPlenarySessionDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+  async <span class="fstat-no" title="function not covered" >getPlenarySessionDocumentsFeed(o</span>ptions: { abortSignal?: AbortSignal } = <span class="branch-0 cbranch-no" title="branch not covered" >{}): Promise&lt;JSONLDResponse&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    return this.get&lt;JSONLDResponse&gt;('plenary-session-documents/feed', {</span>
       format: 'application/ld+json',
     }, DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS, options.abortSignal);
@@ -1323,7 +1323,7 @@ export class DocumentClient extends BaseEPClient {
     startDate?: string;
     workType?: string;
     abortSignal?: AbortSignal;
-  } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span>: Promise&lt;JSONLDResponse&gt; {
+  } = <span class="branch-0 cbranch-no" title="branch not covered" >{}): Promise&lt;JSONLDResponse&gt; {</span>
     const minimumTimeout = <span class="cstat-no" title="statement not covered" >params.timeframe === 'one-month'</span>
       ? DEFAULT_TIMEOUTS.EP_FEED_SLOW_REQUEST_MS
       : undefined;
@@ -1417,7 +1417,7 @@ export class DocumentClient extends BaseEPClient {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-30T11:10:16.812Z
+                at 2026-06-30T12:46:44.263Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
