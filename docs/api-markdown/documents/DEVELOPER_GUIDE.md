@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.31**](../README.md)
+[**European Parliament MCP Server API v1.3.32**](../README.md)
 
 ***
 
@@ -236,7 +236,9 @@ npm run type-check         # TypeScript type checking
 npm run dev                # Development server
 npm run knip               # Find unused exports
 npm run test:licenses      # Check license compliance
-npm run test:mermaid       # Validate every ```mermaid block in *.md (see MERMAID_STYLE_GUIDE.md)
+
+# Mermaid diagrams should remain readable and consistent
+# (Mermaid validation is not currently enforced in CI)
 ```
 
 ---
