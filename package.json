@@ -174,8 +174,8 @@
     "@types/node": "26.1.0",
     "@typescript-eslint/eslint-plugin": "8.62.1",
     "@typescript-eslint/parser": "8.62.1",
-    "@vitest/coverage-v8": "4.1.9",
-    "@vitest/ui": "4.1.9",
+    "@vitest/coverage-v8": "4.1.10",
+    "@vitest/ui": "4.1.10",
     "eslint": "10.6.0",
     "globals": "17.7.0",
     "jsdom": "29.1.1",
@@ -183,12 +183,12 @@
     "license-compliance": "3.0.1",
     "prettier": "3.9.4",
     "tsx": "4.23.0",
-    "typedoc": "0.28.19",
+    "typedoc": "0.28.20",
     "typedoc-plugin-markdown": "4.12.0",
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
     "typescript": "6.0.3",
     "typescript-eslint": "8.62.1",
-    "vitest": "4.1.9"
+    "vitest": "4.1.10"
   }
 }
