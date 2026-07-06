@@ -183,7 +183,7 @@
     "license-compliance": "3.0.1",
     "prettier": "3.9.4",
     "tsx": "4.23.0",
-    "typedoc": "0.28.19",
+    "typedoc": "0.28.20",
     "typedoc-plugin-markdown": "4.12.0",
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
