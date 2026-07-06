@@ -173,4 +173,4 @@
 .hl-19 { color: var(--hl-19); }
 .hl-20 { color: var(--hl-20); }
 .hl-21 { color: var(--hl-21); }
-pre, code { background: var(--code-background); }
+pre, code, math[display='block'] { background: var(--code-background); }
