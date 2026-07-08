@@ -105,6 +105,13 @@ The **European Parliament MCP Server** implements the [Model Context Protocol (M
 - 🧪 **Well-Tested**: 80%+ code coverage, 1130+ unit tests, 71 E2E test cases
 - 📚 **Complete Documentation**: Architecture, TypeDoc API (HTML + Markdown), security guidelines
 
+### 🔧 Current Stack
+
+- **Runtime**: Node.js 26.x
+- **Primary compiler**: TypeScript 7 RC via the `typescript-7` alias (`node_modules/typescript-7/bin/tsc`)
+- **Compatibility layer**: `@typescript/typescript6` remains available so existing 6.x-based tooling can continue using `tsc6` and the TypeScript 6 API
+- **Core platform**: `@modelcontextprotocol/sdk` 1.29.0, `zod` 4.4.3, `vitest` 4.1.10
+
 ---
 
 ## 🌍 Hack23 Political Intelligence Ecosystem
