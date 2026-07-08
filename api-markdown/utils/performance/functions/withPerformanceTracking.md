@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: withPerformanceTracking()
 
-> **withPerformanceTracking**\<`T`\>(`monitor`, `operation`, `fn`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> **withPerformanceTracking**\<`T`\>(`monitor`, `operation`, `fn`): `Promise`\<`T`\>
 
 Defined in: [utils/performance.ts:321](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L321)
 
@@ -39,13 +39,13 @@ Operation name for tracking (e.g., `'fetch_meps'`)
 
 ### fn
 
-() => [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+() => `Promise`\<`T`\>
 
 Async function to execute and measure
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 Promise that resolves with the function result
 

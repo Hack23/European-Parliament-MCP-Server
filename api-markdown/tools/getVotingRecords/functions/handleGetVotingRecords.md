@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleGetVotingRecords()
 
-> **handleGetVotingRecords**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleGetVotingRecords**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/getVotingRecords.ts:74](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getVotingRecords.ts#L74)
 
@@ -27,7 +27,7 @@ Raw tool arguments, validated against [GetVotingRecordsSchema](../../../schemas/
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing a paginated list of voting records with vote counts and results
 

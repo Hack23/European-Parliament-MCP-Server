@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -16,7 +16,7 @@ Transforms EP API plenary session data to internal [PlenarySession](../../../../
 
 ### apiData
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 ## Returns
 

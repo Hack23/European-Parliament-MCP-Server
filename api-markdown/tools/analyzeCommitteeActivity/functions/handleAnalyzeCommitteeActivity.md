@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleAnalyzeCommitteeActivity()
 
-> **handleAnalyzeCommitteeActivity**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleAnalyzeCommitteeActivity**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/analyzeCommitteeActivity.ts:728](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCommitteeActivity.ts#L728)
 
@@ -28,7 +28,7 @@ Raw tool arguments, validated against [AnalyzeCommitteeActivitySchema](../variab
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing a CommitteeActivityAnalysis
 

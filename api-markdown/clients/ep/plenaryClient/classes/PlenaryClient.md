@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -58,7 +58,7 @@ European Parliament API base URL.
 
 ### cache
 
-> `protected` `readonly` **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
+> `protected` `readonly` **cache**: `LRUCache`\<`string`, `Record`\<`string`, `unknown`\>\>
 
 Defined in: [clients/ep/baseClient.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L217)
 
@@ -142,7 +142,7 @@ Request timeout in milliseconds.
 
 ### buildMeetingsAPIParams()
 
-> `private` **buildMeetingsAPIParams**(`params`): [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+> `private` **buildMeetingsAPIParams**(`params`): `Record`\<`string`, `unknown`\>
 
 Defined in: [clients/ep/plenaryClient.ts:67](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L67)
 
@@ -178,7 +178,7 @@ forwarded when present (useful for sub-year ranges).
 
 #### Returns
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 #### Private
 
@@ -224,7 +224,7 @@ API endpoint path (same value passed to [get](../../baseClient/classes/BaseEPCli
 
 ##### params?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 Optional query parameters (same value passed to [get](../../baseClient/classes/BaseEPClient.md#get))
 
@@ -242,7 +242,7 @@ Optional query parameters (same value passed to [get](../../baseClient/classes/B
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): `Promise`\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L685)
 
@@ -252,7 +252,7 @@ Executes a cached, rate-limited GET request to the EP API.
 
 ##### T
 
-`T` *extends* [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`T` *extends* `Record`\<`string`, `unknown`\>
 
 Expected response type (extends `Record<string, unknown>`)
 
@@ -266,7 +266,7 @@ API endpoint path (relative to `baseURL`)
 
 ##### params?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 Optional query parameters
 
@@ -292,7 +292,7 @@ Optional caller-provided cancellation signal. When
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 Promise resolving to the typed API response
 
@@ -351,7 +351,7 @@ Returns cache statistics for monitoring and debugging.
 
 ### getEventById()
 
-> **getEventById**(`eventId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>
+> **getEventById**(`eventId`, `options?`): `Promise`\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>
 
 Defined in: [clients/ep/plenaryClient.ts:371](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L371)
 
@@ -372,13 +372,13 @@ Returns a single EP event by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>
+`Promise`\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>
 
 ***
 
 ### getEvents()
 
-> **getEvents**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>\>
+> **getEvents**(`params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:319](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L319)
 
@@ -407,13 +407,13 @@ at all per the OpenAPI spec.  Only pagination (limit/offset) is supported.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
 ***
 
 ### getEventsFeed()
 
-> **getEventsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getEventsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:353](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L353)
 
@@ -451,13 +451,13 @@ a machine-readable in-band feed envelope; direct `PlenaryClient` /
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getMeetingActivities()
 
-> **getMeetingActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+> **getMeetingActivities**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L148)
 
@@ -486,13 +486,13 @@ Returns activities linked to a specific meeting (plenary sitting).
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 ***
 
 ### getMeetingById()
 
-> **getMeetingById**(`eventId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>
+> **getMeetingById**(`eventId`, `options?`): `Promise`\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>
 
 Defined in: [clients/ep/plenaryClient.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L298)
 
@@ -513,13 +513,13 @@ Returns a single EP meeting by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>
+`Promise`\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>
 
 ***
 
 ### getMeetingDecisions()
 
-> **getMeetingDecisions**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getMeetingDecisions**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:178](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L178)
 
@@ -548,13 +548,13 @@ Returns decisions made in a specific meeting (plenary sitting).
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getMeetingForeseenActivities()
 
-> **getMeetingForeseenActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+> **getMeetingForeseenActivities**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:208](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L208)
 
@@ -583,13 +583,13 @@ Returns foreseen activities linked to a specific meeting.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 ***
 
 ### getMeetingPlenarySessionDocumentItems()
 
-> **getMeetingPlenarySessionDocumentItems**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getMeetingPlenarySessionDocumentItems**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:268](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L268)
 
@@ -618,13 +618,13 @@ Returns plenary session document items for a specific meeting.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getMeetingPlenarySessionDocuments()
 
-> **getMeetingPlenarySessionDocuments**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getMeetingPlenarySessionDocuments**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L238)
 
@@ -653,13 +653,13 @@ Returns plenary session documents for a specific meeting.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getPlenarySessions()
 
-> **getPlenarySessions**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
+> **getPlenarySessions**(`params`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
 
 Defined in: [clients/ep/plenaryClient.ts:97](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/plenaryClient.ts#L97)
 
@@ -707,7 +707,7 @@ year, dateFrom, dateTo, location, limit, offset
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
 
 Paginated plenary session list
 
@@ -723,7 +723,7 @@ Defined in: [clients/ep/plenaryClient.ts:55](https://github.com/Hack23/European-
 
 ##### apiData
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 #### Returns
 
@@ -741,7 +741,7 @@ Defined in: [clients/ep/plenaryClient.ts:47](https://github.com/Hack23/European-
 
 ##### apiData
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 #### Returns
 
@@ -759,7 +759,7 @@ Defined in: [clients/ep/plenaryClient.ts:51](https://github.com/Hack23/European-
 
 ##### apiData
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 #### Returns
 
@@ -777,7 +777,7 @@ Defined in: [clients/ep/plenaryClient.ts:43](https://github.com/Hack23/European-
 
 ##### apiData
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 #### Returns
 

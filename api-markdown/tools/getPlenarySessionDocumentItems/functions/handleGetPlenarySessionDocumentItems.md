@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleGetPlenarySessionDocumentItems()
 
-> **handleGetPlenarySessionDocumentItems**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleGetPlenarySessionDocumentItems**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/getPlenarySessionDocumentItems.ts:49](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getPlenarySessionDocumentItems.ts#L49)
 
@@ -25,7 +25,7 @@ Raw tool arguments, validated against [GetPlenarySessionDocumentItemsSchema](../
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing a paginated list of plenary session document items
 

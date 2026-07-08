@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleAnalyzeVotingPatterns()
 
-> **handleAnalyzeVotingPatterns**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleAnalyzeVotingPatterns**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/analyzeVotingPatterns.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeVotingPatterns.ts#L142)
 
@@ -27,7 +27,7 @@ Raw tool arguments, validated against [AnalyzeVotingPatternsSchema](../../../sch
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing a VotingPatternAnalysis object, or a
   `dataAvailable: false` notice when voting statistics are unavailable from the EP API

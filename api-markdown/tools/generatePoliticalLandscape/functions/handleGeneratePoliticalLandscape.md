@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleGeneratePoliticalLandscape()
 
-> **handleGeneratePoliticalLandscape**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleGeneratePoliticalLandscape**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/generatePoliticalLandscape.ts:342](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L342)
 
@@ -27,7 +27,7 @@ Raw tool arguments, validated against [GeneratePoliticalLandscapeSchema](../vari
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing group seat distributions, power dynamics,
   activity metrics, fragmentation index, majority type, and political balance score

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -50,7 +50,7 @@ Defined in: [clients/ep/doceoClient.ts:125](https://github.com/Hack23/European-P
 
 ### fetchRcvForDate()
 
-> **fetchRcvForDate**(`date`, `term?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RcvVoteResult`](../../doceoXmlParser/interfaces/RcvVoteResult.md)[]\>
+> **fetchRcvForDate**(`date`, `term?`, `abortSignal?`): `Promise`\<[`RcvVoteResult`](../../doceoXmlParser/interfaces/RcvVoteResult.md)[]\>
 
 Defined in: [clients/ep/doceoClient.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L190)
 
@@ -74,7 +74,7 @@ Date in YYYY-MM-DD format
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RcvVoteResult`](../../doceoXmlParser/interfaces/RcvVoteResult.md)[]\>
+`Promise`\<[`RcvVoteResult`](../../doceoXmlParser/interfaces/RcvVoteResult.md)[]\>
 
 Parsed RCV results, or empty array if unavailable
 
@@ -82,7 +82,7 @@ Parsed RCV results, or empty array if unavailable
 
 ### fetchVotesForDate()
 
-> `private` **fetchVotesForDate**(`date`, `term`, `includeIndividual`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `url`: `string`; `votes`: [`LatestVoteRecord`](../../doceoXmlParser/interfaces/LatestVoteRecord.md)[]; \} \| `null`\>
+> `private` **fetchVotesForDate**(`date`, `term`, `includeIndividual`, `abortSignal?`): `Promise`\<\{ `url`: `string`; `votes`: [`LatestVoteRecord`](../../doceoXmlParser/interfaces/LatestVoteRecord.md)[]; \} \| `null`\>
 
 Defined in: [clients/ep/doceoClient.ts:222](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L222)
 
@@ -108,7 +108,7 @@ Fetch votes for a single date, trying RCV first then VOT.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `url`: `string`; `votes`: [`LatestVoteRecord`](../../doceoXmlParser/interfaces/LatestVoteRecord.md)[]; \} \| `null`\>
+`Promise`\<\{ `url`: `string`; `votes`: [`LatestVoteRecord`](../../doceoXmlParser/interfaces/LatestVoteRecord.md)[]; \} \| `null`\>
 
 #### Private
 
@@ -116,7 +116,7 @@ Fetch votes for a single date, trying RCV first then VOT.
 
 ### fetchVotForDate()
 
-> **fetchVotForDate**(`date`, `term?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`VotVoteResult`](../../doceoXmlParser/interfaces/VotVoteResult.md)[]\>
+> **fetchVotForDate**(`date`, `term?`, `abortSignal?`): `Promise`\<[`VotVoteResult`](../../doceoXmlParser/interfaces/VotVoteResult.md)[]\>
 
 Defined in: [clients/ep/doceoClient.ts:207](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L207)
 
@@ -140,7 +140,7 @@ Date in YYYY-MM-DD format
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`VotVoteResult`](../../doceoXmlParser/interfaces/VotVoteResult.md)[]\>
+`Promise`\<[`VotVoteResult`](../../doceoXmlParser/interfaces/VotVoteResult.md)[]\>
 
 Parsed VOT results, or empty array if unavailable
 
@@ -148,7 +148,7 @@ Parsed VOT results, or empty array if unavailable
 
 ### fetchXml()
 
-> `private` **fetchXml**(`url`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`string` \| `null`\>
+> `private` **fetchXml**(`url`, `abortSignal?`): `Promise`\<`string` \| `null`\>
 
 Defined in: [clients/ep/doceoClient.ts:137](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L137)
 
@@ -168,7 +168,7 @@ Full URL to the XML document
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`string` \| `null`\>
+`Promise`\<`string` \| `null`\>
 
 Raw XML string, or null if document not available
 
@@ -176,7 +176,7 @@ Raw XML string, or null if document not available
 
 ### getLatestVotes()
 
-> **getLatestVotes**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LatestVotesResponse`](../interfaces/LatestVotesResponse.md)\>
+> **getLatestVotes**(`params?`): `Promise`\<[`LatestVotesResponse`](../interfaces/LatestVotesResponse.md)\>
 
 Defined in: [clients/ep/doceoClient.ts:272](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoClient.ts#L272)
 
@@ -196,7 +196,7 @@ Query parameters
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LatestVotesResponse`](../interfaces/LatestVotesResponse.md)\>
+`Promise`\<[`LatestVotesResponse`](../interfaces/LatestVotesResponse.md)\>
 
 Latest votes response with available data
 

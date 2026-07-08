@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -24,7 +24,7 @@ Restrict to a specific action name
 
 ### since?
 
-> `optional` **since?**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
+> `optional` **since?**: `Date`
 
 Defined in: [utils/auditSink.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L57)
 
@@ -34,7 +34,7 @@ Include only entries on or after this date
 
 ### until?
 
-> `optional` **until?**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
+> `optional` **until?**: `Date`
 
 Defined in: [utils/auditSink.ts:59](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L59)
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -173,7 +173,7 @@ const freshData = await client.getMEPs({ country: 'SE' });
 
 ### getAdoptedTextById()
 
-> **getAdoptedTextById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>
+> **getAdoptedTextById**(`docId`, `options?`): `Promise`\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:814](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L814)
 
@@ -194,13 +194,13 @@ Returns a single adopted text by document ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>
+`Promise`\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>
 
 ***
 
 ### getAdoptedTexts()
 
-> **getAdoptedTexts**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>\>
+> **getAdoptedTexts**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:801](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L801)
 
@@ -229,13 +229,13 @@ Returns adopted texts.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>\>
 
 ***
 
 ### getAdoptedTextsFeed()
 
-> **getAdoptedTextsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getAdoptedTextsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:835](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L835)
 
@@ -264,7 +264,7 @@ Retrieves recently updated adopted texts via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
@@ -310,7 +310,7 @@ sub-client returns aggregate statistics across the entire facade.
 
 ### getCommitteeDocumentById()
 
-> **getCommitteeDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getCommitteeDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:701](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L701)
 
@@ -331,13 +331,13 @@ Returns a single committee document by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+`Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 ***
 
 ### getCommitteeDocuments()
 
-> **getCommitteeDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getCommitteeDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L626)
 
@@ -365,13 +365,13 @@ Only pagination (limit/offset) is supported.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getCommitteeDocumentsFeed()
 
-> **getCommitteeDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getCommitteeDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:736](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L736)
 
@@ -389,13 +389,13 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getCommitteeInfo()
 
-> **getCommitteeInfo**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
+> **getCommitteeInfo**(`params`): `Promise`\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:555](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L555)
 
@@ -421,7 +421,7 @@ id or abbreviation
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
+`Promise`\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
 
 Committee information
 
@@ -441,7 +441,7 @@ https://data.europarl.europa.eu/api/v2/corporate-bodies
 
 ### getControlledVocabularies()
 
-> **getControlledVocabularies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getControlledVocabularies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:902](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L902)
 
@@ -466,13 +466,13 @@ Returns EP controlled vocabularies.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getControlledVocabulariesFeed()
 
-> **getControlledVocabulariesFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getControlledVocabulariesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:926](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L926)
 
@@ -490,13 +490,13 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getControlledVocabularyById()
 
-> **getControlledVocabularyById**(`vocId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
+> **getControlledVocabularyById**(`vocId`, `options?`): `Promise`\<`Record`\<`string`, `unknown`\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:914](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L914)
 
@@ -517,13 +517,13 @@ Returns a single EP Controlled Vocabulary by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
+`Promise`\<`Record`\<`string`, `unknown`\>\>
 
 ***
 
 ### getCorporateBodiesFeed()
 
-> **getCorporateBodiesFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getCorporateBodiesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:580](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L580)
 
@@ -541,13 +541,13 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getCurrentCorporateBodies()
 
-> **getCurrentCorporateBodies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
+> **getCurrentCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:567](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L567)
 
@@ -572,13 +572,13 @@ Returns the list of all current EP Corporate Bodies for today's date.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
 
 ***
 
 ### getCurrentMEPs()
 
-> **getCurrentMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+> **getCurrentMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L284)
 
@@ -616,13 +616,13 @@ Optional `country` and `group` filters are applied client-side after fetch.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 ***
 
 ### getDocumentById()
 
-> **getDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:677](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L677)
 
@@ -643,13 +643,13 @@ Returns a single document by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+`Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 ***
 
 ### getDocumentsFeed()
 
-> **getDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L718)
 
@@ -667,13 +667,13 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getEventById()
 
-> **getEventById**(`eventId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
+> **getEventById**(`eventId`, `options?`): `Promise`\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:480](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L480)
 
@@ -694,13 +694,13 @@ Returns a single EP event by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
+`Promise`\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
 
 ***
 
 ### getEvents()
 
-> **getEvents**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
+> **getEvents**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:468](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L468)
 
@@ -728,13 +728,13 @@ Only pagination (limit/offset) is supported.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
 ***
 
 ### getEventsFeed()
 
-> **getEventsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getEventsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:488](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L488)
 
@@ -763,13 +763,13 @@ Retrieves recently updated events via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getExternalDocumentById()
 
-> **getExternalDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getExternalDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:709](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L709)
 
@@ -790,13 +790,13 @@ Returns a single external document by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+`Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 ***
 
 ### getExternalDocuments()
 
-> **getExternalDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getExternalDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:665](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L665)
 
@@ -824,13 +824,13 @@ Only pagination (limit/offset) is supported.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getExternalDocumentsFeed()
 
-> **getExternalDocumentsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getExternalDocumentsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:753](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L753)
 
@@ -859,13 +859,13 @@ Retrieves recently updated external documents via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getHomonymMEPs()
 
-> **getHomonymMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+> **getHomonymMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:322](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L322)
 
@@ -890,13 +890,13 @@ Returns homonym MEPs for the current parliamentary term.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 ***
 
 ### getIncomingMEPs()
 
-> **getIncomingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+> **getIncomingMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L298)
 
@@ -921,13 +921,13 @@ Returns all incoming MEPs for the current parliamentary term.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 ***
 
 ### getMeetingActivities()
 
-> **getMeetingActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+> **getMeetingActivities**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:402](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L402)
 
@@ -956,13 +956,13 @@ Returns activities linked to a specific meeting (plenary sitting).
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 ***
 
 ### getMeetingById()
 
-> **getMeetingById**(`eventId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>
+> **getMeetingById**(`eventId`, `options?`): `Promise`\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:457](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L457)
 
@@ -983,13 +983,13 @@ Returns a single EP meeting by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>
+`Promise`\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>
 
 ***
 
 ### getMeetingDecisions()
 
-> **getMeetingDecisions**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getMeetingDecisions**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:413](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L413)
 
@@ -1018,13 +1018,13 @@ Returns decisions made in a specific meeting (plenary sitting).
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getMeetingForeseenActivities()
 
-> **getMeetingForeseenActivities**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+> **getMeetingForeseenActivities**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:424](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L424)
 
@@ -1053,13 +1053,13 @@ Returns foreseen activities linked to a specific meeting.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
 ***
 
 ### getMeetingPlenarySessionDocumentItems()
 
-> **getMeetingPlenarySessionDocumentItems**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getMeetingPlenarySessionDocumentItems**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:446](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L446)
 
@@ -1088,13 +1088,13 @@ Returns plenary session document items for a specific meeting.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getMeetingPlenarySessionDocuments()
 
-> **getMeetingPlenarySessionDocuments**(`sittingId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getMeetingPlenarySessionDocuments**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:435](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L435)
 
@@ -1123,13 +1123,13 @@ Returns plenary session documents for a specific meeting.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getMEPDeclarationById()
 
-> **getMEPDeclarationById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
+> **getMEPDeclarationById**(`docId`, `options?`): `Promise`\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:349](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L349)
 
@@ -1150,7 +1150,7 @@ Returns a single MEP declaration by document ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
+`Promise`\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
 
 #### Gdpr
 
@@ -1160,7 +1160,7 @@ Declarations contain personal financial data – access is audit-logged
 
 ### getMEPDeclarations()
 
-> **getMEPDeclarations**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
+> **getMEPDeclarations**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:335](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L335)
 
@@ -1189,7 +1189,7 @@ Returns MEP declarations of financial interests.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
 
 #### Gdpr
 
@@ -1199,7 +1199,7 @@ Declarations contain personal financial data – access is audit-logged
 
 ### getMEPDeclarationsFeed()
 
-> **getMEPDeclarationsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getMEPDeclarationsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:369](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L369)
 
@@ -1228,13 +1228,13 @@ Retrieves recently updated MEP declarations via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getMEPDetails()
 
-> **getMEPDetails**(`id`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDetails`](../../../types/ep/mep/interfaces/MEPDetails.md)\>
+> **getMEPDetails**(`id`, `options?`): `Promise`\<[`MEPDetails`](../../../types/ep/mep/interfaces/MEPDetails.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:271](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L271)
 
@@ -1259,7 +1259,7 @@ MEP identifier in any supported format
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDetails`](../../../types/ep/mep/interfaces/MEPDetails.md)\>
+`Promise`\<[`MEPDetails`](../../../types/ep/mep/interfaces/MEPDetails.md)\>
 
 Detailed MEP information
 
@@ -1279,7 +1279,7 @@ https://data.europarl.europa.eu/api/v2/meps/{id}
 
 ### getMEPs()
 
-> **getMEPs**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+> **getMEPs**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L247)
 
@@ -1321,7 +1321,7 @@ country, group, committee, active, limit, offset
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 Paginated MEP list
 
@@ -1341,7 +1341,7 @@ https://data.europarl.europa.eu/api/v2/meps
 
 ### getMEPsFeed()
 
-> **getMEPsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getMEPsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:357](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L357)
 
@@ -1366,13 +1366,13 @@ Retrieves recently updated MEPs via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getOutgoingMEPs()
 
-> **getOutgoingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+> **getOutgoingMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L310)
 
@@ -1397,13 +1397,13 @@ Returns all outgoing MEPs for the current parliamentary term.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
 ***
 
 ### getParliamentaryQuestionById()
 
-> **getParliamentaryQuestionById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
+> **getParliamentaryQuestionById**(`docId`, `options?`): `Promise`\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:882](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L882)
 
@@ -1424,13 +1424,13 @@ Returns a single parliamentary question by document ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
+`Promise`\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
 
 ***
 
 ### getParliamentaryQuestions()
 
-> **getParliamentaryQuestions**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>\>
+> **getParliamentaryQuestions**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:864](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L864)
 
@@ -1480,7 +1480,7 @@ type, author, topic, status, dateFrom, dateTo, limit, offset
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>\>
 
 Paginated parliamentary questions list
 
@@ -1500,7 +1500,7 @@ https://data.europarl.europa.eu/api/v2/parliamentary-questions
 
 ### getParliamentaryQuestionsFeed()
 
-> **getParliamentaryQuestionsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getParliamentaryQuestionsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:894](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L894)
 
@@ -1518,13 +1518,13 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getPlenaryDocumentById()
 
-> **getPlenaryDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getPlenaryDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L685)
 
@@ -1545,13 +1545,13 @@ Returns a single plenary document by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+`Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 ***
 
 ### getPlenaryDocuments()
 
-> **getPlenaryDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getPlenaryDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:610](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L610)
 
@@ -1580,13 +1580,13 @@ Returns plenary documents.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getPlenaryDocumentsFeed()
 
-> **getPlenaryDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getPlenaryDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:727](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L727)
 
@@ -1604,13 +1604,13 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getPlenarySessionDocumentById()
 
-> **getPlenarySessionDocumentById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+> **getPlenarySessionDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:693](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L693)
 
@@ -1631,13 +1631,13 @@ Returns a single plenary session document by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
+`Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
 ***
 
 ### getPlenarySessionDocumentItems()
 
-> **getPlenarySessionDocumentItems**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getPlenarySessionDocumentItems**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:650](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L650)
 
@@ -1662,13 +1662,13 @@ Returns all Plenary Session Document Items.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getPlenarySessionDocuments()
 
-> **getPlenarySessionDocuments**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **getPlenarySessionDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:638](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L638)
 
@@ -1693,13 +1693,13 @@ Returns plenary session documents.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 ***
 
 ### getPlenarySessionDocumentsFeed()
 
-> **getPlenarySessionDocumentsFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getPlenarySessionDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:745](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L745)
 
@@ -1717,13 +1717,13 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getPlenarySessions()
 
-> **getPlenarySessions**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
+> **getPlenarySessions**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:386](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L386)
 
@@ -1765,7 +1765,7 @@ year, dateFrom, dateTo, location, limit, offset
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
 
 Paginated plenary session list
 
@@ -1781,7 +1781,7 @@ https://data.europarl.europa.eu/api/v2/meetings
 
 ### getProcedureById()
 
-> **getProcedureById**(`processId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>
+> **getProcedureById**(`processId`, `options?`): `Promise`\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:782](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L782)
 
@@ -1802,7 +1802,7 @@ Returns a single procedure by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>
+`Promise`\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>
 
 #### Throws
 
@@ -1812,7 +1812,7 @@ When the procedure is not found (404)
 
 ### getProcedureEventById()
 
-> **getProcedureEventById**(`processId`, `eventId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
+> **getProcedureEventById**(`processId`, `eventId`, `options?`): `Promise`\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:851](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L851)
 
@@ -1841,13 +1841,13 @@ Event identifier within the procedure
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
+`Promise`\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
 
 ***
 
 ### getProcedureEvents()
 
-> **getProcedureEvents**(`processId`, `params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
+> **getProcedureEvents**(`processId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:790](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L790)
 
@@ -1876,13 +1876,13 @@ Returns events linked to a procedure.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
 ***
 
 ### getProcedures()
 
-> **getProcedures**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>\>
+> **getProcedures**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:769](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L769)
 
@@ -1910,13 +1910,13 @@ Only pagination (limit/offset) is supported.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>\>
 
 ***
 
 ### getProceduresFeed()
 
-> **getProceduresFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+> **getProceduresFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:822](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L822)
 
@@ -1945,13 +1945,13 @@ Retrieves recently updated procedures via the feed endpoint.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getSpeechById()
 
-> **getSpeechById**(`speechId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>
+> **getSpeechById**(`speechId`, `options?`): `Promise`\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>
 
 Defined in: [clients/europeanParliamentClient.ts:542](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L542)
 
@@ -1972,13 +1972,13 @@ Returns a single speech by ID.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>
+`Promise`\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>
 
 ***
 
 ### getSpeeches()
 
-> **getSpeeches**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>\>
+> **getSpeeches**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:528](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L528)
 
@@ -2014,13 +2014,13 @@ Use `dateFrom`/`dateTo` (mapped to `sitting-date`/`sitting-date-end`).
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>\>
 
 ***
 
 ### getVotingRecords()
 
-> **getVotingRecords**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
+> **getVotingRecords**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:509](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L509)
 
@@ -2065,7 +2065,7 @@ sessionId, topic, dateFrom, dateTo, limit, offset
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
 
 Paginated voting records list
 
@@ -2085,7 +2085,7 @@ https://data.europarl.europa.eu/api/v2/meetings/{sitting-id}/vote-results
 
 ### searchDocuments()
 
-> **searchDocuments**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+> **searchDocuments**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Defined in: [clients/europeanParliamentClient.ts:593](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L593)
 
@@ -2131,7 +2131,7 @@ keyword, documentType, dateFrom, dateTo, committee, limit, offset
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
 Paginated legislative documents list
 

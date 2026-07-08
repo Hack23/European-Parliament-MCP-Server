@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleMonitorLegislativePipeline()
 
-> **handleMonitorLegislativePipeline**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleMonitorLegislativePipeline**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/monitorLegislativePipeline.ts:858](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/monitorLegislativePipeline.ts#L858)
 
@@ -28,7 +28,7 @@ Raw tool arguments, validated against [MonitorLegislativePipelineSchema](../../.
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing pipeline items with stage, lifecycle events,
   forecast basis, summary counts, detected bottlenecks (≥95th percentile dwell),

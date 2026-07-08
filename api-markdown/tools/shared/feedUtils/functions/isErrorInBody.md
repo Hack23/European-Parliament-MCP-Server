@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -29,7 +29,7 @@ allowing callers to convert it to an empty feed response.
 
 ### result
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 ## Returns
 

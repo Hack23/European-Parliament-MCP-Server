@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -41,7 +41,7 @@ Defined in: [services/MetricsService.ts:71](https://github.com/Hack23/European-P
 
 ### metrics
 
-> `private` `readonly` **metrics**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `MetricValue`\>
+> `private` `readonly` **metrics**: `Map`\<`string`, `MetricValue`\>
 
 Defined in: [services/MetricsService.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/MetricsService.ts#L70)
 
@@ -64,7 +64,7 @@ Cyclomatic complexity: 2
 
 ##### labels?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
+`Record`\<`string`, `string`\>
 
 #### Returns
 
@@ -123,7 +123,7 @@ Histogram metric name to summarise
 
 ##### labels?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
+`Record`\<`string`, `string`\>
 
 Optional label dimensions to scope the lookup
 
@@ -170,7 +170,7 @@ Metric name to query
 
 ##### labels?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
+`Record`\<`string`, `string`\>
 
 Optional label dimensions to scope the lookup
 
@@ -223,7 +223,7 @@ Amount to add to the counter (default: `1`)
 
 ##### labels?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
+`Record`\<`string`, `string`\>
 
 Optional key/value label dimensions (e.g., `{ endpoint: '/meps' }`)
 
@@ -276,7 +276,7 @@ Observed value (e.g., response time in milliseconds)
 
 ##### labels?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
+`Record`\<`string`, `string`\>
 
 Optional key/value label dimensions
 
@@ -434,7 +434,7 @@ Absolute gauge value to record
 
 ##### labels?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
+`Record`\<`string`, `string`\>
 
 Optional key/value label dimensions
 

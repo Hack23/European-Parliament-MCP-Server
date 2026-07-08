@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../README.md)
 
 ***
 
@@ -63,7 +63,7 @@ Defined in: [index.ts:130](https://github.com/Hack23/European-Parliament-MCP-Ser
 
 ### dispatchToolCall()
 
-> `private` **dispatchToolCall**(`name`, `args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+> `private` **dispatchToolCall**(`name`, `args`): `Promise`\<\{ `content`: `object`[]; \}\>
 
 Defined in: [index.ts:235](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L235)
 
@@ -87,7 +87,7 @@ Tool arguments
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `content`: `object`[]; \}\>
+`Promise`\<\{ `content`: `object`[]; \}\>
 
 Tool execution result
 
@@ -125,7 +125,7 @@ If handler registration fails
 
 ### start()
 
-> **start**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
+> **start**(): `Promise`\<`void`\>
 
 Defined in: [index.ts:268](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/index.ts#L268)
 
@@ -143,7 +143,7 @@ following the MCP specification.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
+`Promise`\<`void`\>
 
 Promise that resolves when server is started
 

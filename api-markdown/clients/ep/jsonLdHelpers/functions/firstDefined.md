@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -16,7 +16,7 @@ Returns the first non-undefined value from a record, looked up by key list.
 
 ### data
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 Record to search
 
