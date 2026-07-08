@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -59,7 +59,7 @@ Defined in: [services/LifecycleWarmupScheduler.ts:114](https://github.com/Hack23
 
 ### inFlight
 
-> `private` **inFlight**: [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LifecycleWarmupOutcome`](../type-aliases/LifecycleWarmupOutcome.md)\> \| `null` = `null`
+> `private` **inFlight**: `Promise`\<[`LifecycleWarmupOutcome`](../type-aliases/LifecycleWarmupOutcome.md)\> \| `null` = `null`
 
 Defined in: [services/LifecycleWarmupScheduler.ts:110](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/LifecycleWarmupScheduler.ts#L110)
 
@@ -153,7 +153,7 @@ Diagnostic snapshot of the scheduler — consumed by `get_server_health`.
 
 ### refreshNow()
 
-> **refreshNow**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LifecycleWarmupOutcome`](../type-aliases/LifecycleWarmupOutcome.md)\>
+> **refreshNow**(): `Promise`\<[`LifecycleWarmupOutcome`](../type-aliases/LifecycleWarmupOutcome.md)\>
 
 Defined in: [services/LifecycleWarmupScheduler.ts:184](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/LifecycleWarmupScheduler.ts#L184)
 
@@ -168,7 +168,7 @@ EP-API failures.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LifecycleWarmupOutcome`](../type-aliases/LifecycleWarmupOutcome.md)\>
+`Promise`\<[`LifecycleWarmupOutcome`](../type-aliases/LifecycleWarmupOutcome.md)\>
 
 Outcome of the attempt (success counts, in-flight share, or
   sanitised error message).

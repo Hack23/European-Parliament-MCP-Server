@@ -1,5 +1,5 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><link rel="canonical" href="https://hack23.github.io/European-Parliament-MCP-Server/api/"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>European Parliament MCP Server API - v1.3.38</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
-<div class="tsd-toolbar-contents container"><a href="index.html" class="title">European Parliament MCP Server API - v1.3.38</a>
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><link rel="canonical" href="https://hack23.github.io/European-Parliament-MCP-Server/api/"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>European Parliament MCP Server API - v1.3.39</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="index.html" class="title">European Parliament MCP Server API - v1.3.39</a>
 <div id="tsd-toolbar-links"><a href="https://hack23.github.io/European-Parliament-MCP-Server/">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md">API Usage Guide</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
 <ul role="listbox" id="tsd-search-results"></ul>
 <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
@@ -7,7 +7,7 @@
 <div class="container container-main">
 <div class="col-content">
 <div class="tsd-page-title">
-<h1>European Parliament MCP Server API - v1.3.38</h1></div>
+<h1>European Parliament MCP Server API - v1.3.39</h1></div>
 <div class="tsd-panel tsd-typography"><p align="center">
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="128" height="128">
 </p>
@@ -95,6 +95,13 @@
 <li>📊 <strong>Type Safety</strong>: TypeScript strict mode + Zod runtime validation</li>
 <li>🧪 <strong>Well-Tested</strong>: 80%+ code coverage, 1130+ unit tests, 71 E2E test cases</li>
 <li>📚 <strong>Complete Documentation</strong>: Architecture, TypeDoc API (HTML + Markdown), security guidelines</li>
+</ul>
+<h3 id="🔧-current-stack" class="tsd-anchor-link">🔧 Current Stack<a href="#🔧-current-stack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul>
+<li><strong>Runtime</strong>: Node.js 26.x</li>
+<li><strong>Primary compiler</strong>: TypeScript 7 RC via the <code>typescript-7</code> alias (<code>node_modules/typescript-7/bin/tsc</code>)</li>
+<li><strong>Compatibility layer</strong>: <code>@typescript/typescript6</code> remains available so existing 6.x-based tooling can continue using <code>tsc6</code> and the TypeScript 6 API</li>
+<li><strong>Core platform</strong>: <code>@modelcontextprotocol/sdk</code> 1.29.0, <code>zod</code> 4.4.3, <code>vitest</code> 4.1.10</li>
 </ul>
 <hr>
 <h2 id="🌍-hack23-political-intelligence-ecosystem" class="tsd-anchor-link">🌍 Hack23 Political Intelligence Ecosystem<a href="#🌍-hack23-political-intelligence-ecosystem" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
@@ -2133,7 +2140,8 @@ automatically applies a token-bucket rate limiter (100 requests per minute).</p>
 <h3>On This Page</h3></summary>
 <div class="tsd-accordion-details"><a href="#📊-quality-metrics-documentation"><span>📊 <wbr/>Quality <wbr/>Metrics &amp; <wbr/>Documentation</span></a><a href="#📋-overview"><span>📋 <wbr/>Overview</span></a>
 <ul>
-<li><a href="#🎯-key-features"><span>🎯 <wbr/>Key <wbr/>Features</span></a></li></ul><a href="#🌍-hack23-political-intelligence-ecosystem"><span>🌍 <wbr/>Hack23 <wbr/>Political <wbr/>Intelligence <wbr/>Ecosystem</span></a>
+<li><a href="#🎯-key-features"><span>🎯 <wbr/>Key <wbr/>Features</span></a></li>
+<li><a href="#🔧-current-stack"><span>🔧 <wbr/>Current <wbr/>Stack</span></a></li></ul><a href="#🌍-hack23-political-intelligence-ecosystem"><span>🌍 <wbr/>Hack23 <wbr/>Political <wbr/>Intelligence <wbr/>Ecosystem</span></a>
 <ul>
 <li><a href="#🎯-vision-ai-powered-democratic-transparency"><span>🎯 <wbr/>Vision: <wbr/>AI-<wbr/>Powered <wbr/>Democratic <wbr/>Transparency</span></a></li>
 <li><a href="#🧭-the-ecosystem-at-a-glance"><span>🧭 <wbr/>The <wbr/>Ecosystem at a <wbr/>Glance</span></a></li>
@@ -2237,7 +2245,7 @@ automatically applies a token-bucket rate limiter (100 requests per minute).</p>
 <li><a href="#hack23-isms"><span>Hack23 <wbr/>ISMS</span></a></li></ul><a href="#🙏-acknowledgments"><span>🙏 <wbr/>Acknowledgments</span></a></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md">Architecture</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md">Data Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md">Developer Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md">Deployment Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md">Performance Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md">SWOT Analysis</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md">End-of-Life Strategy</a><a href="https://hack23.github.io/European-Parliament-MCP-Server/" class="tsd-nav-link">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server" class="tsd-nav-link">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md" class="tsd-nav-link">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC" class="tsd-nav-link">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md" class="tsd-nav-link">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md" class="tsd-nav-link">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md" class="tsd-nav-link">API Usage Guide</a></nav>
-<nav class="tsd-navigation"><a href="modules.html">European Parliament MCP Server API - v1.3.38</a>
+<nav class="tsd-navigation"><a href="modules.html">European Parliament MCP Server API - v1.3.39</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div><footer>
 <p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>

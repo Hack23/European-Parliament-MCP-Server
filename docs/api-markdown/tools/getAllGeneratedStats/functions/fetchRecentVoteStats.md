@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: fetchRecentVoteStats()
 
-> **fetchRecentVoteStats**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RecentVoteActivity`](../interfaces/RecentVoteActivity.md) \| `null`\>
+> **fetchRecentVoteStats**(): `Promise`\<[`RecentVoteActivity`](../interfaces/RecentVoteActivity.md) \| `null`\>
 
 Defined in: [tools/getAllGeneratedStats.ts:262](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L262)
 
@@ -15,4 +15,4 @@ Returns null on any upstream error — callers treat absence as degraded-upstrea
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RecentVoteActivity`](../interfaces/RecentVoteActivity.md) \| `null`\>
+`Promise`\<[`RecentVoteActivity`](../interfaces/RecentVoteActivity.md) \| `null`\>

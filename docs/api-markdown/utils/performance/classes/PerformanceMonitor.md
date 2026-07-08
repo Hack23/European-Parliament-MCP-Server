@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -77,7 +77,7 @@ Defined in: [utils/performance.ts:90](https://github.com/Hack23/European-Parliam
 
 ### metrics
 
-> `private` `readonly` **metrics**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `number`[]\>
+> `private` `readonly` **metrics**: `Map`\<`string`, `number`[]\>
 
 Defined in: [utils/performance.ts:89](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/performance.ts#L89)
 

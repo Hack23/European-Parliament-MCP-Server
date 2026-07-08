@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -34,7 +34,7 @@ Weighted edges.
 
 ### labels
 
-[`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `string`\>
+`Map`\<`string`, `string`\>
 
 Community label per node (from [labelPropagation](labelPropagation.md)).
 

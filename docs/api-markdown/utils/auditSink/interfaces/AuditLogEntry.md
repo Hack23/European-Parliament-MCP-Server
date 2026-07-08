@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -26,7 +26,7 @@ Action performed (e.g. `'get_meps'`, `'tool_call'`)
 
 ### timestamp
 
-> **timestamp**: [`Date`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)
+> **timestamp**: `Date`
 
 Defined in: [utils/auditSink.ts:29](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L29)
 
@@ -66,7 +66,7 @@ IP address (for security monitoring)
 
 ### params?
 
-> `optional` **params?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+> `optional` **params?**: `Record`\<`string`, `unknown`\>
 
 Defined in: [utils/auditSink.ts:33](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L33)
 

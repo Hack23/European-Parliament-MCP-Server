@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleGetMeetingForeseenActivities()
 
-> **handleGetMeetingForeseenActivities**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleGetMeetingForeseenActivities**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/getMeetingForeseenActivities.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMeetingForeseenActivities.ts#L52)
 
@@ -25,7 +25,7 @@ Raw tool arguments, validated against [GetMeetingForeseenActivitiesSchema](../..
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing foreseen activity records for the requested sitting
 

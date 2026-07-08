@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -71,7 +71,7 @@ European Parliament API base URL.
 
 ### cache
 
-> `protected` `readonly` **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
+> `protected` `readonly` **cache**: `LRUCache`\<`string`, `Record`\<`string`, `unknown`\>\>
 
 Defined in: [clients/ep/baseClient.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L217)
 
@@ -149,7 +149,7 @@ Request timeout in milliseconds.
 
 ### EMPTY\_JSONLD
 
-> `private` `readonly` `static` **EMPTY\_JSONLD**: [`Readonly`](https://www.typescriptlang.org/docs/handbook/utility-types.html#readonlytype)\<\{ `@context`: `never`[]; `data`: `never`[]; \}\>
+> `private` `readonly` `static` **EMPTY\_JSONLD**: `Readonly`\<\{ `@context`: `never`[]; `data`: `never`[]; \}\>
 
 Defined in: [clients/ep/baseClient.ts:466](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L466)
 
@@ -175,7 +175,7 @@ Builds the full request URL from endpoint + optional params.
 
 ##### params?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 #### Returns
 
@@ -243,7 +243,7 @@ API endpoint path (same value passed to [get](#get))
 
 ##### params?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 Optional query parameters (same value passed to [get](#get))
 
@@ -257,7 +257,7 @@ Optional query parameters (same value passed to [get](#get))
 
 ### fetchWithRetry()
 
-> `private` **fetchWithRetry**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`, `externalSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `private` **fetchWithRetry**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`, `externalSignal?`): `Promise`\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:600](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L600)
 
@@ -297,7 +297,7 @@ Optional caller-provided cancellation signal
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 #### Private
 
@@ -305,7 +305,7 @@ Optional caller-provided cancellation signal
 
 ### fetchWithTimeout()
 
-> `private` **fetchWithTimeout**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`, `externalSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `private` **fetchWithTimeout**\<`T`\>(`url`, `endpoint`, `minimumTimeoutMs?`, `externalSignal?`): `Promise`\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:562](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L562)
 
@@ -351,7 +351,7 @@ Optional caller-provided cancellation signal.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 #### Private
 
@@ -359,7 +359,7 @@ Optional caller-provided cancellation signal.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): `Promise`\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L685)
 
@@ -369,7 +369,7 @@ Executes a cached, rate-limited GET request to the EP API.
 
 ##### T
 
-`T` *extends* [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`T` *extends* `Record`\<`string`, `unknown`\>
 
 Expected response type (extends `Record<string, unknown>`)
 
@@ -383,7 +383,7 @@ API endpoint path (relative to `baseURL`)
 
 ##### params?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 Optional query parameters
 
@@ -409,7 +409,7 @@ Optional caller-provided cancellation signal. When
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 Promise resolving to the typed API response
 
@@ -440,7 +440,7 @@ API endpoint path
 
 ##### params?
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`Record`\<`string`, `unknown`\>
 
 Optional query parameters
 
@@ -492,7 +492,7 @@ Returns cache statistics for monitoring and debugging.
 
 ### issueRequest()
 
-> `private` **issueRequest**\<`T`\>(`url`, `linkedSignal`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `private` **issueRequest**\<`T`\>(`url`, `linkedSignal`): `Promise`\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:516](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L516)
 
@@ -517,7 +517,7 @@ processes the response (status, content-type, size, body).
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 #### Private
 
@@ -525,7 +525,7 @@ processes the response (status, content-type, size, body).
 
 ### parseByContentLength()
 
-> `private` **parseByContentLength**\<`T`\>(`response`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T` \| `undefined`\>
+> `private` **parseByContentLength**\<`T`\>(`response`): `Promise`\<`T` \| `undefined`\>
 
 Defined in: [clients/ep/baseClient.ts:474](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L474)
 
@@ -547,7 +547,7 @@ should fall through to streamed-body parsing).
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T` \| `undefined`\>
+`Promise`\<`T` \| `undefined`\>
 
 #### Private
 
@@ -555,7 +555,7 @@ should fall through to streamed-body parsing).
 
 ### readStreamedBody()
 
-> `private` **readStreamedBody**\<`T`\>(`response`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `private` **readStreamedBody**\<`T`\>(`response`): `Promise`\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:379](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L379)
 
@@ -577,7 +577,7 @@ transfer encoding). Accumulates all chunks and parses the result as JSON.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 #### Private
 
@@ -676,7 +676,7 @@ instead of receiving a misleading empty-list shape.
 
 ##### bytes
 
-[`Uint8Array`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
+`Uint8Array`
 
 #### Returns
 
@@ -688,7 +688,7 @@ instead of receiving a misleading empty-list shape.
 
 ### parseResponseJson()
 
-> `private` `static` **parseResponseJson**\<`T`\>(`response`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> `private` `static` **parseResponseJson**\<`T`\>(`response`): `Promise`\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:425](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L425)
 
@@ -709,7 +709,7 @@ non-empty bodies is surfaced as an error.
 
 #### Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 #### Private
 

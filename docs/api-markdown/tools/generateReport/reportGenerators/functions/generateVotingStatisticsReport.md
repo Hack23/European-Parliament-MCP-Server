@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: generateVotingStatisticsReport()
 
-> **generateVotingStatisticsReport**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Report`](../../types/interfaces/Report.md)\>
+> **generateVotingStatisticsReport**(`params`): `Promise`\<[`Report`](../../types/interfaces/Report.md)\>
 
 Defined in: [tools/generateReport/reportGenerators.ts:371](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L371)
 
@@ -35,4 +35,4 @@ Cyclomatic complexity: 1
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Report`](../../types/interfaces/Report.md)\>
+`Promise`\<[`Report`](../../types/interfaces/Report.md)\>

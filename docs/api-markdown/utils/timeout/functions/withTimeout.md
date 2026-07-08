@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: withTimeout()
 
-> **withTimeout**\<`T`\>(`promise`, `timeoutMs`, `errorMessage?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+> **withTimeout**\<`T`\>(`promise`, `timeoutMs`, `errorMessage?`): `Promise`\<`T`\>
 
 Defined in: [utils/timeout.ts:95](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/timeout.ts#L95)
 
@@ -27,7 +27,7 @@ Type of the promise result
 
 ### promise
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 Promise to execute with timeout
 
@@ -45,7 +45,7 @@ Optional custom error message
 
 ## Returns
 
-[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
+`Promise`\<`T`\>
 
 Promise that resolves with the result or rejects with TimeoutError
 

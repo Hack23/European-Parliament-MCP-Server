@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -30,7 +30,7 @@ throw new APIError('EP API request failed: 404', 404, { endpoint: '/meps/999999'
 
 ## Extends
 
-- [`Error`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error)
+- `Error`
 
 ## Constructors
 

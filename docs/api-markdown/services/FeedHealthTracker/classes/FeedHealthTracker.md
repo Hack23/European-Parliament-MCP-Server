@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -45,7 +45,7 @@ Defined in: [services/FeedHealthTracker.ts:93](https://github.com/Hack23/Europea
 
 ### statuses
 
-> `private` `readonly` **statuses**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, [`FeedStatus`](../interfaces/FeedStatus.md)\>
+> `private` `readonly` **statuses**: `Map`\<`string`, [`FeedStatus`](../interfaces/FeedStatus.md)\>
 
 Defined in: [services/FeedHealthTracker.ts:92](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L92)
 
@@ -53,7 +53,7 @@ Defined in: [services/FeedHealthTracker.ts:92](https://github.com/Hack23/Europea
 
 ### getAllStatuses()
 
-> **getAllStatuses**(): [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, [`FeedStatus`](../interfaces/FeedStatus.md)\>
+> **getAllStatuses**(): `Record`\<`string`, [`FeedStatus`](../interfaces/FeedStatus.md)\>
 
 Defined in: [services/FeedHealthTracker.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/services/FeedHealthTracker.ts#L139)
 
@@ -61,7 +61,7 @@ Get the statuses of all tracked feeds keyed by tool name.
 
 #### Returns
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, [`FeedStatus`](../interfaces/FeedStatus.md)\>
+`Record`\<`string`, [`FeedStatus`](../interfaces/FeedStatus.md)\>
 
 ***
 

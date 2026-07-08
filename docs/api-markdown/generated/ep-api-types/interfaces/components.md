@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../README.md)
 
 ***
 
@@ -884,19 +884,19 @@ OK
 
 ##### ok-json-ld.content.application/ld+json.data
 
-> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> **data**: `Record`\<`string`, `never`\>
 
 ##### ok-json-ld.content.application/ld+json.@context?
 
-> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: `Record`\<`string`, `never`\>
 
 ##### ok-json-ld.content.application/ld+json.included?
 
-> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: `Record`\<`string`, `never`\>
 
 ##### ok-json-ld.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: `Record`\<`string`, `never`\>
 
 ##### ok-json-ld.headers
 
@@ -1833,19 +1833,19 @@ Hit
 
 ##### json-ld.data
 
-> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> **data**: `Record`\<`string`, `never`\>
 
 ##### json-ld.@context?
 
-> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **@context?**: `Record`\<`string`, `never`\>
 
 ##### json-ld.included?
 
-> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **included?**: `Record`\<`string`, `never`\>
 
 ##### json-ld.searchResults?
 
-> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
+> `optional` **searchResults?**: `Record`\<`string`, `never`\>
 
 #### lang-list
 

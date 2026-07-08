@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.38**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.39**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: buildApiParams()
 
-> **buildApiParams**\<`T`\>(`params`, `mapping`): [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string` \| `number` \| `boolean`\>
+> **buildApiParams**\<`T`\>(`params`, `mapping`): `Record`\<`string`, `string` \| `number` \| `boolean`\>
 
 Defined in: [tools/shared/paramBuilder.ts:34](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/paramBuilder.ts#L34)
 
@@ -21,7 +21,7 @@ explicitly send them to the downstream API. All other value types (including `un
 
 ### T
 
-`T` *extends* [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
+`T` *extends* `Record`\<`string`, `unknown`\>
 
 ## Parameters
 
@@ -40,7 +40,7 @@ A read-only array of `{ from, to }` pairs describing how each
 
 ## Returns
 
-[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string` \| `number` \| `boolean`\>
+`Record`\<`string`, `string` \| `number` \| `boolean`\>
 
 A new `Record<string, string | number | boolean>` containing only the
   entries that were present in `params`.
