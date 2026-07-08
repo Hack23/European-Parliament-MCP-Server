@@ -127,17 +127,16 @@ export class CommitteeClient extends BaseEPClient {
     const meps = Array.isArray(response.data) ? response.data : [];
     for (const mep of meps) {
       if (!this.isRecord(mep)) continue;
-      const mepId = this.normalizeMEPId(mep['id'] ?? mep['identifier'] ?? mep['@id']);
-      if (mepId === '') continue;
 
       const membershipSummary = await this.getMEPMembershipSummary(
-        mepId,
+        mep,
         organizationCandidates,
         abortSignal,
       );
-      if (membershipSummary.member) memberIds.add(mepId);
-      if (membershipSummary.chair) chairId = mepId;
-      if (membershipSummary.viceChair) viceChairIds.add(mepId);
+      if (membershipSummary.mepId === '') continue;
+      if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
+      if (membershipSummary.chair) chairId = membershipSummary.mepId;
+      if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
     }
 
     const membershipSummary: { members: string[]; chair?: string; viceChairs: string[] } = {
@@ -152,22 +151,30 @@ export class CommitteeClient extends BaseEPClient {
   }
 
   private async getMEPMembershipSummary(
-    mepId: string,
+    mep: Record<string, unknown>,
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
-  ): Promise<{ member: boolean; chair: boolean; viceChair: boolean }> {
+  ): Promise<{ mepId: string; member: boolean; chair: boolean; viceChair: boolean }> {
+    const mepId = this.normalizeMEPId(mep['id'] ?? mep['identifier'] ?? mep['@id']);
+    if (mepId === '') {
+      return { mepId: '', member: false, chair: false, viceChair: false };
+    }
+
     try {
       const mepDetailsResponse = await this.get<JSONLDResponse>(`meps/${mepId.substring(7)}`, {
         format: 'application/ld+json',
       }, undefined, abortSignal);
       const details = Array.isArray(mepDetailsResponse.data) ? mepDetailsResponse.data[0] : undefined;
       if (!this.isRecord(details)) {
-        return { member: false, chair: false, viceChair: false };
+        return { mepId, member: false, chair: false, viceChair: false };
       }
 
-      return this.extractMembershipSummary(details, organizationCandidates);
+      return {
+        mepId,
+        ...this.extractMembershipSummary(details, organizationCandidates),
+      };
     } catch {
-      return { member: false, chair: false, viceChair: false };
+      return { mepId, member: false, chair: false, viceChair: false };
     }
   }
 
