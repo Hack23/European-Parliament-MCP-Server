@@ -45,7 +45,7 @@
 
 ### **📋 Strategic Objective**
 
-The European Parliament MCP Server will maintain its current technology stack, utilizing modern TypeScript/Node.js with the MCP SDK, following Hack23 AB's **"Living on the Edge"** philosophy — maintaining latest stable releases with comprehensive automated testing and security validation.
+The European Parliament MCP Server will maintain its current technology stack, utilizing modern TypeScript 7 RC / TypeScript 6 compatibility tooling with Node.js 26 and the MCP SDK, following Hack23 AB's **"Living on the Edge"** philosophy — maintaining latest stable releases with comprehensive automated testing and security validation.
 
 This strategy aligns with [Hack23 AB's Vulnerability Management Policy](https://github.com/Hack23/ISMS-PUBLIC/blob/main/Vulnerability_Management.md).
 
@@ -428,12 +428,14 @@ Post-Migration Validation:
 
 ### **TypeScript Version Upgrade**
 
+The project has started the TypeScript 7 migration. The current configuration uses TypeScript 7 RC as the primary compiler via the `typescript-7` alias while keeping the `@typescript/typescript6` compatibility package available for tooling that still expects the TypeScript 6 API and the `tsc6` executable.
+
 ```
-Step 1: Update typescript dependency
-Step 2: Review tsconfig.json for new options
-Step 3: Fix any new type errors
-Step 4: Run full test suite
-Step 5: Publish patch release
+Step 1: Keep TypeScript 7 RC as the primary compiler for builds and type-checking
+Step 2: Maintain the TypeScript 6 compatibility package for existing tooling and `tsc6`
+Step 3: Review tsconfig.json and compiler options for TypeScript 7 compatibility
+Step 4: Fix any new type errors and update CI scripts if required
+Step 5: Run full test suite and publish the migration-ready release
 ```
 
 ### **MCP SDK Upgrade**

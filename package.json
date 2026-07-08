@@ -68,14 +68,14 @@
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "node ./node_modules/typescript-7/bin/tsc",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "generate:api-types": "npm exec --yes openapi-typescript@7.13.0 -- docs/ep-openapi-spec.json -o src/generated/ep-api-types.ts",
-    "type-check": "tsc --noEmit",
-    "type-check:helpers": "tsc --noEmit --project tsconfig.tests.json",
+    "type-check": "node ./node_modules/typescript-7/bin/tsc --noEmit",
+    "type-check:helpers": "node ./node_modules/typescript-7/bin/tsc --noEmit --project tsconfig.tests.json",
     "test": "vitest",
     "test:unit": "vitest run src",
     "test:integration": "vitest run tests/integration",
@@ -187,7 +187,8 @@
     "typedoc-plugin-markdown": "4.12.0",
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
-    "typescript": "6.0.3",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "typescript-7": "npm:typescript@7.0.1-rc",
     "typescript-eslint": "8.63.0",
     "vitest": "4.1.10"
   }
