@@ -157,7 +157,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
-    "lru-cache": "11.5.1",
+    "lru-cache": "11.5.2",
     "undici": "8.7.0",
     "zod": "4.4.3"
   },
