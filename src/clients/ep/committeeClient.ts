@@ -39,6 +39,128 @@ export class CommitteeClient extends BaseEPClient {
     return _transformCorporateBody(apiData);
   }
 
+  private normalizeMEPId(mepId: unknown): string {
+    if (typeof mepId !== 'string') return '';
+    const trimmed = mepId.trim();
+    if (trimmed === '') return '';
+    if (trimmed.startsWith('MEP-')) return `person/${trimmed.substring(4)}`;
+    if (trimmed.startsWith('person/')) return trimmed;
+    return trimmed.includes('/') ? trimmed : `person/${trimmed}`;
+  }
+
+  private normalizeOrganizationId(value: string): string {
+    const trimmed = value.trim();
+    if (trimmed === '') return '';
+    return trimmed.startsWith('org/') ? trimmed.substring(4) : trimmed;
+  }
+
+  private collectCommitteeOrganizationCandidates(
+    apiData: Record<string, unknown>,
+    committeeAbbreviation: string,
+  ): string[] {
+    const candidates = new Set<string>();
+    const addCandidate = (value: unknown): void => {
+      if (typeof value !== 'string') return;
+      const trimmed = value.trim();
+      if (trimmed === '') return;
+      const normalized = this.normalizeOrganizationId(trimmed);
+      if (normalized !== '') candidates.add(normalized);
+    };
+
+    addCandidate(apiData['body_id'] ?? apiData['identifier'] ?? apiData['id']);
+    addCandidate(apiData['hasCurrentVersion']);
+    if (Array.isArray(apiData['inverse_isVersionOf'])) {
+      for (const item of apiData['inverse_isVersionOf']) {
+        addCandidate(item);
+      }
+    }
+    if (committeeAbbreviation !== '') addCandidate(committeeAbbreviation);
+
+    return [...candidates];
+  }
+
+  private async enrichCommitteeMembership(
+    committee: Committee,
+    apiData: Record<string, unknown>,
+    abortSignal?: AbortSignal,
+  ): Promise<Committee> {
+    const filterValue = committee.abbreviation !== '' ? committee.abbreviation : committee.id;
+    if (filterValue === '') return committee;
+
+    const organizationCandidates = this.collectCommitteeOrganizationCandidates(apiData, committee.abbreviation);
+    const memberIds = new Set<string>();
+    const viceChairIds = new Set<string>();
+    let chairId: string | undefined;
+
+    try {
+      const response = await this.get<JSONLDResponse>('meps/show-current', {
+        format: 'application/ld+json',
+        committee: filterValue,
+        limit: 100,
+      }, undefined, abortSignal);
+
+      const meps = Array.isArray(response.data) ? response.data : [];
+      for (const mep of meps) {
+        if (typeof mep !== 'object' || mep === null) continue;
+        const mepRecord = mep as Record<string, unknown>;
+        const mepId = this.normalizeMEPId(mepRecord['id'] ?? mepRecord['identifier'] ?? mepRecord['@id']);
+        if (mepId === '') continue;
+
+        try {
+          const mepDetailsResponse = await this.get<JSONLDResponse>(`meps/${mepId.substring(7)}`, {
+            format: 'application/ld+json',
+          }, undefined, abortSignal);
+          const details = Array.isArray(mepDetailsResponse.data) ? mepDetailsResponse.data[0] : undefined;
+          if (typeof details !== 'object' || details === null) continue;
+
+          const memberships = Array.isArray(details['hasMembership']) ? details['hasMembership'] : [];
+          for (const membership of memberships) {
+            if (typeof membership !== 'object' || membership === null) continue;
+            const membershipRecord = membership as Record<string, unknown>;
+            const organization = typeof membershipRecord['organization'] === 'string'
+              ? membershipRecord['organization']
+              : '';
+            if (organization === '' || !organizationCandidates.includes(this.normalizeOrganizationId(organization))) {
+              continue;
+            }
+
+            const role = typeof membershipRecord['role'] === 'string' ? membershipRecord['role'] : '';
+            const roleCode = role.split('/').pop()?.toUpperCase() ?? '';
+            if (roleCode === 'MEMBER') {
+              memberIds.add(mepId);
+            } else if (roleCode === 'CHAIR') {
+              chairId = mepId;
+            } else if (roleCode === 'CHAIR_VICE' || roleCode === 'VICE_CHAIR') {
+              viceChairIds.add(mepId);
+            }
+          }
+        } catch {
+          continue;
+        }
+      }
+    } catch {
+      return committee;
+    }
+
+    const members = [...memberIds];
+    const viceChairs = [...viceChairIds];
+    const enrichedCommittee: Committee = {
+      ...committee,
+      members: members.length > 0 ? members : committee.members,
+    };
+    if (chairId !== undefined) {
+      enrichedCommittee.chair = chairId;
+    } else if (committee.chair !== undefined) {
+      enrichedCommittee.chair = committee.chair;
+    }
+    if (viceChairs.length > 0) {
+      enrichedCommittee.viceChairs = viceChairs;
+    } else if (committee.viceChairs !== undefined) {
+      enrichedCommittee.viceChairs = committee.viceChairs;
+    }
+    return enrichedCommittee;
+  }
+
   /**
    * Resolves a committee by trying direct lookup then list search.
    * @throws {APIError} If committee not found
@@ -64,7 +186,8 @@ export class CommitteeClient extends BaseEPClient {
     try {
       const response = await this.get<JSONLDResponse>(`corporate-bodies/${bodyId}`, {}, undefined, abortSignal);
       if (response.data.length > 0) {
-        return this.transformCorporateBody(response.data[0] ?? {});
+        const committee = this.transformCorporateBody(response.data[0] ?? {});
+        return this.enrichCommitteeMembership(committee, response.data[0] ?? {}, abortSignal);
       }
     } catch (error: unknown) {
       if (!(error instanceof APIError && error.statusCode === 404)) {
@@ -88,7 +211,7 @@ export class CommitteeClient extends BaseEPClient {
     for (const item of response.data) {
       const committee = this.transformCorporateBody(item);
       if (committee.abbreviation === searchTerm || committee.id === searchTerm) {
-        return committee;
+        return this.enrichCommitteeMembership(committee, item, abortSignal);
       }
     }
     return null;
@@ -159,7 +282,10 @@ export class CommitteeClient extends BaseEPClient {
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
-    const bodies = items.map((item) => this.transformCorporateBody(item));
+    const bodies = await Promise.all(items.map(async (item) => {
+      const committee = this.transformCorporateBody(item);
+      return this.enrichCommitteeMembership(committee, item, params.abortSignal);
+    }));
     const hasMore = bodies.length === limit;
     return { data: bodies, total: bodies.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }

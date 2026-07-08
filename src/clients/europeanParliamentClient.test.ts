@@ -125,6 +125,33 @@ describe('EuropeanParliamentClient', () => {
     ]
   });
 
+  const createMockCurrentMEPsResponse = () => ({
+    data: [
+      { id: 'person/124810', identifier: '124810', label: 'Chair Person' },
+      { id: 'person/124811', identifier: '124811', label: 'Vice Chair Person' }
+    ],
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
+  const createMockMEPDetailsResponse = (role: string) => ({
+    data: [{
+      id: role === 'CHAIR' ? 'person/124810' : 'person/124811',
+      identifier: role === 'CHAIR' ? '124810' : '124811',
+      label: role === 'CHAIR' ? 'Chair Person' : 'Vice Chair Person',
+      hasMembership: [{
+        organization: 'org/6570',
+        role: `def/ep-roles/${role}`
+      }]
+    }],
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
   const createMockQuestionsResponse = (count: number = 2) => ({
     data: Array.from({ length: count }, (_, i) => ({
       id: `q-${i + 1}`,
@@ -1016,6 +1043,113 @@ describe('EuropeanParliamentClient', () => {
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
       expect(result.members.length).toBeGreaterThan(0);
+    });
+
+    it('should enrich committee roster and leadership from current MEP memberships', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'org/ENVI',
+            body_id: 'ENVI',
+            label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+            notation: 'ENVI',
+            hasCurrentVersion: 'org/6570',
+            inverse_isVersionOf: ['org/6570'],
+            classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockCurrentMEPsResponse()
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPDetailsResponse('CHAIR')
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'person/124811',
+            identifier: '124811',
+            label: 'Vice Chair Person',
+            hasMembership: [{
+              organization: 'org/6570',
+              role: 'def/ep-roles/MEMBER'
+            }, {
+              organization: 'org/6570',
+              role: 'def/ep-roles/CHAIR_VICE'
+            }]
+          }],
+          '@context': []
+        })
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(result.members).toEqual(['person/124811']);
+      expect(result.chair).toBe('person/124810');
+      expect(result.viceChairs).toEqual(['person/124811']);
+    });
+
+    it('should enrich current corporate bodies with membership data', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'org/ENVI',
+            body_id: 'ENVI',
+            label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+            notation: 'ENVI',
+            hasCurrentVersion: 'org/6570',
+            inverse_isVersionOf: ['org/6570'],
+            classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockCurrentMEPsResponse()
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPDetailsResponse('CHAIR')
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'person/124811',
+            identifier: '124811',
+            label: 'Vice Chair Person',
+            hasMembership: [{
+              organization: 'org/6570',
+              role: 'def/ep-roles/MEMBER'
+            }, {
+              organization: 'org/6570',
+              role: 'def/ep-roles/CHAIR_VICE'
+            }]
+          }],
+          '@context': []
+        })
+      });
+
+      const result = await client.getCurrentCorporateBodies({ limit: 10 });
+
+      expect(result.data[0]?.members).toEqual(['person/124811']);
+      expect(result.data[0]?.chair).toBe('person/124810');
     });
 
     it('should not assume chair from member order', async () => {
