@@ -1092,6 +1092,11 @@ describe('EuropeanParliamentClient', () => {
           '@context': []
         })
       });
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      });
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 

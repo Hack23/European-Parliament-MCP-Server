@@ -123,7 +123,6 @@ export class CommitteeClient extends BaseEPClient {
       }, COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS);
       try {
         const membershipSummary = await this.loadCommitteeMemberships(
-          filterValue,
           organizationCandidates,
           linkedAbort.controller.signal,
         );
@@ -147,7 +146,6 @@ export class CommitteeClient extends BaseEPClient {
   }
 
   private async loadCommitteeMemberships(
-    filterValue: string,
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
   ): Promise<{ members: string[]; chair?: string; viceChairs: string[] }> {
@@ -161,7 +159,6 @@ export class CommitteeClient extends BaseEPClient {
     for (;;) {
       const response = await this.get<JSONLDResponse>('meps/show-current', {
         format: 'application/ld+json',
-        committee: filterValue,
         limit: batchSize,
         offset: fetchOffset,
       }, undefined, abortSignal);
