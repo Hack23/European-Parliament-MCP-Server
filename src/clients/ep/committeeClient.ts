@@ -22,7 +22,10 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
+import { createLinkedAbortController } from './abortUtils.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
+
+const COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS = 20_000;
 
 /**
  * Sub-client for committee/corporate-body EP API endpoints.
@@ -106,12 +109,25 @@ export class CommitteeClient extends BaseEPClient {
     const organizationCandidates = this.collectCommitteeOrganizationCandidates(apiData, committee.abbreviation);
 
     try {
-      const membershipSummary = await this.loadCommitteeMemberships(
-        filterValue,
-        organizationCandidates,
-        abortSignal,
-      );
-      return this.applyCommitteeMemberships(committee, membershipSummary);
+      const linkedAbort = createLinkedAbortController(abortSignal);
+      const enrichmentTimeout = setTimeout(() => {
+        linkedAbort.controller.abort(
+          new Error(
+            `Committee membership enrichment timed out after ${String(COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS)}ms`,
+          ),
+        );
+      }, COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS);
+      try {
+        const membershipSummary = await this.loadCommitteeMemberships(
+          filterValue,
+          organizationCandidates,
+          linkedAbort.controller.signal,
+        );
+        return this.applyCommitteeMemberships(committee, membershipSummary);
+      } finally {
+        clearTimeout(enrichmentTimeout);
+        linkedAbort.cleanup();
+      }
     } catch (error: unknown) {
       auditLogger.logError(
         'get_committee_info.enrich_memberships',
