@@ -159,10 +159,9 @@ export class CommitteeClient extends BaseEPClient {
     let fetchOffset = 0;
 
     for (;;) {
-      const response = await this.get<JSONLDResponse>('meps', {
+      const response = await this.get<JSONLDResponse>('meps/show-current', {
         format: 'application/ld+json',
         committee: filterValue,
-        status: 'current',
         limit: batchSize,
         offset: fetchOffset,
       }, undefined, abortSignal);
@@ -220,13 +219,16 @@ export class CommitteeClient extends BaseEPClient {
             mep,
             organizationCandidates,
             abortSignal,
+            true,
           );
         }),
       );
 
       for (const membershipSummary of membershipSummaries) {
         if (membershipSummary === null || membershipSummary.mepId === '') continue;
-        memberIds.add(membershipSummary.mepId);
+        if (membershipSummary.member) {
+          memberIds.add(membershipSummary.mepId);
+        }
         if (membershipSummary.chair) chairId = membershipSummary.mepId;
         if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
       }
@@ -241,6 +243,7 @@ export class CommitteeClient extends BaseEPClient {
     mep: Record<string, unknown>,
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
+    inferMemberFromRoster = false,
   ): Promise<{ mepId: string; member: boolean; chair: boolean; viceChair: boolean }> {
     const mepId = this.normalizeMEPId(mep['id'] ?? mep['identifier'] ?? mep['@id']);
     if (mepId === '') {
@@ -248,10 +251,38 @@ export class CommitteeClient extends BaseEPClient {
     }
 
     const inlineMembershipSummary = this.extractMembershipSummary(mep, organizationCandidates);
-    if (inlineMembershipSummary.member || inlineMembershipSummary.chair || inlineMembershipSummary.viceChair) {
+    if (this.hasMembershipSummary(inlineMembershipSummary)) {
       return { mepId, ...inlineMembershipSummary };
     }
 
+    if (inferMemberFromRoster && !this.hasMembershipDetails(mep)) {
+      return this.resolveRosterMembershipSummary(mepId, organizationCandidates, abortSignal);
+    }
+
+    return this.resolveDetailMembershipSummary(mepId, organizationCandidates, abortSignal);
+  }
+
+  private async resolveRosterMembershipSummary(
+    mepId: string,
+    organizationCandidates: string[],
+    abortSignal?: AbortSignal,
+  ): Promise<{ mepId: string; member: boolean; chair: boolean; viceChair: boolean }> {
+    const detailsMembershipSummary = await this.loadMEPMembershipSummaryFromDetails(
+      mepId,
+      organizationCandidates,
+      abortSignal,
+    );
+    if (this.hasMembershipSummary(detailsMembershipSummary)) {
+      return { mepId, ...detailsMembershipSummary };
+    }
+    return { mepId, member: true, chair: false, viceChair: false };
+  }
+
+  private async resolveDetailMembershipSummary(
+    mepId: string,
+    organizationCandidates: string[],
+    abortSignal?: AbortSignal,
+  ): Promise<{ mepId: string; member: boolean; chair: boolean; viceChair: boolean }> {
     const detailsMembershipSummary = await this.loadMEPMembershipSummaryFromDetails(
       mepId,
       organizationCandidates,
@@ -279,6 +310,15 @@ export class CommitteeClient extends BaseEPClient {
     } catch {
       return { member: false, chair: false, viceChair: false };
     }
+  }
+
+  private hasMembershipDetails(details: Record<string, unknown>): boolean {
+    const memberships = Array.isArray(details['hasMembership']) ? details['hasMembership'] : [];
+    return memberships.length > 0;
+  }
+
+  private hasMembershipSummary(summary: { member: boolean; chair: boolean; viceChair: boolean }): boolean {
+    return summary.member || summary.chair || summary.viceChair;
   }
 
   private extractMembershipSummary(
@@ -317,7 +357,25 @@ export class CommitteeClient extends BaseEPClient {
       ? membership['organization']
       : '';
     if (organization === '') return false;
+
+    let membershipClassification = '';
+    if (typeof membership['membershipClassification'] === 'string') {
+      membershipClassification = membership['membershipClassification'];
+    } else if (typeof membership['classification'] === 'string') {
+      membershipClassification = membership['classification'];
+    }
+    const normalizedClassification = this.normalizeMembershipClassificationCode(membershipClassification);
+    if (normalizedClassification !== '' && normalizedClassification !== 'COMMITTEE_PARLIAMENTARY_STANDING') {
+      return false;
+    }
+
     return organizationCandidates.includes(this.normalizeOrganizationId(organization));
+  }
+
+  private normalizeMembershipClassificationCode(value: string): string {
+    const trimmed = value.trim();
+    if (trimmed === '') return '';
+    return trimmed.split('/').pop()?.toUpperCase() ?? '';
   }
 
   private getMembershipRoleCode(membership: Record<string, unknown>): string {
@@ -344,6 +402,8 @@ export class CommitteeClient extends BaseEPClient {
       enrichedCommittee.viceChairs = membershipSummary.viceChairs;
     } else if (committee.viceChairs !== undefined) {
       enrichedCommittee.viceChairs = committee.viceChairs;
+    } else {
+      enrichedCommittee.viceChairs = [];
     }
 
     return enrichedCommittee;

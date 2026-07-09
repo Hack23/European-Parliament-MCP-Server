@@ -136,7 +136,8 @@ export interface Committee {
    *
    * Array of MEP IDs representing full members (not substitutes).
    * Committee size varies by mandate, typically 25-86 members.
-   * Membership reflects political group proportionality.
+   * Membership reflects political group proportionality and is derived from
+   * MEP membership relations when available.
    *
    * **EP API Field:** `members`
    * **Format:** Array of MEP IDs (format: "person/{id}")

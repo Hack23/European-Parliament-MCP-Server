@@ -117,7 +117,7 @@ export async function handleGetCommitteeInfo(
  */
 export const getCommitteeInfoToolMetadata = {
   name: 'get_committee_info',
-  description: 'Retrieve detailed information about EP corporate bodies/committees. Query by ID, abbreviation, or set showCurrent=true for all current active bodies. Returns composition, chair, vice-chairs, members, meeting schedules, and areas of responsibility.',
+  description: 'Retrieve detailed information about EP corporate bodies/committees. Query by ID, abbreviation, or set showCurrent=true for all current active bodies. Returns committee metadata plus roster leadership and membership derived from MEP membership relations when available, along with meeting schedules and areas of responsibility.',
   inputSchema: {
     type: 'object' as const,
     properties: {
