@@ -275,7 +275,7 @@ export class CommitteeClient extends BaseEPClient {
     if (this.hasMembershipSummary(detailsMembershipSummary)) {
       return { mepId, ...detailsMembershipSummary };
     }
-    return { mepId, member: true, chair: false, viceChair: false };
+    return { mepId, member: false, chair: false, viceChair: false };
   }
 
   private async resolveDetailMembershipSummary(

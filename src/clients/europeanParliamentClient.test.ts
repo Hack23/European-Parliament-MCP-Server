@@ -1248,7 +1248,7 @@ describe('EuropeanParliamentClient', () => {
       expect(result.members).toContain('person/1000');
     });
 
-    it('should include committee members even when MEP detail lookups fail', async () => {
+    it('should not include members when MEP detail lookups fail to establish committee membership', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1283,7 +1283,9 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(result.members).toEqual(['person/124810']);
+      expect(result.members).toEqual([]);
+      expect(result.chair).toBeUndefined();
+      expect(result.viceChairs).toEqual([]);
     });
 
     it('should normalize full URI MEP ids before loading MEP details', async () => {
