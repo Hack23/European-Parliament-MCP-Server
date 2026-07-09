@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.40**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.41**](../../../../README.md)
 
 ***
 
@@ -153,13 +153,14 @@ ID remains consistent even if committee name or mandate changes.
 
 > **members**: `string`[]
 
-Defined in: [types/ep/committee.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L149)
+Defined in: [types/ep/committee.ts:150](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L150)
 
 Committee members.
 
 Array of MEP IDs representing full members (not substitutes).
 Committee size varies by mandate, typically 25-86 members.
-Membership reflects political group proportionality.
+Membership reflects political group proportionality and is derived from
+MEP membership relations when available.
 
 **EP API Field:** `members`
 **Format:** Array of MEP IDs (format: "person/{id}")
@@ -213,7 +214,7 @@ EP multilingual API.
 
 > `optional` **chair?**: `string`
 
-Defined in: [types/ep/committee.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L165)
+Defined in: [types/ep/committee.ts:166](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L166)
 
 Committee chair.
 
@@ -240,7 +241,7 @@ MEP for chair details
 
 > `optional` **meetingSchedule?**: `string`[]
 
-Defined in: [types/ep/committee.ts:201](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L201)
+Defined in: [types/ep/committee.ts:202](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L202)
 
 Scheduled committee meetings.
 
@@ -268,7 +269,7 @@ during parliamentary session weeks. Extraordinary meetings may be scheduled.
 
 > `optional` **responsibilities?**: `string`[]
 
-Defined in: [types/ep/committee.ts:226](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L226)
+Defined in: [types/ep/committee.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L227)
 
 Committee responsibilities and mandate.
 
@@ -304,7 +305,7 @@ May include Treaty article references.
 
 > `optional` **viceChairs?**: `string`[]
 
-Defined in: [types/ep/committee.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L182)
+Defined in: [types/ep/committee.ts:183](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L183)
 
 Committee vice-chairs.
 
