@@ -19,6 +19,7 @@ describe('EuropeanParliamentClient', () => {
   beforeEach(() => {
     client = new EuropeanParliamentClient();
     client.clearCache();
+    mockFetch.mockReset();
     vi.clearAllMocks();
   });
 
@@ -1159,7 +1160,7 @@ describe('EuropeanParliamentClient', () => {
                 identifier: mepIdentifier,
                 label: 'Committee Member',
                 hasMembership: [{
-                  organization: 'org/6570',
+                  organization: 'ENVI',
                   role: 'def/ep-roles/MEMBER'
                 }]
               }],
