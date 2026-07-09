@@ -112,7 +112,16 @@ export class CommitteeClient extends BaseEPClient {
         abortSignal,
       );
       return this.applyCommitteeMemberships(committee, membershipSummary);
-    } catch {
+    } catch (error: unknown) {
+      auditLogger.logError(
+        'get_committee_info.enrich_memberships',
+        {
+          committeeId: committee.id,
+          committeeAbbreviation: committee.abbreviation,
+          filterValue,
+        },
+        toErrorMessage(error),
+      );
       return committee;
     }
   }
@@ -181,18 +190,26 @@ export class CommitteeClient extends BaseEPClient {
     const viceChairIds = new Set<string>();
     let chairId: string | undefined;
 
-    for (const mep of meps) {
-      if (!this.isRecord(mep)) continue;
-
-      const membershipSummary = await this.getMEPMembershipSummary(
-        mep,
-        organizationCandidates,
-        abortSignal,
+    const concurrency = 10;
+    for (let index = 0; index < meps.length; index += concurrency) {
+      const batch = meps.slice(index, index + concurrency);
+      const membershipSummaries = await Promise.all(
+        batch.map(async (mep) => {
+          if (!this.isRecord(mep)) return null;
+          return this.getMEPMembershipSummary(
+            mep,
+            organizationCandidates,
+            abortSignal,
+          );
+        }),
       );
-      if (membershipSummary.mepId === '') continue;
-      if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
-      if (membershipSummary.chair) chairId = membershipSummary.mepId;
-      if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
+
+      for (const membershipSummary of membershipSummaries) {
+        if (membershipSummary === null || membershipSummary.mepId === '') continue;
+        if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
+        if (membershipSummary.chair) chairId = membershipSummary.mepId;
+        if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
+      }
     }
 
     return chairId === undefined
