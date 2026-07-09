@@ -11,7 +11,7 @@ vi.mock('undici', () => ({
 }));
 
 import { fetch } from 'undici';
-const mockFetch = fetch as ReturnType<typeof vi.fn>;
+const mockFetch = vi.mocked(fetch);
 
 describe('EuropeanParliamentClient', () => {
   let client: EuropeanParliamentClient;
@@ -19,6 +19,7 @@ describe('EuropeanParliamentClient', () => {
   beforeEach(() => {
     client = new EuropeanParliamentClient();
     client.clearCache();
+    mockFetch.mockReset();
     vi.clearAllMocks();
   });
 
@@ -118,6 +119,33 @@ describe('EuropeanParliamentClient', () => {
         { person: 'person/124810' },
         { person: 'person/124811' }
       ]
+    }],
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
+  const createMockCurrentMEPsResponse = () => ({
+    data: [
+      { id: 'person/124810', identifier: '124810', label: 'Chair Person' },
+      { id: 'person/124811', identifier: '124811', label: 'Vice Chair Person' }
+    ],
+    '@context': [
+      { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
+      'https://data.europarl.europa.eu/api/v2/context.jsonld'
+    ]
+  });
+
+  const createMockMEPDetailsResponse = (role: string) => ({
+    data: [{
+      id: role === 'CHAIR' ? 'person/124810' : 'person/124811',
+      identifier: role === 'CHAIR' ? '124810' : '124811',
+      label: role === 'CHAIR' ? 'Chair Person' : 'Vice Chair Person',
+      hasMembership: [{
+        organization: 'org/6570',
+        role: `def/ep-roles/${role}`
+      }]
     }],
     '@context': [
       { data: '@graph', '@base': 'https://data.europarl.europa.eu/' },
@@ -1016,6 +1044,223 @@ describe('EuropeanParliamentClient', () => {
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
       expect(result.members.length).toBeGreaterThan(0);
+    });
+
+    it('should enrich committee roster and include leadership in members', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'org/ENVI',
+            body_id: 'ENVI',
+            label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+            notation: 'ENVI',
+            hasCurrentVersion: 'org/6570',
+            inverse_isVersionOf: ['org/6570'],
+            classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockCurrentMEPsResponse()
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPDetailsResponse('CHAIR')
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'person/124811',
+            identifier: '124811',
+            label: 'Vice Chair Person',
+            hasMembership: [{
+              organization: 'org/6570',
+              role: 'def/ep-roles/MEMBER'
+            }, {
+              organization: 'org/6570',
+              role: 'def/ep-roles/CHAIR_VICE'
+            }]
+          }],
+          '@context': []
+        })
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(result.members).toEqual(['person/124810', 'person/124811']);
+      expect(result.chair).toBe('person/124810');
+      expect(result.viceChairs).toEqual(['person/124811']);
+    });
+
+    it('should page through all committee members when the roster exceeds one page', async () => {
+      const firstPageMembers = Array.from({ length: 100 }, (_, index) => ({
+        id: `person/${1000 + index}`,
+        identifier: String(1000 + index),
+        label: `Member ${index + 1}`
+      }));
+      const secondPageMembers = [{
+        id: 'person/2000',
+        identifier: '2000',
+        label: 'Member 101'
+      }];
+
+      mockFetch.mockImplementation((url: string | URL | Request): Promise<Response> => {
+        const requestUrl = typeof url === 'string'
+          ? url
+          : url instanceof URL
+            ? url.toString()
+            : url.url;
+
+        if (String(requestUrl).includes('/corporate-bodies/ENVI')) {
+          return Promise.resolve({
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({
+              data: [{
+                id: 'org/ENVI',
+                body_id: 'ENVI',
+                label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+                notation: 'ENVI',
+                classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+              }],
+              '@context': []
+            })
+          } as Response);
+        }
+
+        if (String(requestUrl).includes('/meps?')) {
+          const hasOffset100 = String(requestUrl).includes('offset=100');
+          return Promise.resolve({
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({
+              data: hasOffset100 ? secondPageMembers : firstPageMembers,
+              '@context': []
+            })
+          } as Response);
+        }
+
+        if (String(requestUrl).includes('/meps/')) {
+          const parsedUrl = new URL(requestUrl);
+          const mepIdentifier = parsedUrl.pathname.split('/').filter(Boolean).pop() ?? '';
+          return Promise.resolve({
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({
+              data: [{
+                id: `person/${mepIdentifier}`,
+                identifier: mepIdentifier,
+                label: 'Committee Member',
+                hasMembership: [{
+                  organization: 'ENVI',
+                  role: 'def/ep-roles/MEMBER'
+                }]
+              }],
+              '@context': []
+            })
+          } as Response);
+        }
+
+        return Promise.resolve({
+          ok: true,
+          headers: new Headers(),
+          json: async () => ({ data: [], '@context': [] })
+        } as Response);
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(result.members).toHaveLength(101);
+      expect(result.members).toContain('person/2000');
+      expect(result.members).toContain('person/1000');
+    });
+
+    it('should include committee members even when MEP detail lookups fail', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'org/ENVI',
+            body_id: 'ENVI',
+            label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+            notation: 'ENVI',
+            classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'person/124810',
+            identifier: '124810',
+            label: 'Member One'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(result.members).toEqual(['person/124810']);
+    });
+
+    it('should normalize full URI MEP ids before loading MEP details', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'org/ENVI',
+            body_id: 'ENVI',
+            label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+            notation: 'ENVI',
+            classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'https://data.europarl.europa.eu/person/124810',
+            identifier: '124810',
+            label: 'Full URI Member'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => createMockMEPDetailsResponse('MEMBER')
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/meps/124810'),
+        expect.anything()
+      );
+      expect(result.members).toContain('person/124810');
     });
 
     it('should not assume chair from member order', async () => {
