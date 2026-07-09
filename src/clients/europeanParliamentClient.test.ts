@@ -1092,12 +1092,61 @@ describe('EuropeanParliamentClient', () => {
           '@context': []
         })
       });
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error'
+      });
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
       expect(result.members).toEqual(['person/124810', 'person/124811']);
       expect(result.chair).toBe('person/124810');
       expect(result.viceChairs).toEqual(['person/124811']);
+    });
+
+    it('should derive committee rosters from current MEP memberships and ignore non-committee classifications', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'org/ENVI',
+            body_id: 'ENVI',
+            label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+            notation: 'ENVI',
+            classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'person/124810',
+            identifier: '124810',
+            label: 'Non-committee member',
+            hasMembership: [{
+              organization: 'org/ENVI',
+              membershipClassification: 'def/ep-entities/POLITICAL_GROUP',
+              role: 'def/ep-roles/MEMBER'
+            }]
+          }],
+          '@context': []
+        })
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/meps/show-current'),
+        expect.anything()
+      );
+      expect(result.members).toEqual([]);
+      expect(result.chair).toBeUndefined();
+      expect(result.viceChairs).toEqual([]);
     });
 
     it('should page through all committee members when the roster exceeds one page', async () => {
@@ -1136,7 +1185,7 @@ describe('EuropeanParliamentClient', () => {
           } as Response);
         }
 
-        if (String(requestUrl).includes('/meps?')) {
+        if (String(requestUrl).includes('/meps/show-current')) {
           const hasOffset100 = String(requestUrl).includes('offset=100');
           return Promise.resolve({
             ok: true,
@@ -1149,6 +1198,27 @@ describe('EuropeanParliamentClient', () => {
         }
 
         if (String(requestUrl).includes('/meps/')) {
+          const parsedUrl = new URL(requestUrl);
+          const mepIdentifier = parsedUrl.pathname.split('/').filter(Boolean).pop() ?? '';
+          return Promise.resolve({
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({
+              data: [{
+                id: `person/${mepIdentifier}`,
+                identifier: mepIdentifier,
+                label: 'Committee Member',
+                hasMembership: [{
+                  organization: 'ENVI',
+                  role: 'def/ep-roles/MEMBER'
+                }]
+              }],
+              '@context': []
+            })
+          } as Response);
+        }
+
+        if (String(requestUrl).includes('/meps')) {
           const parsedUrl = new URL(requestUrl);
           const mepIdentifier = parsedUrl.pathname.split('/').filter(Boolean).pop() ?? '';
           return Promise.resolve({
@@ -1183,7 +1253,7 @@ describe('EuropeanParliamentClient', () => {
       expect(result.members).toContain('person/1000');
     });
 
-    it('should include committee members even when MEP detail lookups fail', async () => {
+    it('should not include members when MEP detail lookups fail to establish committee membership', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1218,7 +1288,9 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(result.members).toEqual(['person/124810']);
+      expect(result.members).toEqual([]);
+      expect(result.chair).toBeUndefined();
+      expect(result.viceChairs).toEqual([]);
     });
 
     it('should normalize full URI MEP ids before loading MEP details', async () => {
@@ -1251,7 +1323,19 @@ describe('EuropeanParliamentClient', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
-        json: async () => createMockMEPDetailsResponse('MEMBER')
+        json: async () => ({
+          data: [{
+            id: 'person/124810',
+            identifier: '124810',
+            label: 'Full URI Member',
+            hasMembership: [{
+              organization: 'org/ENVI',
+              membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+              role: 'def/ep-roles/MEMBER'
+            }]
+          }],
+          '@context': []
+        })
       });
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
