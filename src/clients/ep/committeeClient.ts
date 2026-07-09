@@ -59,7 +59,15 @@ export class CommitteeClient extends BaseEPClient {
   }
 
   private getCommitteeFilterValue(committee: Committee): string {
-    return committee.abbreviation !== '' ? committee.abbreviation : committee.id;
+    const abbreviation = this.normalizeOrganizationId(committee.abbreviation);
+    if (abbreviation !== '' && /[A-Za-z]/.test(abbreviation)) {
+      return abbreviation;
+    }
+    const id = this.normalizeOrganizationId(committee.id);
+    if (id !== '' && /[A-Za-z]/.test(id)) {
+      return id;
+    }
+    return '';
   }
 
   private collectCommitteeOrganizationCandidates(
@@ -118,13 +126,14 @@ export class CommitteeClient extends BaseEPClient {
     const viceChairIds = new Set<string>();
     let chairId: string | undefined;
 
-    const response = await this.get<JSONLDResponse>('meps/show-current', {
+    const response = await this.get<JSONLDResponse>('meps', {
       format: 'application/ld+json',
       committee: filterValue,
+      status: 'current',
       limit: 100,
     }, undefined, abortSignal);
-
     const meps = Array.isArray(response.data) ? response.data : [];
+
     for (const mep of meps) {
       if (!this.isRecord(mep)) continue;
 
@@ -158,6 +167,11 @@ export class CommitteeClient extends BaseEPClient {
     const mepId = this.normalizeMEPId(mep['id'] ?? mep['identifier'] ?? mep['@id']);
     if (mepId === '') {
       return { mepId: '', member: false, chair: false, viceChair: false };
+    }
+
+    const inlineMembershipSummary = this.extractMembershipSummary(mep, organizationCandidates);
+    if (inlineMembershipSummary.member || inlineMembershipSummary.chair || inlineMembershipSummary.viceChair) {
+      return { mepId, ...inlineMembershipSummary };
     }
 
     try {
@@ -195,8 +209,10 @@ export class CommitteeClient extends BaseEPClient {
       if (roleCode === 'MEMBER') {
         member = true;
       } else if (roleCode === 'CHAIR') {
+        member = true;
         chair = true;
       } else if (roleCode === 'CHAIR_VICE' || roleCode === 'VICE_CHAIR') {
+        member = true;
         viceChair = true;
       }
     }
@@ -365,10 +381,7 @@ export class CommitteeClient extends BaseEPClient {
     );
 
     const items = Array.isArray(response.data) ? response.data : [];
-    const bodies = await Promise.all(items.map(async (item) => {
-      const committee = this.transformCorporateBody(item);
-      return this.enrichCommitteeMembership(committee, item, params.abortSignal);
-    }));
+    const bodies = items.map((item) => this.transformCorporateBody(item));
     const hasMore = bodies.length === limit;
     return { data: bodies, total: bodies.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
   }
