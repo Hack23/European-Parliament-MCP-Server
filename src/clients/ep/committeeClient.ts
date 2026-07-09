@@ -48,7 +48,11 @@ export class CommitteeClient extends BaseEPClient {
     if (trimmed === '') return '';
     if (trimmed.startsWith('MEP-')) return `person/${trimmed.substring(4)}`;
     if (trimmed.startsWith('person/')) return trimmed;
-    return trimmed.includes('/') ? trimmed : `person/${trimmed}`;
+    if (trimmed.includes('/')) {
+      const identifier = trimmed.split('/').filter((segment) => segment !== '').pop() ?? '';
+      return identifier === '' ? '' : `person/${identifier}`;
+    }
+    return `person/${trimmed}`;
   }
 
   private normalizeOrganizationId(value: string): string {
@@ -222,7 +226,7 @@ export class CommitteeClient extends BaseEPClient {
 
       for (const membershipSummary of membershipSummaries) {
         if (membershipSummary === null || membershipSummary.mepId === '') continue;
-        if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
+        memberIds.add(membershipSummary.mepId);
         if (membershipSummary.chair) chairId = membershipSummary.mepId;
         if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
       }
@@ -248,21 +252,32 @@ export class CommitteeClient extends BaseEPClient {
       return { mepId, ...inlineMembershipSummary };
     }
 
+    const detailsMembershipSummary = await this.loadMEPMembershipSummaryFromDetails(
+      mepId,
+      organizationCandidates,
+      abortSignal,
+    );
+    return { mepId, ...detailsMembershipSummary };
+  }
+
+  private async loadMEPMembershipSummaryFromDetails(
+    mepId: string,
+    organizationCandidates: string[],
+    abortSignal?: AbortSignal,
+  ): Promise<{ member: boolean; chair: boolean; viceChair: boolean }> {
     try {
-      const mepDetailsResponse = await this.get<JSONLDResponse>(`meps/${mepId.substring(7)}`, {
+      const mepIdentifier = mepId.split('/').filter((segment) => segment !== '').pop() ?? mepId;
+      const mepDetailsResponse = await this.get<JSONLDResponse>(`meps/${mepIdentifier}`, {
         format: 'application/ld+json',
       }, undefined, abortSignal);
       const details = Array.isArray(mepDetailsResponse.data) ? mepDetailsResponse.data[0] : undefined;
       if (!this.isRecord(details)) {
-        return { mepId, member: false, chair: false, viceChair: false };
+        return { member: false, chair: false, viceChair: false };
       }
 
-      return {
-        mepId,
-        ...this.extractMembershipSummary(details, organizationCandidates),
-      };
+      return this.extractMembershipSummary(details, organizationCandidates);
     } catch {
-      return { mepId, member: false, chair: false, viceChair: false };
+      return { member: false, chair: false, viceChair: false };
     }
   }
 
