@@ -1099,6 +1099,89 @@ describe('EuropeanParliamentClient', () => {
       expect(result.viceChairs).toEqual(['person/124811']);
     });
 
+    it('should page through all committee members when the roster exceeds one page', async () => {
+      const firstPageMembers = Array.from({ length: 100 }, (_, index) => ({
+        id: `person/${1000 + index}`,
+        identifier: String(1000 + index),
+        label: `Member ${index + 1}`
+      }));
+      const secondPageMembers = [{
+        id: 'person/2000',
+        identifier: '2000',
+        label: 'Member 101'
+      }];
+
+      mockFetch.mockImplementation(async (url: string | URL | Request) => {
+        const requestUrl = typeof url === 'string'
+          ? url
+          : url instanceof URL
+            ? url.toString()
+            : url.url;
+
+        if (String(requestUrl).includes('/corporate-bodies/ENVI')) {
+          return {
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({
+              data: [{
+                id: 'org/ENVI',
+                body_id: 'ENVI',
+                label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+                notation: 'ENVI',
+                classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+              }],
+              '@context': []
+            })
+          };
+        }
+
+        if (String(requestUrl).includes('/meps?')) {
+          const hasOffset100 = String(requestUrl).includes('offset=100');
+          return {
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({
+              data: hasOffset100 ? secondPageMembers : firstPageMembers,
+              '@context': []
+            })
+          };
+        }
+
+        if (String(requestUrl).includes('/meps/')) {
+          const parsedUrl = new URL(requestUrl);
+          const mepIdentifier = parsedUrl.pathname.split('/').filter(Boolean).pop() ?? '';
+          return {
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({
+              data: [{
+                id: `person/${mepIdentifier}`,
+                identifier: mepIdentifier,
+                label: 'Committee Member',
+                hasMembership: [{
+                  organization: 'org/6570',
+                  role: 'def/ep-roles/MEMBER'
+                }]
+              }],
+              '@context': []
+            })
+          };
+        }
+
+        return {
+          ok: true,
+          headers: new Headers(),
+          json: async () => ({ data: [], '@context': [] })
+        };
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(result.members).toHaveLength(101);
+      expect(result.members).toContain('person/2000');
+      expect(result.members).toContain('person/1000');
+    });
+
     it('should not assume chair from member order', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,

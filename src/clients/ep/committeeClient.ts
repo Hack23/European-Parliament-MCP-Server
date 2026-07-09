@@ -126,26 +126,42 @@ export class CommitteeClient extends BaseEPClient {
     const viceChairIds = new Set<string>();
     let chairId: string | undefined;
 
-    const response = await this.get<JSONLDResponse>('meps', {
-      format: 'application/ld+json',
-      committee: filterValue,
-      status: 'current',
-      limit: 100,
-    }, undefined, abortSignal);
-    const meps = Array.isArray(response.data) ? response.data : [];
+    const batchSize = 100;
+    let fetchOffset = 0;
 
-    for (const mep of meps) {
-      if (!this.isRecord(mep)) continue;
+    while (true) {
+      const response = await this.get<JSONLDResponse>('meps', {
+        format: 'application/ld+json',
+        committee: filterValue,
+        status: 'current',
+        limit: batchSize,
+        offset: fetchOffset,
+      }, undefined, abortSignal);
+      const meps = Array.isArray(response.data) ? response.data : [];
 
-      const membershipSummary = await this.getMEPMembershipSummary(
-        mep,
-        organizationCandidates,
-        abortSignal,
-      );
-      if (membershipSummary.mepId === '') continue;
-      if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
-      if (membershipSummary.chair) chairId = membershipSummary.mepId;
-      if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
+      if (meps.length === 0) {
+        break;
+      }
+
+      for (const mep of meps) {
+        if (!this.isRecord(mep)) continue;
+
+        const membershipSummary = await this.getMEPMembershipSummary(
+          mep,
+          organizationCandidates,
+          abortSignal,
+        );
+        if (membershipSummary.mepId === '') continue;
+        if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
+        if (membershipSummary.chair) chairId = membershipSummary.mepId;
+        if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
+      }
+
+      if (meps.length < batchSize) {
+        break;
+      }
+
+      fetchOffset += batchSize;
     }
 
     const membershipSummary: { members: string[]; chair?: string; viceChairs: string[] } = {
