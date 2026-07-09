@@ -1,5 +1,5 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Committee | European Parliament MCP Server API - v1.3.40</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
-<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">European Parliament MCP Server API - v1.3.40</a>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Committee | European Parliament MCP Server API - v1.3.41</title><meta name="description" content="Documentation for European Parliament MCP Server API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../index.html" class="title">European Parliament MCP Server API - v1.3.41</a>
 <div id="tsd-toolbar-links"><a href="https://hack23.github.io/European-Parliament-MCP-Server/">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md">API Usage Guide</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
 <ul role="listbox" id="tsd-search-results"></ul>
 <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
@@ -155,7 +155,8 @@ ID remains consistent even if committee name or mandate changes.</p>
 <div class="tsd-comment tsd-typography"><p>Committee members.</p>
 <p>Array of MEP IDs representing full members (not substitutes).
 Committee size varies by mandate, typically 25-86 members.
-Membership reflects political group proportionality.</p>
+Membership reflects political group proportionality and is derived from
+MEP membership relations when available.</p>
 <p><strong>EP API Field:</strong> <code>members</code>
 <strong>Format:</strong> Array of MEP IDs (format: &quot;person/{id}&quot;)
 <strong>Typical Size:</strong> 25-86 members per committee</p>
@@ -170,7 +171,7 @@ Membership reflects political group proportionality.</p>
 <h4 class="tsd-anchor-link" id="see-1">See<a href="#see-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>MEP for member details</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L149">types/ep/committee.ts:149</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L150">types/ep/committee.ts:150</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="name"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
@@ -220,7 +221,7 @@ members at start of parliamentary term.</p>
 <h4 class="tsd-anchor-link" id="see-2">See<a href="#see-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>MEP for chair details</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L165">types/ep/committee.ts:165</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L166">types/ep/committee.ts:166</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="meetingschedule"><code class="tsd-tag">Optional</code><span>meeting<wbr/>Schedule</span><a href="#meetingschedule" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">meetingSchedule</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
@@ -239,7 +240,7 @@ during parliamentary session weeks. Extraordinary meetings may be scheduled.</p>
 
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L201">types/ep/committee.ts:201</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L202">types/ep/committee.ts:202</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="responsibilities"><code class="tsd-tag">Optional</code><span>responsibilities</span><a href="#responsibilities" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">responsibilities</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
@@ -262,7 +263,7 @@ May include Treaty article references.</p>
 
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L226">types/ep/committee.ts:226</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L227">types/ep/committee.ts:227</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="vicechairs"><code class="tsd-tag">Optional</code><span>vice<wbr/>Chairs</span><a href="#vicechairs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">viceChairs</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
@@ -284,7 +285,7 @@ allocated to ensure political group representation.</p>
 <h4 class="tsd-anchor-link" id="see-3">See<a href="#see-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>MEP for vice-chair details</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L182">types/ep/committee.ts:182</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L183">types/ep/committee.ts:183</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -307,7 +308,7 @@ allocated to ensure political group representation.</p>
 <div><a href="#abbreviation"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>abbreviation</span></a><a href="#id"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>id</span></a><a href="#members"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>members</span></a><a href="#name"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a><a href="#chair"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>chair</span></a><a href="#meetingschedule"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>meeting<wbr/>Schedule</span></a><a href="#responsibilities"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>responsibilities</span></a><a href="#vicechairs"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>vice<wbr/>Chairs</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/ARCHITECTURE.md">Architecture</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DATA_MODEL.md">Data Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEVELOPER_GUIDE.md">Developer Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/DEPLOYMENT_GUIDE.md">Deployment Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/PERFORMANCE_GUIDE.md">Performance Guide</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SWOT.md">SWOT Analysis</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/End-of-Life-Strategy.md">End-of-Life Strategy</a><a href="https://hack23.github.io/European-Parliament-MCP-Server/" class="tsd-nav-link">Documentation Portal</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server" class="tsd-nav-link">GitHub Repository</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/SECURITY_ARCHITECTURE.md" class="tsd-nav-link">Security Architecture</a><a href="https://github.com/Hack23/ISMS-PUBLIC" class="tsd-nav-link">ISMS Policies</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/CRA-ASSESSMENT.md" class="tsd-nav-link">CRA Assessment</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/THREAT_MODEL.md" class="tsd-nav-link">Threat Model</a><a href="https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/API_USAGE_GUIDE.md" class="tsd-nav-link">API Usage Guide</a></nav>
-<nav class="tsd-navigation"><a href="../modules.html">European Parliament MCP Server API - v1.3.40</a>
+<nav class="tsd-navigation"><a href="../modules.html">European Parliament MCP Server API - v1.3.41</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div><footer>
 <p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer>

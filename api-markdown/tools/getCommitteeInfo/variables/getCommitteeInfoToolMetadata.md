@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.40**](../../../README.md)
+[**European Parliament MCP Server API v1.3.41**](../../../README.md)
 
 ***
 
@@ -16,7 +16,7 @@ Tool metadata for MCP registration
 
 ### description
 
-> **description**: `string` = `'Retrieve detailed information about EP corporate bodies/committees. Query by ID, abbreviation, or set showCurrent=true for all current active bodies. Returns composition, chair, vice-chairs, members, meeting schedules, and areas of responsibility.'`
+> **description**: `string` = `'Retrieve detailed information about EP corporate bodies/committees. Query by ID, abbreviation, or set showCurrent=true for all current active bodies. Returns committee metadata plus roster leadership and membership derived from MEP membership relations when available, along with meeting schedules and areas of responsibility.'`
 
 ### inputSchema
 
