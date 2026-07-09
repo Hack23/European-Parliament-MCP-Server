@@ -1318,7 +1318,19 @@ describe('EuropeanParliamentClient', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
-        json: async () => createMockMEPDetailsResponse('MEMBER')
+        json: async () => ({
+          data: [{
+            id: 'person/124810',
+            identifier: '124810',
+            label: 'Full URI Member',
+            hasMembership: [{
+              organization: 'org/ENVI',
+              membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+              role: 'def/ep-roles/MEMBER'
+            }]
+          }],
+          '@context': []
+        })
       });
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
