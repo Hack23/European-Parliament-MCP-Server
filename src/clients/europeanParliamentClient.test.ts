@@ -11,7 +11,7 @@ vi.mock('undici', () => ({
 }));
 
 import { fetch } from 'undici';
-const mockFetch = fetch as ReturnType<typeof vi.fn>;
+const mockFetch = vi.mocked(fetch);
 
 describe('EuropeanParliamentClient', () => {
   let client: EuropeanParliamentClient;
@@ -1112,7 +1112,7 @@ describe('EuropeanParliamentClient', () => {
         label: 'Member 101'
       }];
 
-      mockFetch.mockImplementation(async (url: string | URL | Request) => {
+      mockFetch.mockImplementation((url: string | URL | Request): Promise<Response> => {
         const requestUrl = typeof url === 'string'
           ? url
           : url instanceof URL
@@ -1120,7 +1120,7 @@ describe('EuropeanParliamentClient', () => {
             : url.url;
 
         if (String(requestUrl).includes('/corporate-bodies/ENVI')) {
-          return {
+          return Promise.resolve({
             ok: true,
             headers: new Headers(),
             json: async () => ({
@@ -1133,25 +1133,25 @@ describe('EuropeanParliamentClient', () => {
               }],
               '@context': []
             })
-          };
+          } as Response);
         }
 
         if (String(requestUrl).includes('/meps?')) {
           const hasOffset100 = String(requestUrl).includes('offset=100');
-          return {
+          return Promise.resolve({
             ok: true,
             headers: new Headers(),
             json: async () => ({
               data: hasOffset100 ? secondPageMembers : firstPageMembers,
               '@context': []
             })
-          };
+          } as Response);
         }
 
         if (String(requestUrl).includes('/meps/')) {
           const parsedUrl = new URL(requestUrl);
           const mepIdentifier = parsedUrl.pathname.split('/').filter(Boolean).pop() ?? '';
-          return {
+          return Promise.resolve({
             ok: true,
             headers: new Headers(),
             json: async () => ({
@@ -1166,14 +1166,14 @@ describe('EuropeanParliamentClient', () => {
               }],
               '@context': []
             })
-          };
+          } as Response);
         }
 
-        return {
+        return Promise.resolve({
           ok: true,
           headers: new Headers(),
           json: async () => ({ data: [], '@context': [] })
-        };
+        } as Response);
       });
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });

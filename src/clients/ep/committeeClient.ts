@@ -129,7 +129,7 @@ export class CommitteeClient extends BaseEPClient {
     const batchSize = 100;
     let fetchOffset = 0;
 
-    while (true) {
+    for (;;) {
       const response = await this.get<JSONLDResponse>('meps', {
         format: 'application/ld+json',
         committee: filterValue,
@@ -143,18 +143,15 @@ export class CommitteeClient extends BaseEPClient {
         break;
       }
 
-      for (const mep of meps) {
-        if (!this.isRecord(mep)) continue;
-
-        const membershipSummary = await this.getMEPMembershipSummary(
-          mep,
-          organizationCandidates,
-          abortSignal,
-        );
-        if (membershipSummary.mepId === '') continue;
-        if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
-        if (membershipSummary.chair) chairId = membershipSummary.mepId;
-        if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
+      const batchMemberships = await this.collectMembershipsFromBatch(
+        meps,
+        organizationCandidates,
+        abortSignal,
+      );
+      batchMemberships.memberIds.forEach((mepId) => memberIds.add(mepId));
+      batchMemberships.viceChairIds.forEach((mepId) => viceChairIds.add(mepId));
+      if (batchMemberships.chairId !== undefined) {
+        chairId = batchMemberships.chairId;
       }
 
       if (meps.length < batchSize) {
@@ -173,6 +170,34 @@ export class CommitteeClient extends BaseEPClient {
     }
 
     return membershipSummary;
+  }
+
+  private async collectMembershipsFromBatch(
+    meps: unknown[],
+    organizationCandidates: string[],
+    abortSignal?: AbortSignal,
+  ): Promise<{ memberIds: Set<string>; viceChairIds: Set<string>; chairId?: string }> {
+    const memberIds = new Set<string>();
+    const viceChairIds = new Set<string>();
+    let chairId: string | undefined;
+
+    for (const mep of meps) {
+      if (!this.isRecord(mep)) continue;
+
+      const membershipSummary = await this.getMEPMembershipSummary(
+        mep,
+        organizationCandidates,
+        abortSignal,
+      );
+      if (membershipSummary.mepId === '') continue;
+      if (membershipSummary.member) memberIds.add(membershipSummary.mepId);
+      if (membershipSummary.chair) chairId = membershipSummary.mepId;
+      if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
+    }
+
+    return chairId === undefined
+      ? { memberIds, viceChairIds }
+      : { memberIds, viceChairIds, chairId };
   }
 
   private async getMEPMembershipSummary(
