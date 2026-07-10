@@ -132,7 +132,7 @@ function unwrapMEPApiData(value: unknown): MEPApiData | undefined {
   const candidate = value as Record<string, unknown>;
   const data = candidate['data'];
   if (Array.isArray(data)) {
-    const first = data[0];
+    const first: unknown = data[0];
     if (typeof first !== 'object' || first === null) return undefined;
     return first as MEPApiData;
   }
