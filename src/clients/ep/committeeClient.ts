@@ -63,21 +63,37 @@ export class CommitteeClient extends BaseEPClient {
     return _transformCorporateBody(apiData);
   }
 
-  private normalizeMEPId(mepId: unknown): string {
-    if (typeof mepId !== 'string') return '';
-    const trimmed = mepId.trim();
-    if (trimmed === '') return '';
-    if (trimmed.startsWith('MEP-')) return `person/${trimmed.substring(4)}`;
-    if (trimmed.startsWith('person/')) return trimmed;
-    if (trimmed.includes('/')) {
-      const identifier = trimmed.split('/').filter((segment) => segment !== '').pop() ?? '';
-      return identifier === '' ? '' : `person/${identifier}`;
+  private extractReferenceValue(value: unknown): string {
+    if (typeof value === 'string') return value.trim();
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        const extracted = this.extractReferenceValue(item);
+        if (extracted !== '') return extracted;
+      }
+      return '';
     }
-    return `person/${trimmed}`;
+    if (!this.isRecord(value)) return '';
+    for (const key of ['@id', 'id', 'identifier', 'body_id', 'value']) {
+      const extracted = this.extractReferenceValue(value[key]);
+      if (extracted !== '') return extracted;
+    }
+    return '';
   }
 
-  private normalizeOrganizationId(value: string): string {
-    const trimmed = value.trim();
+  private normalizeMEPId(mepId: unknown): string {
+    const normalized = this.extractReferenceValue(mepId);
+    if (normalized === '') return '';
+    if (normalized.startsWith('MEP-')) return `person/${normalized.substring(4)}`;
+    if (normalized.startsWith('person/')) return normalized;
+    if (normalized.includes('/')) {
+      const identifier = normalized.split('/').filter((segment) => segment !== '').pop() ?? '';
+      return identifier === '' ? '' : `person/${identifier}`;
+    }
+    return `person/${normalized}`;
+  }
+
+  private normalizeOrganizationId(value: unknown): string {
+    const trimmed = this.extractReferenceValue(value);
     if (trimmed === '') return '';
     const orgMarker = '/org/';
     const markerIndex = trimmed.lastIndexOf(orgMarker);
@@ -107,10 +123,7 @@ export class CommitteeClient extends BaseEPClient {
   ): string[] {
     const candidates = new Set<string>();
     const addCandidate = (value: unknown): void => {
-      if (typeof value !== 'string') return;
-      const trimmed = value.trim();
-      if (trimmed === '') return;
-      const normalized = this.normalizeOrganizationId(trimmed);
+      const normalized = this.normalizeOrganizationId(value);
       if (normalized !== '') candidates.add(normalized);
     };
 
@@ -364,11 +377,17 @@ export class CommitteeClient extends BaseEPClient {
 
     for (const membership of memberships) {
       if (!this.isRecord(membership)) continue;
-      if (!this.matchesCommitteeOrganization(membership, organizationCandidates)) continue;
+      const normalizedMembership = {
+        ...membership,
+        organization: this.extractReferenceValue(membership['organization']),
+        role: this.extractReferenceValue(membership['role']),
+        membershipClassification: this.extractReferenceValue(membership['membershipClassification'] ?? membership['classification']),
+      };
+      if (!this.matchesCommitteeOrganization(normalizedMembership, organizationCandidates)) continue;
       if (!this.isCurrentMembership(membership)) continue;
-      const transformedMembership = transformMEPMembership(membership);
+      const transformedMembership = transformMEPMembership(normalizedMembership);
       if (transformedMembership !== undefined) summary.memberships.push(transformedMembership);
-      this.applyMembershipRole(summary, this.getMembershipRoleCode(membership));
+      this.applyMembershipRole(summary, this.getMembershipRoleCode(normalizedMembership));
     }
 
     return summary;
@@ -411,17 +430,12 @@ export class CommitteeClient extends BaseEPClient {
     membership: Record<string, unknown>,
     organizationCandidates: string[],
   ): boolean {
-    const organization = typeof membership['organization'] === 'string'
-      ? membership['organization']
-      : '';
+    const organization = this.extractReferenceValue(membership['organization']);
     if (organization === '') return false;
 
-    let membershipClassification = '';
-    if (typeof membership['membershipClassification'] === 'string') {
-      membershipClassification = membership['membershipClassification'];
-    } else if (typeof membership['classification'] === 'string') {
-      membershipClassification = membership['classification'];
-    }
+    const membershipClassification = this.extractReferenceValue(
+      membership['membershipClassification'] ?? membership['classification'],
+    );
     const normalizedClassification = this.normalizeMembershipClassificationCode(membershipClassification);
     if (normalizedClassification !== '' && normalizedClassification !== 'COMMITTEE_PARLIAMENTARY_STANDING') {
       return false;
@@ -437,7 +451,7 @@ export class CommitteeClient extends BaseEPClient {
   }
 
   private getMembershipRoleCode(membership: Record<string, unknown>): string {
-    const role = typeof membership['role'] === 'string' ? membership['role'] : '';
+    const role = this.extractReferenceValue(membership['role']);
     return role.split('/').pop()?.toUpperCase() ?? '';
   }
 

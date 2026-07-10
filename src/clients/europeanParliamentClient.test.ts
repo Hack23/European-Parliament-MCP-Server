@@ -1132,6 +1132,56 @@ describe('EuropeanParliamentClient', () => {
       });
     });
 
+    it('should derive committee rosters from JSON-LD object references', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'org/ENVI',
+            body_id: 'ENVI',
+            label: [{ '@language': 'en', '@value': 'Committee on Environment' }],
+            notation: 'ENVI',
+            hasCurrentVersion: 'org/6570',
+            classification: 'COMMITTEE_PARLIAMENTARY_STANDING'
+          }],
+          '@context': []
+        })
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({
+          data: [{
+            id: 'person/124810',
+            identifier: '124810',
+            label: 'Committee Chair',
+            hasMembership: [{
+              organization: { '@id': 'org/6570' },
+              role: { '@id': 'def/ep-roles/CHAIR' },
+              membershipClassification: { '@id': 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING' },
+              memberDuring: {
+                startDate: '2024-07-16',
+                endDate: '2099-12-31'
+              }
+            }]
+          }],
+          '@context': []
+        })
+      });
+
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(result.members).toEqual(['person/124810']);
+      expect(result.chair).toBe('person/124810');
+      expect(result.memberships?.[0]).toMatchObject({
+        member: 'person/124810',
+        organization: 'org/6570',
+        role: 'def/ep-roles/CHAIR',
+        membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+      });
+    });
+
     it('should derive committee rosters from current MEP memberships and ignore non-committee classifications', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
