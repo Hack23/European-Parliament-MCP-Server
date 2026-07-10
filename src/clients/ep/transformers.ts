@@ -74,11 +74,11 @@ function optionalString(value: unknown): string | undefined {
   return stringValue === '' ? undefined : stringValue;
 }
 
-function pickOptionalStringFields(
+function pickOptionalStringFields<const K extends string>(
   source: Record<string, unknown>,
-  fields: readonly string[],
-): Record<string, string> {
-  const result: Record<string, string> = {};
+  fields: readonly K[],
+): Partial<Record<K, string>> {
+  const result: Partial<Record<K, string>> = {};
   for (const field of fields) {
     const value = optionalString(source[field]);
     if (value !== undefined) result[field] = value;
@@ -200,8 +200,7 @@ function authorityCode(value: string | undefined): string | undefined {
 
 function isCommitteeMembership(membership: MEPMembership): boolean {
   const classification = membershipClassificationCode(membership);
-  return (classification === '' && !isMandateMembership(membership))
-    || classification.startsWith('COMMITTEE_PARLIAMENTARY');
+  return classification.startsWith('COMMITTEE_PARLIAMENTARY');
 }
 
 function isMandateMembership(membership: MEPMembership): boolean {

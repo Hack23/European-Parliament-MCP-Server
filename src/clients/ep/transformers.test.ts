@@ -170,8 +170,14 @@ describe('transformMEPDetails', () => {
       label: 'MEP Name',
       bday: '1970-05-15',
       hasMembership: [
-        { organization: 'ENVI' },
-        { organization: 'ITRE' },
+        {
+          organization: 'ENVI',
+          membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+        },
+        {
+          organization: 'ITRE',
+          membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+        },
       ],
     };
     const details = transformMEPDetails(apiData);
@@ -207,7 +213,10 @@ describe('transformMEPDetails', () => {
       identifier: '104',
       label: 'MEP',
       committees: ['OLD_COMMITTEE'],
-      hasMembership: [{ organization: 'NEW_COMMITTEE' }],
+      hasMembership: [{
+        organization: 'NEW_COMMITTEE',
+        membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+      }],
     };
     const details = transformMEPDetails(apiData);
     expect(details.committees).toContain('NEW_COMMITTEE');
@@ -218,7 +227,13 @@ describe('transformMEPDetails', () => {
     const apiData = {
       identifier: '105',
       label: 'MEP',
-      hasMembership: [{ other: 'field' }, { organization: 'VALID' }],
+      hasMembership: [
+        { other: 'field' },
+        {
+          organization: 'VALID',
+          membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+        },
+      ],
     };
     const details = transformMEPDetails(apiData);
     expect(details.committees).toEqual(['VALID']);

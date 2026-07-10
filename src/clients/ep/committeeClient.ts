@@ -347,7 +347,7 @@ export class CommitteeClient extends BaseEPClient {
   }
 
   private hasMembershipSummary(summary: MembershipRoleSummary): boolean {
-    return summary.member || summary.chair || summary.viceChair;
+    return summary.member || summary.chair || summary.viceChair || summary.memberships.length > 0;
   }
 
   private extractMembershipSummary(
