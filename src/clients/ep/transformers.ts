@@ -11,6 +11,8 @@
 import type {
   MEP,
   MEPDetails,
+  MEPMembership,
+  MEPMembershipPeriod,
   PlenarySession,
   VotingRecord,
   Committee,
@@ -63,6 +65,156 @@ function extractMEPCommittees(apiData: Record<string, unknown>): string[] {
   const raw = firstDefined(apiData, 'committees', 'committeeRoles');
   if (!Array.isArray(raw)) return [];
   return raw.map((item: unknown) => toSafeString(item));
+}
+
+function optionalString(value: unknown): string | undefined {
+  const stringValue = toSafeString(value);
+  return stringValue === '' ? undefined : stringValue;
+}
+
+function pickOptionalStringFields(
+  source: Record<string, unknown>,
+  fields: readonly string[],
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const field of fields) {
+    const value = optionalString(source[field]);
+    if (value !== undefined) result[field] = value;
+  }
+  return result;
+}
+
+function transformMembershipPeriod(value: unknown): MEPMembershipPeriod | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const period = value as Record<string, unknown>;
+  const id = optionalString(period['id'] ?? period['@id']);
+  const type = optionalString(period['type'] ?? period['@type']);
+  if (id === undefined || type === undefined) return undefined;
+
+  return {
+    id,
+    type,
+    ...pickOptionalStringFields(period, ['startDate', 'endDate']),
+  };
+}
+
+function extractStringArray(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.map(toSafeString).filter((item) => item !== '');
+}
+
+function buildMEPMembership(
+  membership: Record<string, unknown>,
+): MEPMembership {
+  const normalizedMembership = {
+    ...membership,
+    id: membership['id'] ?? membership['@id'],
+    type: membership['type'] ?? membership['@type'],
+  };
+  const result: MEPMembership = {
+    ...pickOptionalStringFields(normalizedMembership, [
+      'id',
+      'type',
+      'identifier',
+      'notation_codictFunctionId',
+      'notation_codictMandateId',
+      'organization',
+      'role',
+      'membershipClassification',
+    ]),
+    contactPoint: Array.isArray(membership['contactPoint']) ? membership['contactPoint'] : [],
+  };
+  const represents = extractStringArray(membership['represents']);
+  const memberDuring = transformMembershipPeriod(membership['memberDuring']);
+  if (represents !== undefined) result.represents = represents;
+  if (memberDuring !== undefined) result.memberDuring = memberDuring;
+  return result;
+}
+
+function transformMEPMembership(value: unknown): MEPMembership | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  return buildMEPMembership(value as Record<string, unknown>);
+}
+
+function membershipClassificationCode(membership: MEPMembership): string {
+  return membership.membershipClassification?.split('/').pop()?.toUpperCase() ?? '';
+}
+
+function latestMembership(
+  memberships: MEPMembership[],
+  predicate: (membership: MEPMembership) => boolean,
+): MEPMembership | undefined {
+  return memberships
+    .filter(predicate)
+    .sort((left, right) =>
+      (right.memberDuring?.startDate ?? '').localeCompare(left.memberDuring?.startDate ?? '')
+    )[0];
+}
+
+function authorityCode(value: string | undefined): string | undefined {
+  return value?.split('/').pop();
+}
+
+function isCommitteeMembership(membership: MEPMembership): boolean {
+  const classification = membershipClassificationCode(membership);
+  return (classification === '' && !isMandateMembership(membership))
+    || classification.startsWith('COMMITTEE_PARLIAMENTARY');
+}
+
+function isMandateMembership(membership: MEPMembership): boolean {
+  return membership.notation_codictMandateId !== undefined
+    || authorityCode(membership.role) === 'MEMBER_PARLIAMENT';
+}
+
+function isPoliticalGroupMembership(membership: MEPMembership): boolean {
+  return membershipClassificationCode(membership) === 'EU_POLITICAL_GROUP';
+}
+
+function resolveMandateActive(mandate: MEPMembership | undefined, fallback: boolean): boolean {
+  if (mandate === undefined) return fallback;
+  const endDate = mandate.memberDuring?.endDate;
+  return endDate === undefined || endDate >= new Date().toISOString().slice(0, 10);
+}
+
+function resolveMandateTerm(
+  mandate: MEPMembership | undefined,
+  fallback: string,
+): Pick<MEP, 'termStart' | 'termEnd'> {
+  const termStart = mandate?.memberDuring?.startDate ?? fallback;
+  const termEnd = mandate?.memberDuring?.endDate;
+  return termEnd === undefined ? { termStart } : { termStart, termEnd };
+}
+
+function deriveMEPMembershipProfile(
+  memberships: MEPMembership[],
+  baseMEP: MEP,
+): Pick<MEP, 'politicalGroup' | 'committees' | 'active' | 'termStart' | 'termEnd'> & {
+  roles: string[];
+} {
+  const mandate = latestMembership(memberships, isMandateMembership);
+  const politicalGroupMembership = latestMembership(memberships, isPoliticalGroupMembership);
+  const committees = memberships
+    .filter(isCommitteeMembership)
+    .map((membership) => membership.organization)
+    .filter((organization): organization is string => organization !== undefined);
+  const roles = [...new Set(
+    memberships
+      .map((membership) => membership.role)
+      .filter((role): role is string => role !== undefined)
+  )];
+
+  return {
+    politicalGroup: politicalGroupMembership?.organization ?? baseMEP.politicalGroup,
+    committees: committees.length > 0 ? committees : baseMEP.committees,
+    active: resolveMandateActive(mandate, baseMEP.active),
+    ...resolveMandateTerm(mandate, baseMEP.termStart),
+    roles,
+  };
+}
+
+function resolveMEPCountry(apiData: Record<string, unknown>, fallback: string): string {
+  const country = optionalString(apiData['citizenship']) ?? fallback;
+  return country.startsWith('http') ? authorityCode(country) ?? country : country;
 }
 
 /**
@@ -120,31 +272,40 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
  */
 export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetails {
   const baseMEP = transformMEP(apiData);
-
-  let country = baseMEP.country;
-  if (country.startsWith('http')) {
-    const parts = country.split('/');
-    country = parts[parts.length - 1] ?? country;
-  }
-
+  const memberships = Array.isArray(apiData['hasMembership'])
+    ? apiData['hasMembership']
+      .map(transformMEPMembership)
+      .filter((membership): membership is MEPMembership => membership !== undefined)
+    : [];
+  const membershipProfile = deriveMEPMembershipProfile(memberships, baseMEP);
   const bday = toSafeString(apiData['bday']);
-  const memberships = apiData['hasMembership'];
-  const committees: string[] = [];
-
-  if (Array.isArray(memberships)) {
-    for (const membership of memberships) {
-      if (typeof membership === 'object' && membership !== null) {
-        const org = toSafeString((membership as Record<string, unknown>)['organization']);
-        if (org !== '') committees.push(org);
-      }
-    }
-  }
+  const sourceFields = pickOptionalStringFields(apiData, [
+    'identifier',
+    'label',
+    'notation_codictPersonId',
+    'hasGender',
+    'hasHonorificPrefix',
+    'citizenship',
+    'placeOfBirth',
+    'familyName',
+    'givenName',
+    'img',
+    'sortLabel',
+    'upperFamilyName',
+    'upperGivenName',
+  ]);
+  const type = optionalString(apiData['type'] ?? apiData['@type']);
 
   return {
     ...baseMEP,
-    country,
-    committees: committees.length > 0 ? committees : baseMEP.committees,
+    ...membershipProfile,
+    country: resolveMEPCountry(apiData, baseMEP.country),
+    ...sourceFields,
+    ...(type !== undefined ? { type } : {}),
+    ...(bday !== '' ? { bday } : {}),
+    hasMembership: memberships,
     biography: `Born: ${bday !== '' ? bday : 'Unknown'}`,
+    ...(membershipProfile.roles.length > 0 ? { roles: membershipProfile.roles } : {}),
   };
 }
 

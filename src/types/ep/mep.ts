@@ -180,6 +180,34 @@ export interface MEP {
   termEnd?: string;
 }
 
+/** Period associated with an EP membership record. */
+export interface MEPMembershipPeriod {
+  id: string;
+  type: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+/**
+ * Membership returned by `GET /meps/{mep-id}`.
+ *
+ * Function memberships use `notation_codictFunctionId`; parliamentary
+ * mandates use `notation_codictMandateId` and may include `represents`.
+ */
+export interface MEPMembership {
+  id?: string;
+  type?: string;
+  identifier?: string;
+  notation_codictFunctionId?: string;
+  notation_codictMandateId?: string;
+  represents?: string[];
+  memberDuring?: MEPMembershipPeriod;
+  organization?: string;
+  role?: string;
+  membershipClassification?: string;
+  contactPoint: unknown[];
+}
+
 /**
  * Detailed MEP information including biography and social media.
  *
@@ -249,6 +277,54 @@ export interface MEP {
  * @gdpr Contains personal data (phone, address) - requires audit logging
  */
 export interface MEPDetails extends MEP {
+  /** EP entity type (`Person`). */
+  type?: string;
+
+  /** Numeric EP person identifier. */
+  identifier?: string;
+
+  /** Official display label. */
+  label?: string;
+
+  /** CODICT person identifier from the source response. */
+  notation_codictPersonId?: string;
+
+  /** Date of birth in ISO 8601 date format. */
+  bday?: string;
+
+  /** EU authority URI identifying gender. */
+  hasGender?: string;
+
+  /** EU authority URI identifying the honorific prefix. */
+  hasHonorificPrefix?: string;
+
+  /** Complete EP membership history, including mandate and function records. */
+  hasMembership?: MEPMembership[];
+
+  /** EU authority URI identifying citizenship. */
+  citizenship?: string;
+
+  /** Place of birth as supplied by the EP. */
+  placeOfBirth?: string;
+
+  /** Family name with source capitalization. */
+  familyName?: string;
+
+  /** Given name with source capitalization. */
+  givenName?: string;
+
+  /** Official MEP portrait URL. */
+  img?: string;
+
+  /** EP sorting label. */
+  sortLabel?: string;
+
+  /** Uppercase family name supplied by the EP. */
+  upperFamilyName?: string;
+
+  /** Uppercase given name supplied by the EP. */
+  upperGivenName?: string;
+
   /**
    * Biographical information.
    *

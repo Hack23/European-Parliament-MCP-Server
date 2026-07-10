@@ -202,6 +202,112 @@ describe('transformMEPDetails', () => {
     const details = transformMEPDetails(apiData);
     expect(details.committees).toEqual(['VALID']);
   });
+
+  it('maps every field returned by the EP API v2 MEP detail endpoint', () => {
+    const apiData = {
+      id: 'person/124936',
+      type: 'Person',
+      identifier: '124936',
+      label: 'Maria ARENA',
+      notation_codictPersonId: '124936',
+      bday: '1966-12-17',
+      hasGender: 'http://publications.europa.eu/resource/authority/human-sex/FEMALE',
+      hasHonorificPrefix: 'http://publications.europa.eu/resource/authority/honorific/MS',
+      hasMembership: [
+        {
+          id: 'membership/124936-f-167664',
+          type: 'Membership',
+          identifier: '124936-f-167664',
+          notation_codictFunctionId: '167664',
+          memberDuring: {
+            id: 'time-period/20220518-20240715',
+            type: 'PeriodOfTime',
+            startDate: '2022-05-18',
+            endDate: '2024-07-15',
+          },
+          organization: 'org/6358',
+          role: 'def/ep-roles/CHAIR_VICE',
+          membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+          contactPoint: [{ email: 'public@example.eu' }],
+        },
+        {
+          id: 'membership/124936-f-156057',
+          type: 'Membership',
+          identifier: '124936-f-156057',
+          notation_codictFunctionId: '156057',
+          memberDuring: {
+            id: 'time-period/20190702-20240715',
+            type: 'PeriodOfTime',
+            startDate: '2019-07-02',
+            endDate: '2024-07-15',
+          },
+          organization: 'org/5154',
+          role: 'def/ep-roles/MEMBER',
+          membershipClassification: 'def/ep-entities/EU_POLITICAL_GROUP',
+          contactPoint: [],
+        },
+        {
+          id: 'membership/124936-m-16006',
+          type: 'Membership',
+          represents: ['http://publications.europa.eu/resource/authority/country/BEL'],
+          identifier: '124936-m-16006',
+          notation_codictMandateId: '16006',
+          memberDuring: {
+            id: 'time-period/20190702-20240715',
+            type: 'PeriodOfTime',
+            startDate: '2019-07-02',
+            endDate: '2024-07-15',
+          },
+          organization: 'org/ep-9',
+          role: 'def/ep-roles/MEMBER_PARLIAMENT',
+          contactPoint: [],
+        },
+      ],
+      citizenship: 'http://publications.europa.eu/resource/authority/country/BEL',
+      placeOfBirth: 'Mons',
+      familyName: 'Arena',
+      givenName: 'Maria',
+      img: 'https://www.europarl.europa.eu/mepphoto/124936.jpg',
+      sortLabel: 'ARENA',
+      upperFamilyName: 'ARENA',
+      upperGivenName: 'MARIA',
+    };
+
+    const details = transformMEPDetails(apiData);
+
+    expect(details).toMatchObject({
+      id: 'person/124936',
+      type: 'Person',
+      identifier: '124936',
+      label: 'Maria ARENA',
+      notation_codictPersonId: '124936',
+      name: 'Maria ARENA',
+      bday: '1966-12-17',
+      hasGender: apiData.hasGender,
+      hasHonorificPrefix: apiData.hasHonorificPrefix,
+      citizenship: apiData.citizenship,
+      country: 'BEL',
+      placeOfBirth: 'Mons',
+      familyName: 'Arena',
+      givenName: 'Maria',
+      img: apiData.img,
+      sortLabel: 'ARENA',
+      upperFamilyName: 'ARENA',
+      upperGivenName: 'MARIA',
+      politicalGroup: 'org/5154',
+      committees: ['org/6358'],
+      active: false,
+      termStart: '2019-07-02',
+      termEnd: '2024-07-15',
+      roles: [
+        'def/ep-roles/CHAIR_VICE',
+        'def/ep-roles/MEMBER',
+        'def/ep-roles/MEMBER_PARLIAMENT',
+      ],
+    });
+    expect(details.hasMembership).toEqual(apiData.hasMembership);
+    expect(details.hasMembership?.[0]?.contactPoint).toEqual([{ email: 'public@example.eu' }]);
+  });
 });
 
 // ─── transformPlenarySession ────────────────────────────────────
