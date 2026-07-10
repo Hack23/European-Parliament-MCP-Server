@@ -21,8 +21,10 @@
 export type {
   MEP,
   MEPDetails,
+  MEPContactPoint,
   MEPMembership,
   MEPMembershipPeriod,
+  MEPTelephone,
   VotingStatistics,
 } from './ep/mep.js';
 export type { PlenarySession, VotingRecord } from './ep/plenary.js';

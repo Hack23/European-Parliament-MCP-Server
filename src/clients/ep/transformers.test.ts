@@ -211,6 +211,7 @@ describe('transformMEPDetails', () => {
       label: 'Maria ARENA',
       notation_codictPersonId: '124936',
       bday: '1966-12-17',
+      hasEmail: 'mailto:maria.arena@europarl.europa.eu',
       hasGender: 'http://publications.europa.eu/resource/authority/human-sex/FEMALE',
       hasHonorificPrefix: 'http://publications.europa.eu/resource/authority/honorific/MS',
       hasMembership: [
@@ -220,15 +221,14 @@ describe('transformMEPDetails', () => {
           identifier: '124936-f-167664',
           notation_codictFunctionId: '167664',
           memberDuring: {
-            id: 'time-period/20220518-20240715',
+            id: 'time-period/20240723',
             type: 'PeriodOfTime',
-            startDate: '2022-05-18',
-            endDate: '2024-07-15',
+            startDate: '2024-07-23',
           },
           organization: 'org/6358',
           role: 'def/ep-roles/CHAIR_VICE',
           membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
-          contactPoint: [{ email: 'public@example.eu' }],
+          contactPoint: [],
         },
         {
           id: 'membership/124936-f-156057',
@@ -236,10 +236,9 @@ describe('transformMEPDetails', () => {
           identifier: '124936-f-156057',
           notation_codictFunctionId: '156057',
           memberDuring: {
-            id: 'time-period/20190702-20240715',
+            id: 'time-period/20240716',
             type: 'PeriodOfTime',
-            startDate: '2019-07-02',
-            endDate: '2024-07-15',
+            startDate: '2024-07-16',
           },
           organization: 'org/5154',
           role: 'def/ep-roles/MEMBER',
@@ -253,14 +252,23 @@ describe('transformMEPDetails', () => {
           identifier: '124936-m-16006',
           notation_codictMandateId: '16006',
           memberDuring: {
-            id: 'time-period/20190702-20240715',
+            id: 'time-period/20240716',
             type: 'PeriodOfTime',
-            startDate: '2019-07-02',
-            endDate: '2024-07-15',
+            startDate: '2024-07-16',
           },
           organization: 'org/ep-9',
           role: 'def/ep-roles/MEMBER_PARLIAMENT',
-          contactPoint: [],
+          contactPoint: [{
+            id: 'contact-point/124936-m-16006-12G301',
+            type: 'ContactPoint',
+            officeAddress: '12G301',
+            hasTelephone: {
+              id: 'tel/003222845555',
+              type: 'Voice',
+              hasValue: 'tel:+3222845555',
+            },
+            hasSite: 'http://publications.europa.eu/resource/authority/site/ASP',
+          }],
         },
       ],
       citizenship: 'http://publications.europa.eu/resource/authority/country/BEL',
@@ -280,6 +288,7 @@ describe('transformMEPDetails', () => {
       type: 'Person',
       identifier: '124936',
       label: 'Maria ARENA',
+      hasEmail: apiData.hasEmail,
       notation_codictPersonId: '124936',
       name: 'Maria ARENA',
       bday: '1966-12-17',
@@ -294,11 +303,13 @@ describe('transformMEPDetails', () => {
       sortLabel: 'ARENA',
       upperFamilyName: 'ARENA',
       upperGivenName: 'MARIA',
+      email: 'maria.arena@europarl.europa.eu',
       politicalGroup: 'org/5154',
       committees: ['org/6358'],
-      active: false,
-      termStart: '2019-07-02',
-      termEnd: '2024-07-15',
+      active: true,
+      termStart: '2024-07-16',
+      address: '12G301',
+      phone: '+3222845555',
       roles: [
         'def/ep-roles/CHAIR_VICE',
         'def/ep-roles/MEMBER',
@@ -306,7 +317,7 @@ describe('transformMEPDetails', () => {
       ],
     });
     expect(details.hasMembership).toEqual(apiData.hasMembership);
-    expect(details.hasMembership?.[0]?.contactPoint).toEqual([{ email: 'public@example.eu' }]);
+    expect(details.hasMembership?.[2]?.contactPoint).toEqual(apiData.hasMembership[2]?.contactPoint);
   });
 });
 
@@ -516,7 +527,7 @@ describe('transformCorporateBody', () => {
     expect(committee.name).toBe('Committee on the Environment, Climate and Food Safety');
     // Abbreviation must be the short code from label, not the org/ prefixed id
     expect(committee.abbreviation).toBe('ENVI');
-    expect(committee.id).toBe('org/ENVI');
+    expect(committee.id).toBe('ENVI');
     expect(committee.responsibilities).toContain('COMMITTEE_PARLIAMENTARY_STANDING');
   });
 
@@ -534,7 +545,7 @@ describe('transformCorporateBody', () => {
     expect(committee.abbreviation).toBe('ENVI');
     // Name falls back to label when prefLabel/altLabel are absent
     expect(committee.name).toBe('ENVI');
-    expect(committee.id).toBe('org/102');
+    expect(committee.id).toBe('102');
   });
 
   it('prefers altLabel over label for committee name when prefLabel is absent', () => {
@@ -1207,7 +1218,7 @@ describe('transformers with real EP API JSON-LD format', () => {
     expect(committee.name).toBe('Committee on the Environment, Climate and Food Safety');
     expect(committee.name).not.toBe('ENVI');
     expect(committee.abbreviation).toBe('ENVI');
-    expect(committee.id).toBe('org/ENVI');
+    expect(committee.id).toBe('ENVI');
     expect(committee.responsibilities).toContain('COMMITTEE_PARLIAMENTARY_STANDING');
   });
 
@@ -1222,7 +1233,7 @@ describe('transformers with real EP API JSON-LD format', () => {
     };
     const committee = transformCorporateBody(apiData);
     expect(committee.abbreviation).toBe('ECON');
-    expect(committee.id).toBe('org/1');
+    expect(committee.id).toBe('1');
     // Without prefLabel, name falls back to label
     expect(committee.name).toBe('ECON');
   });
@@ -1478,7 +1489,7 @@ describe('Real EP API v2 Response Shapes', () => {
         label: 'STOA',
       };
       const committee = transformCorporateBody(apiData);
-      expect(committee.id).toBe('org/3730');
+      expect(committee.id).toBe('3730');
       expect(committee.abbreviation).toBe('STOA');
       expect(committee.name).toBe('STOA');
     });
@@ -1491,7 +1502,7 @@ describe('Real EP API v2 Response Shapes', () => {
         classification: 'def/ep-entities/NATIONAL_CHAMBER',
       };
       const committee = transformCorporateBody(apiData);
-      expect(committee.id).toBe('org/3901');
+      expect(committee.id).toBe('3901');
       expect(committee.responsibilities).toContain('NATIONAL_CHAMBER');
     });
   });
@@ -1600,7 +1611,7 @@ describe('Real EP API v2 Response Shapes', () => {
         linkedTo: ['org/6579', 'org/6572'],
       };
       const committee = transformCorporateBody(apiData);
-      expect(committee.id).toBe('org/7875');
+      expect(committee.id).toBe('7875');
       expect(committee.abbreviation).toBe('CJ52');
       expect(committee.responsibilities).toContain('COMMITTEE_PARLIAMENTARY_JOINT');
     });

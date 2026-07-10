@@ -11,6 +11,7 @@
 import type {
   MEP,
   MEPDetails,
+  MEPContactPoint,
   MEPMembership,
   MEPMembershipPeriod,
   PlenarySession,
@@ -49,7 +50,8 @@ function resolveMEPId(apiData: Record<string, unknown>): string {
   const identifier = firstDefined(apiData, 'identifier', '@id', 'id');
   const idStr = toSafeString(identifier) || toSafeString(apiData['id']) || '';
   const fallbackId = idStr || 'unknown';
-  return idStr.includes('/') ? idStr : `person/${fallbackId}`;
+  const normalizedIdentifier = idStr.split('/').filter((segment) => segment !== '').pop() ?? fallbackId;
+  return `person/${normalizedIdentifier}`;
 }
 
 /** Build the MEP display name from available label / name fields. */
@@ -103,6 +105,39 @@ function extractStringArray(value: unknown): string[] | undefined {
   return value.map(toSafeString).filter((item) => item !== '');
 }
 
+function transformTelephone(value: unknown): MEPContactPoint['hasTelephone'] {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const telephone = value as Record<string, unknown>;
+  const result = pickOptionalStringFields(
+    { ...telephone, id: telephone['id'] ?? telephone['@id'], type: telephone['type'] ?? telephone['@type'] },
+    ['id', 'type', 'hasValue'],
+  );
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+function transformContactPoint(value: unknown): MEPContactPoint | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const contactPoint = value as Record<string, unknown>;
+  const result: MEPContactPoint = pickOptionalStringFields(
+    {
+      ...contactPoint,
+      id: contactPoint['id'] ?? contactPoint['@id'],
+      type: contactPoint['type'] ?? contactPoint['@type'],
+    },
+    ['id', 'type', 'officeAddress', 'hasSite'],
+  );
+  const hasTelephone = transformTelephone(contactPoint['hasTelephone']);
+  if (hasTelephone !== undefined) result.hasTelephone = hasTelephone;
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+function transformContactPoints(value: unknown): MEPContactPoint[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map(transformContactPoint)
+    .filter((contactPoint): contactPoint is MEPContactPoint => contactPoint !== undefined);
+}
+
 function buildMEPMembership(
   membership: Record<string, unknown>,
 ): MEPMembership {
@@ -122,7 +157,7 @@ function buildMEPMembership(
       'role',
       'membershipClassification',
     ]),
-    contactPoint: Array.isArray(membership['contactPoint']) ? membership['contactPoint'] : [],
+    contactPoint: transformContactPoints(membership['contactPoint']),
   };
   const represents = extractStringArray(membership['represents']);
   const memberDuring = transformMembershipPeriod(membership['memberDuring']);
@@ -149,6 +184,14 @@ function latestMembership(
     .sort((left, right) =>
       (right.memberDuring?.startDate ?? '').localeCompare(left.memberDuring?.startDate ?? '')
     )[0];
+}
+
+function isCurrentMembership(membership: MEPMembership): boolean {
+  const today = new Date().toISOString().slice(0, 10);
+  const startDate = membership.memberDuring?.startDate;
+  const endDate = membership.memberDuring?.endDate;
+  return (startDate === undefined || startDate <= today)
+    && (endDate === undefined || endDate >= today);
 }
 
 function authorityCode(value: string | undefined): string | undefined {
@@ -191,14 +234,15 @@ function deriveMEPMembershipProfile(
 ): Pick<MEP, 'politicalGroup' | 'committees' | 'active' | 'termStart' | 'termEnd'> & {
   roles: string[];
 } {
-  const mandate = latestMembership(memberships, isMandateMembership);
-  const politicalGroupMembership = latestMembership(memberships, isPoliticalGroupMembership);
-  const committees = memberships
+  const currentMemberships = memberships.filter(isCurrentMembership);
+  const mandate = latestMembership(currentMemberships, isMandateMembership);
+  const politicalGroupMembership = latestMembership(currentMemberships, isPoliticalGroupMembership);
+  const committees = currentMemberships
     .filter(isCommitteeMembership)
     .map((membership) => membership.organization)
     .filter((organization): organization is string => organization !== undefined);
   const roles = [...new Set(
-    memberships
+    currentMemberships
       .map((membership) => membership.role)
       .filter((role): role is string => role !== undefined)
   )];
@@ -215,6 +259,21 @@ function deriveMEPMembershipProfile(
 function resolveMEPCountry(apiData: Record<string, unknown>, fallback: string): string {
   const country = optionalString(apiData['citizenship']) ?? fallback;
   return country.startsWith('http') ? authorityCode(country) ?? country : country;
+}
+
+function deriveCurrentContactProfile(
+  memberships: MEPMembership[],
+): Pick<MEPDetails, 'address' | 'phone'> {
+  const currentMandate = latestMembership(
+    memberships.filter(isCurrentMembership),
+    isMandateMembership,
+  );
+  const contactPoint = currentMandate?.contactPoint[0];
+  const result: Pick<MEPDetails, 'address' | 'phone'> = {};
+  if (contactPoint?.officeAddress !== undefined) result.address = contactPoint.officeAddress;
+  const phone = contactPoint?.hasTelephone?.hasValue?.replace(/^tel:/i, '');
+  if (phone !== undefined) result.phone = phone;
+  return result;
 }
 
 /**
@@ -250,7 +309,7 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
   const country = toSafeString(firstDefined(apiData, 'api:country-of-representation', 'country', 'citizenship', 'nationality')) || 'Unknown';
   const politicalGroup = toSafeString(firstDefined(apiData, 'api:political-group', 'politicalGroup', 'political_group')) || 'Unknown';
 
-  const emailValue = toSafeString(apiData['email']);
+  const emailValue = toSafeString(apiData['email'] ?? apiData['hasEmail']).replace(/^mailto:/i, '');
   const termEndValue = toSafeString(firstDefined(apiData, 'termEnd', 'term_end'));
 
   const mep: MEP = {
@@ -282,6 +341,7 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
   const sourceFields = pickOptionalStringFields(apiData, [
     'identifier',
     'label',
+    'hasEmail',
     'notation_codictPersonId',
     'hasGender',
     'hasHonorificPrefix',
@@ -305,6 +365,7 @@ export function transformMEPDetails(apiData: Record<string, unknown>): MEPDetail
     ...(bday !== '' ? { bday } : {}),
     hasMembership: memberships,
     biography: `Born: ${bday !== '' ? bday : 'Unknown'}`,
+    ...deriveCurrentContactProfile(memberships),
     ...(membershipProfile.roles.length > 0 ? { roles: membershipProfile.roles } : {}),
   };
 }
@@ -406,7 +467,7 @@ function resolveCommitteeAbbreviation(apiData: Record<string, unknown>, id: stri
  * Cyclomatic complexity: 6
  */
 export function transformCorporateBody(apiData: Record<string, unknown>): Committee {
-  const id = extractField(apiData, ['body_id', 'id', 'identifier']);
+  const id = extractField(apiData, ['body_id', 'identifier', 'id']);
   const name = resolveCommitteeName(apiData);
   const abbreviation = resolveCommitteeAbbreviation(apiData, id);
   const effectiveId = id !== '' ? id : abbreviation;

@@ -22,10 +22,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
-import { createLinkedAbortController } from './abortUtils.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
-
-const COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS = 20_000;
 
 /**
  * Sub-client for committee/corporate-body EP API endpoints.
@@ -58,6 +55,9 @@ export class CommitteeClient extends BaseEPClient {
   private normalizeOrganizationId(value: string): string {
     const trimmed = value.trim();
     if (trimmed === '') return '';
+    const orgMarker = '/org/';
+    const markerIndex = trimmed.lastIndexOf(orgMarker);
+    if (markerIndex >= 0) return trimmed.substring(markerIndex + orgMarker.length);
     return trimmed.startsWith('org/') ? trimmed.substring(4) : trimmed;
   }
 
@@ -113,24 +113,11 @@ export class CommitteeClient extends BaseEPClient {
     const organizationCandidates = this.collectCommitteeOrganizationCandidates(apiData, committee.abbreviation);
 
     try {
-      const linkedAbort = createLinkedAbortController(abortSignal);
-      const enrichmentTimeout = setTimeout(() => {
-        linkedAbort.controller.abort(
-          new Error(
-            `Committee membership enrichment timed out after ${String(COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS)}ms`,
-          ),
-        );
-      }, COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS);
-      try {
-        const membershipSummary = await this.loadCommitteeMemberships(
-          organizationCandidates,
-          linkedAbort.controller.signal,
-        );
-        return this.applyCommitteeMemberships(committee, membershipSummary);
-      } finally {
-        clearTimeout(enrichmentTimeout);
-        linkedAbort.cleanup();
-      }
+      const membershipSummary = await this.loadCommitteeMemberships(
+        organizationCandidates,
+        abortSignal,
+      );
+      return this.applyCommitteeMemberships(committee, membershipSummary);
     } catch (error: unknown) {
       auditLogger.logError(
         'get_committee_info.enrich_memberships',
@@ -330,6 +317,7 @@ export class CommitteeClient extends BaseEPClient {
     for (const membership of memberships) {
       if (!this.isRecord(membership)) continue;
       if (!this.matchesCommitteeOrganization(membership, organizationCandidates)) continue;
+      if (!this.isCurrentMembership(membership)) continue;
 
       const roleCode = this.getMembershipRoleCode(membership);
       if (roleCode === 'MEMBER') {
@@ -344,6 +332,18 @@ export class CommitteeClient extends BaseEPClient {
     }
 
     return { member, chair, viceChair };
+  }
+
+  private isCurrentMembership(membership: Record<string, unknown>): boolean {
+    const period = this.isRecord(membership['memberDuring'])
+      ? membership['memberDuring']
+      : undefined;
+    if (period === undefined) return true;
+    const today = new Date().toISOString().slice(0, 10);
+    const startDate = typeof period['startDate'] === 'string' ? period['startDate'] : undefined;
+    const endDate = typeof period['endDate'] === 'string' ? period['endDate'] : undefined;
+    return (startDate === undefined || startDate <= today)
+      && (endDate === undefined || endDate >= today);
   }
 
   private matchesCommitteeOrganization(
@@ -429,7 +429,13 @@ export class CommitteeClient extends BaseEPClient {
    */
   private async fetchCommitteeDirectly(bodyId: string, abortSignal?: AbortSignal): Promise<Committee | null> {
     try {
-      const response = await this.get<JSONLDResponse>(`corporate-bodies/${bodyId}`, {}, undefined, abortSignal);
+      const normalizedBodyId = this.normalizeOrganizationId(bodyId);
+      const response = await this.get<JSONLDResponse>(
+        `corporate-bodies/${normalizedBodyId}`,
+        {},
+        undefined,
+        abortSignal,
+      );
       if (response.data.length > 0) {
         const committee = this.transformCorporateBody(response.data[0] ?? {});
         return await this.enrichCommitteeMembership(committee, response.data[0] ?? {}, abortSignal);

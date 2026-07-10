@@ -80,6 +80,20 @@ const MEPMembershipPeriodSchema = z.object({
   endDate: z.string().optional(),
 });
 
+const MEPTelephoneSchema = z.object({
+  id: z.string().optional(),
+  type: z.string().optional(),
+  hasValue: z.string().optional(),
+});
+
+const MEPContactPointSchema = z.object({
+  id: z.string().optional(),
+  type: z.string().optional(),
+  officeAddress: z.string().optional(),
+  hasTelephone: MEPTelephoneSchema.optional(),
+  hasSite: z.string().optional(),
+});
+
 const MEPMembershipSchema = z.object({
   id: z.string().optional(),
   type: z.string().optional(),
@@ -91,7 +105,7 @@ const MEPMembershipSchema = z.object({
   organization: z.string().optional(),
   role: z.string().optional(),
   membershipClassification: z.string().optional(),
-  contactPoint: z.array(z.unknown()),
+  contactPoint: z.array(MEPContactPointSchema),
 });
 
 /**
@@ -101,6 +115,7 @@ export const MEPDetailsSchema = MEPSchema.extend({
   type: z.string().optional(),
   identifier: z.string().optional(),
   label: z.string().optional(),
+  hasEmail: z.string().optional(),
   notation_codictPersonId: z.string().optional(),
   bday: z.string().optional(),
   hasGender: z.string().optional(),

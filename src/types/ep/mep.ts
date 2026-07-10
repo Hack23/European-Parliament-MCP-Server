@@ -188,6 +188,22 @@ export interface MEPMembershipPeriod {
   endDate?: string;
 }
 
+/** Telephone value embedded in an EP membership contact point. */
+export interface MEPTelephone {
+  id?: string;
+  type?: string;
+  hasValue?: string;
+}
+
+/** Office contact point embedded in an EP parliamentary mandate. */
+export interface MEPContactPoint {
+  id?: string;
+  type?: string;
+  officeAddress?: string;
+  hasTelephone?: MEPTelephone;
+  hasSite?: string;
+}
+
 /**
  * Membership returned by `GET /meps/{mep-id}`.
  *
@@ -205,7 +221,7 @@ export interface MEPMembership {
   organization?: string;
   role?: string;
   membershipClassification?: string;
-  contactPoint: unknown[];
+  contactPoint: MEPContactPoint[];
 }
 
 /**
@@ -285,6 +301,9 @@ export interface MEPDetails extends MEP {
 
   /** Official display label. */
   label?: string;
+
+  /** Official EP email URI as returned by the API (`mailto:...`). */
+  hasEmail?: string;
 
   /** CODICT person identifier from the source response. */
   notation_codictPersonId?: string;
