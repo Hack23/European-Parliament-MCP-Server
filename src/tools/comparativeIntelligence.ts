@@ -123,6 +123,23 @@ interface MEPApiData {
 };
 
 /**
+ * Accept both the normalized client model and a JSON-LD response returned by
+ * older client implementations. This keeps profile construction resilient
+ * while the EP client is being migrated to typed sub-clients.
+ */
+function unwrapMEPApiData(value: unknown): MEPApiData | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const candidate = value as Record<string, unknown>;
+  const data = candidate['data'];
+  if (Array.isArray(data)) {
+    const first = data[0];
+    if (typeof first !== 'object' || first === null) return undefined;
+    return first as MEPApiData;
+  }
+  return candidate as unknown as MEPApiData;
+}
+
+/**
  * Computes a normalized voting score (0–100) for an MEP based on
  * participation volume and for-vote ratio.
  *
@@ -574,7 +591,11 @@ function buildProfilesFromResults(
     const mepId = mepIds[i];
     if (result === undefined || mepId === undefined) continue;
     if (result.status === 'fulfilled') {
-      const mep = result.value as MEPApiData;
+      const mep = unwrapMEPApiData(result.value);
+      if (mep === undefined) {
+        profiles.push(buildPlaceholderProfile(mepId));
+        continue;
+      }
       const scores = computeDimensionScores(mep, dimensions);
       const overallScore = computeOverallScore(scores);
       profiles.push({

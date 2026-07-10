@@ -184,6 +184,27 @@ describe('comparative_intelligence Tool', () => {
       expect(data.profiles).toHaveLength(3);
     });
 
+    it('should build profiles from a JSON-LD detail response', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValue({
+        data: [{
+          id: 'person/1',
+          label: 'Alice Smith',
+          country: 'DE',
+          politicalGroup: 'EPP',
+          committees: ['AGRI'],
+        }],
+        '@context': [],
+      } as never);
+
+      const result = await handleComparativeIntelligence({ mepIds: [1, 2] });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        profiles: { mepId: string }[];
+      };
+
+      expect(data.profiles).toHaveLength(2);
+      expect(data.profiles[0]?.mepId).toBe('person/1');
+    });
+
     it('should build correlation matrix with correct pair count', async () => {
       const result = await handleComparativeIntelligence({ mepIds: [1, 2, 3] });
       const data = JSON.parse(result.content[0]?.text ?? '{}') as {
