@@ -138,7 +138,12 @@ export class CommitteeClient extends BaseEPClient {
 
     try {
       const membershipSummary = await withTimeoutAndAbort(
-        (signal) => this.loadCommitteeMemberships(organizationCandidates, signal),
+        (timeoutSignal) => this.loadCommitteeMemberships(
+          organizationCandidates,
+          abortSignal === undefined
+            ? timeoutSignal
+            : AbortSignal.any([abortSignal, timeoutSignal]),
+        ),
         COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS,
         'Committee membership enrichment timed out',
       );

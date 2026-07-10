@@ -99,18 +99,18 @@ describe('transformMEP', () => {
     const apiData = {
       identifier: '9',
       label: 'Current MEP',
-      active: true,
+      active: false,
       termStart: '2019-07-02',
       hasMembership: [{
         notation_codictMandateId: 'MANDATE',
-        memberDuring: { startDate: '2019-07-02', endDate: '2024-07-15' },
+        memberDuring: { startDate: '2024-07-02', endDate: '2099-07-15' },
       }],
     };
 
     const mep = transformMEP(apiData);
     const details = transformMEPDetails(apiData);
 
-    expect(mep.active).toBe(false);
+    expect(mep.active).toBe(true);
     expect(mep.termStart).toBe(details.termStart);
     expect(mep.termEnd).toBe(details.termEnd);
     expect(mep.active).toBe(details.active);

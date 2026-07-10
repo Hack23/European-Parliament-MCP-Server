@@ -316,6 +316,7 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
       .filter((membership): membership is MEPMembership => membership !== undefined)
     : [];
   const mandate = latestMembership(memberships.filter(isCurrentMembership), isMandateMembership);
+  const termEndValue = toSafeString(firstDefined(apiData, 'termEnd', 'term_end'));
   const term = resolveMandateTerm(
     mandate,
     toSafeString(firstDefined(apiData, 'termStart', 'term_start')) || '',
@@ -331,6 +332,7 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
     ...term,
   };
   if (emailValue !== '') mep.email = emailValue;
+  if (mandate === undefined && termEndValue !== '') mep.termEnd = termEndValue;
   return mep;
 }
 
