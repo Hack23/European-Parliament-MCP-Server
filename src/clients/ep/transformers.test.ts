@@ -95,6 +95,27 @@ describe('transformMEP', () => {
     expect(mep.active).toBe(true);
   });
 
+  it('derives shared mandate fields from current memberships', () => {
+    const apiData = {
+      identifier: '9',
+      label: 'Current MEP',
+      active: true,
+      termStart: '2019-07-02',
+      hasMembership: [{
+        notation_codictMandateId: 'MANDATE',
+        memberDuring: { startDate: '2019-07-02', endDate: '2024-07-15' },
+      }],
+    };
+
+    const mep = transformMEP(apiData);
+    const details = transformMEPDetails(apiData);
+
+    expect(mep.active).toBe(false);
+    expect(mep.termStart).toBe(details.termStart);
+    expect(mep.termEnd).toBe(details.termEnd);
+    expect(mep.active).toBe(details.active);
+  });
+
   it('returns empty committees array when committees field is absent', () => {
     const mep = transformMEP({ identifier: '8', label: 'No Committees' });
     expect(mep.committees).toEqual([]);

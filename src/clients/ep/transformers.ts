@@ -310,7 +310,16 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
   const politicalGroup = toSafeString(firstDefined(apiData, 'api:political-group', 'politicalGroup', 'political_group')) || 'Unknown';
 
   const emailValue = toSafeString(apiData['email'] ?? apiData['hasEmail']).replace(/^mailto:/i, '');
-  const termEndValue = toSafeString(firstDefined(apiData, 'termEnd', 'term_end'));
+  const memberships = Array.isArray(apiData['hasMembership'])
+    ? apiData['hasMembership']
+      .map(transformMEPMembership)
+      .filter((membership): membership is MEPMembership => membership !== undefined)
+    : [];
+  const mandate = latestMembership(memberships.filter(isCurrentMembership), isMandateMembership);
+  const term = resolveMandateTerm(
+    mandate,
+    toSafeString(firstDefined(apiData, 'termStart', 'term_start')) || '',
+  );
 
   const mep: MEP = {
     id: mepId,
@@ -318,11 +327,10 @@ export function transformMEP(apiData: Record<string, unknown>): MEP {
     country,
     politicalGroup,
     committees: extractMEPCommittees(apiData),
-    active: apiData['active'] === true || apiData['active'] === 'true',
-    termStart: toSafeString(firstDefined(apiData, 'termStart', 'term_start')) || '',
+    active: resolveMandateActive(mandate, apiData['active'] === true || apiData['active'] === 'true'),
+    ...term,
   };
   if (emailValue !== '') mep.email = emailValue;
-  if (termEndValue !== '') mep.termEnd = termEndValue;
   return mep;
 }
 

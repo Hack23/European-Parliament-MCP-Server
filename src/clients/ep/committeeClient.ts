@@ -25,7 +25,10 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
-import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
+import { DEFAULT_TIMEOUTS, withTimeoutAndAbort } from '../../utils/timeout.js';
+
+/** Prevent roster enrichment from exhausting the shared EP API rate-limit budget. */
+const COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS = 10_000;
 
 interface MembershipRoleSummary {
   member: boolean;
@@ -134,9 +137,10 @@ export class CommitteeClient extends BaseEPClient {
     const organizationCandidates = this.collectCommitteeOrganizationCandidates(apiData, committee.abbreviation);
 
     try {
-      const membershipSummary = await this.loadCommitteeMemberships(
-        organizationCandidates,
-        abortSignal,
+      const membershipSummary = await withTimeoutAndAbort(
+        (signal) => this.loadCommitteeMemberships(organizationCandidates, signal),
+        COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS,
+        'Committee membership enrichment timed out',
       );
       return this.applyCommitteeMemberships(committee, membershipSummary);
     } catch (error: unknown) {
