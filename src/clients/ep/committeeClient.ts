@@ -381,7 +381,10 @@ export class CommitteeClient extends BaseEPClient {
         ...membership,
         organization: this.extractReferenceValue(membership['organization']),
         role: this.extractReferenceValue(membership['role']),
-        membershipClassification: this.extractReferenceValue(membership['membershipClassification'] ?? membership['classification']),
+        membershipClassification: this.extractReferenceValue([
+          membership['membershipClassification'],
+          membership['classification'],
+        ]),
       };
       if (!this.matchesCommitteeOrganization(normalizedMembership, organizationCandidates)) continue;
       if (!this.isCurrentMembership(membership)) continue;
@@ -433,9 +436,10 @@ export class CommitteeClient extends BaseEPClient {
     const organization = this.extractReferenceValue(membership['organization']);
     if (organization === '') return false;
 
-    const membershipClassification = this.extractReferenceValue(
-      membership['membershipClassification'] ?? membership['classification'],
-    );
+    const membershipClassification = this.extractReferenceValue([
+      membership['membershipClassification'],
+      membership['classification'],
+    ]);
     const normalizedClassification = this.normalizeMembershipClassificationCode(membershipClassification);
     if (normalizedClassification !== '' && normalizedClassification !== 'COMMITTEE_PARLIAMENTARY_STANDING') {
       return false;

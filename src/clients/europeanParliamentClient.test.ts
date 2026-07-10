@@ -1174,12 +1174,12 @@ describe('EuropeanParliamentClient', () => {
 
       expect(result.members).toEqual(['person/124810']);
       expect(result.chair).toBe('person/124810');
-      expect(result.memberships?.[0]).toMatchObject({
+      expect(result.memberships).toEqual(expect.arrayContaining([expect.objectContaining({
         member: 'person/124810',
         organization: 'org/6570',
         role: 'def/ep-roles/CHAIR',
         membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
-      });
+      })]));
     });
 
     it('should derive committee rosters from current MEP memberships and ignore non-committee classifications', async () => {
