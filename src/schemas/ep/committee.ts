@@ -5,6 +5,7 @@
  */
 
 import { z } from 'zod';
+import { MEPMembershipSchema } from './mep.js';
 
 /**
  * Get committee info input schema
@@ -37,6 +38,9 @@ export const CommitteeSchema = z.object({
   name: z.string(),
   abbreviation: z.string(),
   members: z.array(z.string()),
+  memberships: z.array(MEPMembershipSchema.extend({
+    member: z.string(),
+  })).optional(),
   chair: z.string().optional(),
   viceChairs: z.array(z.string()).optional(),
   meetingSchedule: z.array(z.string()).optional(),

@@ -18,9 +18,17 @@
  * @see https://data.europarl.europa.eu/api/v2/
  */
 
-export type { MEP, MEPDetails, VotingStatistics } from './ep/mep.js';
+export type {
+  MEP,
+  MEPDetails,
+  MEPContactPoint,
+  MEPMembership,
+  MEPMembershipPeriod,
+  MEPTelephone,
+  VotingStatistics,
+} from './ep/mep.js';
 export type { PlenarySession, VotingRecord } from './ep/plenary.js';
-export type { Committee } from './ep/committee.js';
+export type { Committee, CommitteeMembership } from './ep/committee.js';
 export type { LegislativeDocument, DocumentType, DocumentStatus } from './ep/document.js';
 export type { ParliamentaryQuestion } from './ep/question.js';
 export type { PaginatedResponse } from './ep/common.js';

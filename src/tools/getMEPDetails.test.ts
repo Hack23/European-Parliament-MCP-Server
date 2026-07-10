@@ -103,6 +103,72 @@ describe('get_mep_details Tool', () => {
         expect(mep).toHaveProperty('votingStatistics');
       }
     });
+
+    it('should preserve complete EP profile and membership fields in the MCP response', async () => {
+      vi.mocked(epClientModule.epClient.getMEPDetails).mockResolvedValueOnce({
+        id: 'person/124936',
+        name: 'Maria ARENA',
+        country: 'BEL',
+        politicalGroup: 'org/5154',
+        committees: ['org/6358'],
+        active: false,
+        termStart: '2019-07-02',
+        termEnd: '2024-07-15',
+        type: 'Person',
+        identifier: '124936',
+        label: 'Maria ARENA',
+        notation_codictPersonId: '124936',
+        bday: '1966-12-17',
+        hasGender: 'http://publications.europa.eu/resource/authority/human-sex/FEMALE',
+        hasHonorificPrefix: 'http://publications.europa.eu/resource/authority/honorific/MS',
+        citizenship: 'http://publications.europa.eu/resource/authority/country/BEL',
+        placeOfBirth: 'Mons',
+        familyName: 'Arena',
+        givenName: 'Maria',
+        img: 'https://www.europarl.europa.eu/mepphoto/124936.jpg',
+        sortLabel: 'ARENA',
+        upperFamilyName: 'ARENA',
+        upperGivenName: 'MARIA',
+        roles: ['def/ep-roles/CHAIR_VICE'],
+        hasMembership: [{
+          id: 'membership/124936-f-167664',
+          type: 'Membership',
+          identifier: '124936-f-167664',
+          notation_codictFunctionId: '167664',
+          memberDuring: {
+            id: 'time-period/20220518-20240715',
+            type: 'PeriodOfTime',
+            startDate: '2022-05-18',
+            endDate: '2024-07-15',
+          },
+          organization: 'org/6358',
+          role: 'def/ep-roles/CHAIR_VICE',
+          membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+          contactPoint: [{ email: 'public@example.eu' }],
+        }],
+      });
+
+      const result = await handleGetMEPDetails({ id: '124936' });
+      const profile = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
+
+      expect(profile).toMatchObject({
+        identifier: '124936',
+        notation_codictPersonId: '124936',
+        hasGender: 'http://publications.europa.eu/resource/authority/human-sex/FEMALE',
+        placeOfBirth: 'Mons',
+        familyName: 'Arena',
+        img: 'https://www.europarl.europa.eu/mepphoto/124936.jpg',
+        roles: ['def/ep-roles/CHAIR_VICE'],
+      });
+      expect(profile['hasMembership']).toEqual([
+        expect.objectContaining({
+          notation_codictFunctionId: '167664',
+          organization: 'org/6358',
+          role: 'def/ep-roles/CHAIR_VICE',
+          contactPoint: [{ email: 'public@example.eu' }],
+        }),
+      ]);
+    });
   });
 
   describe('Error Handling', () => {

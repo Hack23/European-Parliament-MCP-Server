@@ -101,6 +101,48 @@ describe('get_committee_info Tool', () => {
         expect(committee).toHaveProperty('members');
       }
     });
+
+    it.each(['ECON', 'ENVI'])(
+      'should preserve full current membership records for %s',
+      async (abbreviation) => {
+        vi.mocked(epClientModule.epClient.getCommitteeInfo).mockResolvedValueOnce({
+          id: `org/${abbreviation}`,
+          name: `Committee ${abbreviation}`,
+          abbreviation,
+          members: ['person/124810'],
+          memberships: [{
+            member: 'person/124810',
+            id: 'membership/124810-f-100',
+            type: 'Membership',
+            identifier: '124810-f-100',
+            notation_codictFunctionId: '100',
+            memberDuring: {
+              id: 'time-period/20240716',
+              type: 'PeriodOfTime',
+              startDate: '2024-07-16',
+            },
+            organization: `org/${abbreviation}`,
+            role: 'def/ep-roles/MEMBER',
+            membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+            contactPoint: [{ email: 'public@example.eu' }],
+          }],
+          responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING'],
+        });
+
+        const result = await handleGetCommitteeInfo({ abbreviation });
+        const committee = JSON.parse(result.content[0]?.text ?? '{}') as Record<string, unknown>;
+
+        expect(committee['memberships']).toEqual([
+          expect.objectContaining({
+            member: 'person/124810',
+            notation_codictFunctionId: '100',
+            organization: `org/${abbreviation}`,
+            role: 'def/ep-roles/MEMBER',
+            contactPoint: [{ email: 'public@example.eu' }],
+          }),
+        ]);
+      },
+    );
   });
 
   describe('Error Handling', () => {
