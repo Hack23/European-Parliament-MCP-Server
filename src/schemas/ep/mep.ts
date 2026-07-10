@@ -89,12 +89,13 @@ const MEPTelephoneSchema = z.object({
 const MEPContactPointSchema = z.object({
   id: z.string().optional(),
   type: z.string().optional(),
+  email: z.string().optional(),
   officeAddress: z.string().optional(),
   hasTelephone: MEPTelephoneSchema.optional(),
   hasSite: z.string().optional(),
 });
 
-const MEPMembershipSchema = z.object({
+export const MEPMembershipSchema = z.object({
   id: z.string().optional(),
   type: z.string().optional(),
   identifier: z.string().optional(),

@@ -124,7 +124,7 @@ function transformContactPoint(value: unknown): MEPContactPoint | undefined {
       id: contactPoint['id'] ?? contactPoint['@id'],
       type: contactPoint['type'] ?? contactPoint['@type'],
     },
-    ['id', 'type', 'officeAddress', 'hasSite'],
+    ['id', 'type', 'email', 'officeAddress', 'hasSite'],
   );
   const hasTelephone = transformTelephone(contactPoint['hasTelephone']);
   if (hasTelephone !== undefined) result.hasTelephone = hasTelephone;
@@ -166,7 +166,7 @@ function buildMEPMembership(
   return result;
 }
 
-function transformMEPMembership(value: unknown): MEPMembership | undefined {
+export function transformMEPMembership(value: unknown): MEPMembership | undefined {
   if (typeof value !== 'object' || value === null) return undefined;
   return buildMEPMembership(value as Record<string, unknown>);
 }

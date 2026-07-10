@@ -261,6 +261,7 @@ describe('transformMEPDetails', () => {
           contactPoint: [{
             id: 'contact-point/124936-m-16006-12G301',
             type: 'ContactPoint',
+            email: 'public@example.eu',
             officeAddress: '12G301',
             hasTelephone: {
               id: 'tel/003222845555',

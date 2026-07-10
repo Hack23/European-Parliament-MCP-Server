@@ -7,6 +7,14 @@
  * @see https://data.europarl.europa.eu/api/v2/
  */
 
+import type { MEPMembership } from './mep.js';
+
+/** Complete EP membership record associated with a committee member. */
+export interface CommitteeMembership extends MEPMembership {
+  /** MEP identifier owning this membership record. */
+  member: string;
+}
+
 /**
  * European Parliament committee information.
  *
@@ -148,6 +156,9 @@ export interface Committee {
    * @see {@link MEP} for member details
    */
   members: string[];
+
+  /** Complete current membership records used to derive the committee roster. */
+  memberships?: CommitteeMembership[];
 
   /**
    * Committee chair.

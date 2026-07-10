@@ -143,8 +143,18 @@ describe('EuropeanParliamentClient', () => {
       identifier: role === 'CHAIR' ? '124810' : '124811',
       label: role === 'CHAIR' ? 'Chair Person' : 'Vice Chair Person',
       hasMembership: [{
+        id: `membership/${role.toLowerCase()}`,
+        type: 'Membership',
+        identifier: `${role.toLowerCase()}-membership`,
+        memberDuring: {
+          id: 'time-period/20240716',
+          type: 'PeriodOfTime',
+          startDate: '2024-07-16'
+        },
         organization: 'org/6570',
-        role: `def/ep-roles/${role}`
+        role: `def/ep-roles/${role}`,
+        membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+        contactPoint: [{ email: `${role.toLowerCase()}@example.eu` }]
       }]
     }],
     '@context': [
@@ -1103,6 +1113,23 @@ describe('EuropeanParliamentClient', () => {
       expect(result.members).toEqual(['person/124810', 'person/124811']);
       expect(result.chair).toBe('person/124810');
       expect(result.viceChairs).toEqual(['person/124811']);
+      expect(result.memberships).toHaveLength(3);
+      expect(result.memberships?.find(({ id }) => id === 'membership/chair')).toMatchObject({
+        member: 'person/124810',
+        memberDuring: {
+          id: 'time-period/20240716',
+          type: 'PeriodOfTime',
+          startDate: '2024-07-16',
+        },
+        organization: 'org/6570',
+        role: 'def/ep-roles/CHAIR',
+        membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
+        contactPoint: [{ email: 'chair@example.eu' }],
+      });
+      expect(result.memberships?.find(({ role }) => role === 'def/ep-roles/CHAIR_VICE')).toMatchObject({
+        member: 'person/124811',
+        organization: 'org/6570',
+      });
     });
 
     it('should derive committee rosters from current MEP memberships and ignore non-committee classifications', async () => {

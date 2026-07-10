@@ -199,6 +199,7 @@ export interface MEPTelephone {
 export interface MEPContactPoint {
   id?: string;
   type?: string;
+  email?: string;
   officeAddress?: string;
   hasTelephone?: MEPTelephone;
   hasSite?: string;

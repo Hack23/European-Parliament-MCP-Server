@@ -10,10 +10,13 @@
 import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import type {
   Committee,
+  CommitteeMembership,
+  MEPMembership,
   PaginatedResponse,
 } from '../../types/europeanParliament.js';
 import {
   transformCorporateBody as _transformCorporateBody,
+  transformMEPMembership,
 } from './transformers.js';
 import {
   BaseEPClient,
@@ -23,6 +26,24 @@ import {
   type JSONLDResponse,
 } from './baseClient.js';
 import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
+
+interface MembershipRoleSummary {
+  member: boolean;
+  chair: boolean;
+  viceChair: boolean;
+  memberships: MEPMembership[];
+}
+
+interface MEPMembershipSummary extends MembershipRoleSummary {
+  mepId: string;
+}
+
+interface CommitteeMembershipSummary {
+  members: string[];
+  chair?: string;
+  viceChairs: string[];
+  memberships: CommitteeMembership[];
+}
 
 /**
  * Sub-client for committee/corporate-body EP API endpoints.
@@ -135,9 +156,10 @@ export class CommitteeClient extends BaseEPClient {
   private async loadCommitteeMemberships(
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
-  ): Promise<{ members: string[]; chair?: string; viceChairs: string[] }> {
+  ): Promise<CommitteeMembershipSummary> {
     const memberIds = new Set<string>();
     const viceChairIds = new Set<string>();
+    const memberships = new Map<string, CommitteeMembership>();
     let chairId: string | undefined;
 
     const batchSize = 100;
@@ -162,6 +184,9 @@ export class CommitteeClient extends BaseEPClient {
       );
       batchMemberships.memberIds.forEach((mepId) => memberIds.add(mepId));
       batchMemberships.viceChairIds.forEach((mepId) => viceChairIds.add(mepId));
+      for (const membership of batchMemberships.memberships) {
+        memberships.set(this.getMembershipKey(membership), membership);
+      }
       if (batchMemberships.chairId !== undefined) {
         chairId = batchMemberships.chairId;
       }
@@ -173,9 +198,10 @@ export class CommitteeClient extends BaseEPClient {
       fetchOffset += batchSize;
     }
 
-    const membershipSummary: { members: string[]; chair?: string; viceChairs: string[] } = {
+    const membershipSummary: CommitteeMembershipSummary = {
       members: [...memberIds],
       viceChairs: [...viceChairIds],
+      memberships: [...memberships.values()],
     };
     if (chairId !== undefined) {
       membershipSummary.chair = chairId;
@@ -188,9 +214,15 @@ export class CommitteeClient extends BaseEPClient {
     meps: unknown[],
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
-  ): Promise<{ memberIds: Set<string>; viceChairIds: Set<string>; chairId?: string }> {
+  ): Promise<{
+    memberIds: Set<string>;
+    viceChairIds: Set<string>;
+    chairId?: string;
+    memberships: CommitteeMembership[];
+  }> {
     const memberIds = new Set<string>();
     const viceChairIds = new Set<string>();
+    const memberships: CommitteeMembership[] = [];
     let chairId: string | undefined;
 
     const concurrency = 10;
@@ -215,12 +247,16 @@ export class CommitteeClient extends BaseEPClient {
         }
         if (membershipSummary.chair) chairId = membershipSummary.mepId;
         if (membershipSummary.viceChair) viceChairIds.add(membershipSummary.mepId);
+        memberships.push(...membershipSummary.memberships.map((membership) => ({
+          ...membership,
+          member: membershipSummary.mepId,
+        })));
       }
     }
 
     return chairId === undefined
-      ? { memberIds, viceChairIds }
-      : { memberIds, viceChairIds, chairId };
+      ? { memberIds, viceChairIds, memberships }
+      : { memberIds, viceChairIds, chairId, memberships };
   }
 
   private async getMEPMembershipSummary(
@@ -228,10 +264,10 @@ export class CommitteeClient extends BaseEPClient {
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
     inferMemberFromRoster = false,
-  ): Promise<{ mepId: string; member: boolean; chair: boolean; viceChair: boolean }> {
+  ): Promise<MEPMembershipSummary> {
     const mepId = this.normalizeMEPId(mep['id'] ?? mep['identifier'] ?? mep['@id']);
     if (mepId === '') {
-      return { mepId: '', member: false, chair: false, viceChair: false };
+      return { mepId: '', member: false, chair: false, viceChair: false, memberships: [] };
     }
 
     const inlineMembershipSummary = this.extractMembershipSummary(mep, organizationCandidates);
@@ -250,7 +286,7 @@ export class CommitteeClient extends BaseEPClient {
     mepId: string,
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
-  ): Promise<{ mepId: string; member: boolean; chair: boolean; viceChair: boolean }> {
+  ): Promise<MEPMembershipSummary> {
     const detailsMembershipSummary = await this.loadMEPMembershipSummaryFromDetails(
       mepId,
       organizationCandidates,
@@ -259,14 +295,14 @@ export class CommitteeClient extends BaseEPClient {
     if (this.hasMembershipSummary(detailsMembershipSummary)) {
       return { mepId, ...detailsMembershipSummary };
     }
-    return { mepId, member: false, chair: false, viceChair: false };
+    return { mepId, member: false, chair: false, viceChair: false, memberships: [] };
   }
 
   private async resolveDetailMembershipSummary(
     mepId: string,
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
-  ): Promise<{ mepId: string; member: boolean; chair: boolean; viceChair: boolean }> {
+  ): Promise<MEPMembershipSummary> {
     const detailsMembershipSummary = await this.loadMEPMembershipSummaryFromDetails(
       mepId,
       organizationCandidates,
@@ -279,7 +315,7 @@ export class CommitteeClient extends BaseEPClient {
     mepId: string,
     organizationCandidates: string[],
     abortSignal?: AbortSignal,
-  ): Promise<{ member: boolean; chair: boolean; viceChair: boolean }> {
+  ): Promise<MembershipRoleSummary> {
     try {
       const mepIdentifier = mepId.split('/').filter((segment) => segment !== '').pop() ?? mepId;
       const mepDetailsResponse = await this.get<JSONLDResponse>(`meps/${mepIdentifier}`, {
@@ -287,12 +323,12 @@ export class CommitteeClient extends BaseEPClient {
       }, undefined, abortSignal);
       const details = Array.isArray(mepDetailsResponse.data) ? mepDetailsResponse.data[0] : undefined;
       if (!this.isRecord(details)) {
-        return { member: false, chair: false, viceChair: false };
+        return { member: false, chair: false, viceChair: false, memberships: [] };
       }
 
       return this.extractMembershipSummary(details, organizationCandidates);
     } catch {
-      return { member: false, chair: false, viceChair: false };
+      return { member: false, chair: false, viceChair: false, memberships: [] };
     }
   }
 
@@ -301,37 +337,53 @@ export class CommitteeClient extends BaseEPClient {
     return memberships.length > 0;
   }
 
-  private hasMembershipSummary(summary: { member: boolean; chair: boolean; viceChair: boolean }): boolean {
+  private hasMembershipSummary(summary: MembershipRoleSummary): boolean {
     return summary.member || summary.chair || summary.viceChair;
   }
 
   private extractMembershipSummary(
     details: Record<string, unknown>,
     organizationCandidates: string[],
-  ): { member: boolean; chair: boolean; viceChair: boolean } {
+  ): MembershipRoleSummary {
     const memberships = Array.isArray(details['hasMembership']) ? details['hasMembership'] : [];
-    let member = false;
-    let chair = false;
-    let viceChair = false;
+    const summary: MembershipRoleSummary = {
+      member: false,
+      chair: false,
+      viceChair: false,
+      memberships: [],
+    };
 
     for (const membership of memberships) {
       if (!this.isRecord(membership)) continue;
       if (!this.matchesCommitteeOrganization(membership, organizationCandidates)) continue;
       if (!this.isCurrentMembership(membership)) continue;
-
-      const roleCode = this.getMembershipRoleCode(membership);
-      if (roleCode === 'MEMBER') {
-        member = true;
-      } else if (roleCode === 'CHAIR') {
-        member = true;
-        chair = true;
-      } else if (roleCode === 'CHAIR_VICE' || roleCode === 'VICE_CHAIR') {
-        member = true;
-        viceChair = true;
-      }
+      const transformedMembership = transformMEPMembership(membership);
+      if (transformedMembership !== undefined) summary.memberships.push(transformedMembership);
+      this.applyMembershipRole(summary, this.getMembershipRoleCode(membership));
     }
 
-    return { member, chair, viceChair };
+    return summary;
+  }
+
+  private applyMembershipRole(summary: MembershipRoleSummary, roleCode: string): void {
+    if (roleCode === 'MEMBER') {
+      summary.member = true;
+    } else if (roleCode === 'CHAIR') {
+      summary.member = true;
+      summary.chair = true;
+    } else if (roleCode === 'CHAIR_VICE' || roleCode === 'VICE_CHAIR') {
+      summary.member = true;
+      summary.viceChair = true;
+    }
+  }
+
+  private getMembershipKey(membership: CommitteeMembership): string {
+    return [
+      membership.member,
+      membership.id ?? membership.identifier ?? '',
+      membership.organization ?? '',
+      membership.role ?? '',
+    ].join('|');
   }
 
   private isCurrentMembership(membership: Record<string, unknown>): boolean {
@@ -382,11 +434,12 @@ export class CommitteeClient extends BaseEPClient {
 
   private applyCommitteeMemberships(
     committee: Committee,
-    membershipSummary: { members: string[]; chair?: string; viceChairs: string[] },
+    membershipSummary: CommitteeMembershipSummary,
   ): Committee {
     const enrichedCommittee: Committee = {
       ...committee,
       members: membershipSummary.members.length > 0 ? membershipSummary.members : committee.members,
+      memberships: membershipSummary.memberships,
     };
 
     if (membershipSummary.chair !== undefined) {
