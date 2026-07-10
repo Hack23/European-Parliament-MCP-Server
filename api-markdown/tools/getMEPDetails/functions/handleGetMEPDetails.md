@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -8,13 +8,13 @@
 
 > **handleGetMEPDetails**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMEPDetails.ts:52](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDetails.ts#L52)
+Defined in: [tools/getMEPDetails.ts:51](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDetails.ts#L51)
 
 Handles the get_mep_details MCP tool request.
 
-Retrieves comprehensive information about a single MEP identified by their unique ID,
-including biography, contact details, committee memberships, voting statistics, and
-parliamentary activities. Access to personal data is audit-logged for GDPR compliance.
+Retrieves the complete EP API v2 profile for a single MEP, including
+biographical fields and full membership history. Access to personal data is
+audit-logged for GDPR compliance.
 
 ## Parameters
 
@@ -28,8 +28,7 @@ Raw tool arguments, validated against [GetMEPDetailsSchema](../../../schemas/ep/
 
 `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-MCP tool result containing detailed MEP profile data including biography,
-  contact information, committee roles, voting record, and activity statistics
+MCP tool result containing the detailed MEP profile and membership records
 
 ## Throws
 
@@ -40,7 +39,7 @@ MCP tool result containing detailed MEP profile data including biography,
 
 ```typescript
 const result = await handleGetMEPDetails({ id: 'MEP-124810' });
-// Returns full profile for MEP 124810, including committees and voting stats
+// Returns the EP profile for MEP 124810, including complete memberships
 ```
 
 ## Security

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getMEPDetailsToolMetadata**: `object`
 
-Defined in: [tools/getMEPDetails.ts:102](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDetails.ts#L102)
+Defined in: [tools/getMEPDetails.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDetails.ts#L101)
 
 Tool metadata for MCP registration
 
@@ -16,7 +16,7 @@ Tool metadata for MCP registration
 
 ### description
 
-> **description**: `string` = `'Retrieve detailed information about a specific Member of European Parliament including biography, contact information, committee memberships, voting statistics, and parliamentary activities. Personal data access is logged for GDPR compliance.'`
+> **description**: `string` = `'Retrieve the complete EP API v2 profile for a Member of European Parliament, including biographical data, mandates, organizations, committee classifications, and leadership roles. Personal data access is logged for GDPR compliance.'`
 
 ### inputSchema
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -17,5 +17,9 @@ https://data.europarl.europa.eu/api/v2/
 ## Interfaces
 
 - [MEP](interfaces/MEP.md)
+- [MEPContactPoint](interfaces/MEPContactPoint.md)
 - [MEPDetails](interfaces/MEPDetails.md)
+- [MEPMembership](interfaces/MEPMembership.md)
+- [MEPMembershipPeriod](interfaces/MEPMembershipPeriod.md)
+- [MEPTelephone](interfaces/MEPTelephone.md)
 - [VotingStatistics](interfaces/VotingStatistics.md)

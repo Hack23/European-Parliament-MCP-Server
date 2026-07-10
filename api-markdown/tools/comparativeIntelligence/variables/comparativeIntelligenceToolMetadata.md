@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **comparativeIntelligenceToolMetadata**: `object`
 
-Defined in: [tools/comparativeIntelligence.ts:885](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L885)
+Defined in: [tools/comparativeIntelligence.ts:906](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L906)
 
 MCP tool metadata for `comparative_intelligence` (name, description,
 and JSON Schema for the tool's input). Consumed by the server's tool

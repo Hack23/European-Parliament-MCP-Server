@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -22,6 +22,7 @@ and delegates field extraction to module:clients/ep/jsonLdHelpers.
 - [transformMEP](functions/transformMEP.md)
 - [transformMEPDeclaration](functions/transformMEPDeclaration.md)
 - [transformMEPDetails](functions/transformMEPDetails.md)
+- [transformMEPMembership](functions/transformMEPMembership.md)
 - [transformParliamentaryQuestion](functions/transformParliamentaryQuestion.md)
 - [transformPlenarySession](functions/transformPlenarySession.md)
 - [transformProcedure](functions/transformProcedure.md)
