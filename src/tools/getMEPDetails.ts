@@ -26,20 +26,19 @@ import type { ToolResult } from './shared/types.js';
 /**
  * Handles the get_mep_details MCP tool request.
  *
- * Retrieves comprehensive information about a single MEP identified by their unique ID,
- * including biography, contact details, committee memberships, voting statistics, and
- * parliamentary activities. Access to personal data is audit-logged for GDPR compliance.
+ * Retrieves the complete EP API v2 profile for a single MEP, including
+ * biographical fields and full membership history. Access to personal data is
+ * audit-logged for GDPR compliance.
  *
  * @param args - Raw tool arguments, validated against {@link GetMEPDetailsSchema}
- * @returns MCP tool result containing detailed MEP profile data including biography,
- *   contact information, committee roles, voting record, and activity statistics
+ * @returns MCP tool result containing the detailed MEP profile and membership records
  * @throws - If `args` fails schema validation (e.g., missing or empty `id` field)
  * - If the European Parliament API is unreachable or returns an error response
  *
  * @example
  * ```typescript
  * const result = await handleGetMEPDetails({ id: 'MEP-124810' });
- * // Returns full profile for MEP 124810, including committees and voting stats
+ * // Returns the EP profile for MEP 124810, including complete memberships
  * ```
  *
  * @security Input is validated with Zod before any API call.
@@ -101,7 +100,7 @@ export async function handleGetMEPDetails(
  */
 export const getMEPDetailsToolMetadata = {
   name: 'get_mep_details',
-  description: 'Retrieve detailed information about a specific Member of European Parliament including biography, contact information, committee memberships, voting statistics, and parliamentary activities. Personal data access is logged for GDPR compliance.',
+  description: 'Retrieve the complete EP API v2 profile for a Member of European Parliament, including biographical data, mandates, organizations, committee classifications, and leadership roles. Personal data access is logged for GDPR compliance.',
   inputSchema: {
     type: 'object' as const,
     properties: {

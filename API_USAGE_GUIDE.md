@@ -433,13 +433,16 @@ print(f"Found {data['total']} Swedish S&D MEPs")
 
 ### Tool: get_mep_details
 
-**Description**: Retrieve comprehensive information about a specific MEP including biography, contact details, committee memberships, and voting statistics.
+**Description**: Retrieve the complete profile returned by EP API v2
+`GET /meps/{mep-id}`, including biographical fields and the full membership
+history used to identify mandates, political groups, committees, and leadership
+roles.
 
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| id | string | Yes | - | MEP identifier (e.g., "MEP-124810") |
+| id | string | Yes | - | Numeric ID, `person/{id}`, or `MEP-{id}` (for example, `124936`) |
 
 #### Response Format
 
@@ -448,24 +451,61 @@ print(f"Found {data['total']} Swedish S&D MEPs")
   "content": [{
     "type": "text",
     "text": "{
-      \"id\": \"MEP-124810\",
-      \"name\": \"Anna Lindberg\",
-      \"country\": \"SE\",
-      \"politicalGroup\": \"S&D\",
-      \"committees\": [\"ENVI\", \"AGRI\"],
-      \"email\": \"anna.lindberg@europarl.europa.eu\",
-      \"biography\": \"Anna Lindberg has been an MEP since 2019...\",
-      \"votingStatistics\": {
-        \"totalVotes\": 1250,
-        \"votesFor\": 850,
-        \"votesAgainst\": 200,
-        \"abstentions\": 200,
-        \"attendanceRate\": 92.5
-      }
+      \"id\": \"person/124936\",
+      \"type\": \"Person\",
+      \"identifier\": \"124936\",
+      \"label\": \"Maria ARENA\",
+      \"notation_codictPersonId\": \"124936\",
+      \"name\": \"Maria ARENA\",
+      \"country\": \"BEL\",
+      \"politicalGroup\": \"org/5154\",
+      \"committees\": [\"org/6358\"],
+      \"active\": false,
+      \"termStart\": \"2019-07-02\",
+      \"termEnd\": \"2024-07-15\",
+      \"bday\": \"1966-12-17\",
+      \"hasGender\": \"http://publications.europa.eu/resource/authority/human-sex/FEMALE\",
+      \"citizenship\": \"http://publications.europa.eu/resource/authority/country/BEL\",
+      \"placeOfBirth\": \"Mons\",
+      \"familyName\": \"Arena\",
+      \"givenName\": \"Maria\",
+      \"img\": \"https://www.europarl.europa.eu/mepphoto/124936.jpg\",
+      \"roles\": [\"def/ep-roles/MEMBER\", \"def/ep-roles/MEMBER_PARLIAMENT\"],
+      \"hasMembership\": [{
+        \"id\": \"membership/124936-f-167664\",
+        \"type\": \"Membership\",
+        \"identifier\": \"124936-f-167664\",
+        \"notation_codictFunctionId\": \"167664\",
+        \"memberDuring\": {
+          \"id\": \"time-period/20220518-20240715\",
+          \"type\": \"PeriodOfTime\",
+          \"startDate\": \"2022-05-18\",
+          \"endDate\": \"2024-07-15\"
+        },
+        \"organization\": \"org/6358\",
+        \"role\": \"def/ep-roles/MEMBER\",
+        \"membershipClassification\": \"def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING\",
+        \"contactPoint\": []
+      }]
     }"
   }]
 }
 ```
+
+The tool preserves the EP fields `type`, `identifier`, `label`,
+`notation_codictPersonId`, `bday`, `hasGender`, `hasHonorificPrefix`,
+`hasMembership`, `citizenship`, `placeOfBirth`, `familyName`, `givenName`,
+`img`, `sortLabel`, `upperFamilyName`, and `upperGivenName`. Membership entries
+preserve function or mandate identifiers, represented countries, periods,
+organizations, roles, classifications, and contact points.
+
+The compatibility fields `name`, `country`, `politicalGroup`, `committees`,
+`active`, `termStart`, `termEnd`, `biography`, and `roles` are derived from the
+same source record. `committees` contains committee organization IDs only;
+inspect `hasMembership[].membershipClassification` and
+`hasMembership[].role` for the authoritative assignment and leadership data.
+The EP endpoint does not provide voting statistics, so this tool does not
+fabricate them.
 
 #### Example Usage
 
@@ -477,12 +517,12 @@ Get detailed information about MEP with ID MEP-124810
 **TypeScript:**
 ```typescript
 const result = await client.callTool('get_mep_details', {
-  id: 'MEP-124810'
+  id: '124936'
 });
 
 const mep = JSON.parse(result.content[0].text);
 console.log(`${mep.name} from ${mep.country}`);
-console.log(`Attendance: ${mep.votingStatistics.attendanceRate}%`);
+console.log(`Membership records: ${mep.hasMembership.length}`);
 ```
 
 #### Common Errors
@@ -495,10 +535,10 @@ console.log(`Attendance: ${mep.votingStatistics.attendanceRate}%`);
 
 #### Use Cases
 
-1. **MEP Profile**: Get complete MEP information for profile pages
-2. **Voting Analysis**: Access voting statistics for analysis
-3. **Contact Information**: Retrieve email and office details
-4. **Committee Work**: View committee assignments
+1. **MEP Profile**: Get complete EP biographical information for profile pages
+2. **Mandate History**: Inspect parliamentary terms and represented countries
+3. **Committee Work**: Resolve assignments from membership classifications
+4. **Leadership Analysis**: Identify chair and vice-chair roles from membership records
 
 ---
 
