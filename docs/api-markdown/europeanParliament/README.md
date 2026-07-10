@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../README.md)
+[**European Parliament MCP Server API v1.3.42**](../README.md)
 
 ***
 
@@ -39,6 +39,12 @@ Re-exports [Committee](../types/ep/committee/interfaces/Committee.md)
 
 ***
 
+### CommitteeMembership
+
+Re-exports [CommitteeMembership](../types/ep/committee/interfaces/CommitteeMembership.md)
+
+***
+
 ### DocumentStatus
 
 Re-exports [DocumentStatus](../types/ep/document/type-aliases/DocumentStatus.md)
@@ -75,6 +81,12 @@ Re-exports [MEP](../types/ep/mep/interfaces/MEP.md)
 
 ***
 
+### MEPContactPoint
+
+Re-exports [MEPContactPoint](../types/ep/mep/interfaces/MEPContactPoint.md)
+
+***
+
 ### MEPDeclaration
 
 Re-exports [MEPDeclaration](../types/ep/activities/interfaces/MEPDeclaration.md)
@@ -84,6 +96,24 @@ Re-exports [MEPDeclaration](../types/ep/activities/interfaces/MEPDeclaration.md)
 ### MEPDetails
 
 Re-exports [MEPDetails](../types/ep/mep/interfaces/MEPDetails.md)
+
+***
+
+### MEPMembership
+
+Re-exports [MEPMembership](../types/ep/mep/interfaces/MEPMembership.md)
+
+***
+
+### MEPMembershipPeriod
+
+Re-exports [MEPMembershipPeriod](../types/ep/mep/interfaces/MEPMembershipPeriod.md)
+
+***
+
+### MEPTelephone
+
+Re-exports [MEPTelephone](../types/ep/mep/interfaces/MEPTelephone.md)
 
 ***
 

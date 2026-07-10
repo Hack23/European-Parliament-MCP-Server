@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: CommitteeClient
 
-Defined in: [clients/ep/committeeClient.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L36)
+Defined in: [clients/ep/committeeClient.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L57)
 
 Sub-client for committee/corporate-body EP API endpoints.
 
@@ -20,7 +20,7 @@ Sub-client for committee/corporate-body EP API endpoints.
 
 > **new CommitteeClient**(`config?`, `shared?`): `CommitteeClient`
 
-Defined in: [clients/ep/committeeClient.ts:37](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L37)
+Defined in: [clients/ep/committeeClient.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L58)
 
 #### Parameters
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > `private` **applyCommitteeMemberships**(`committee`, `membershipSummary`): [`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
 
-Defined in: [clients/ep/committeeClient.ts:383](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L383)
+Defined in: [clients/ep/committeeClient.ts:444](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L444)
 
 #### Parameters
 
@@ -154,21 +154,33 @@ Defined in: [clients/ep/committeeClient.ts:383](https://github.com/Hack23/Europe
 
 ##### membershipSummary
 
-###### members
+`CommitteeMembershipSummary`
 
-`string`[]
+#### Returns
 
-###### viceChairs
+[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
 
-`string`[]
+***
 
-###### chair?
+### applyMembershipRole()
+
+> `private` **applyMembershipRole**(`summary`, `roleCode`): `void`
+
+Defined in: [clients/ep/committeeClient.ts:377](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L377)
+
+#### Parameters
+
+##### summary
+
+`MembershipRoleSummary`
+
+##### roleCode
 
 `string`
 
 #### Returns
 
-[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
+`void`
 
 ***
 
@@ -194,7 +206,7 @@ Clears all entries from the LRU cache.
 
 > `private` **collectCommitteeOrganizationCandidates**(`apiData`, `committeeAbbreviation`): `string`[]
 
-Defined in: [clients/ep/committeeClient.ts:80](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L80)
+Defined in: [clients/ep/committeeClient.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L104)
 
 #### Parameters
 
@@ -214,9 +226,9 @@ Defined in: [clients/ep/committeeClient.ts:80](https://github.com/Hack23/Europea
 
 ### collectMembershipsFromBatch()
 
-> `private` **collectMembershipsFromBatch**(`meps`, `organizationCandidates`, `abortSignal?`): `Promise`\<\{ `memberIds`: `Set`\<`string`\>; `viceChairIds`: `Set`\<`string`\>; `chairId?`: `string`; \}\>
+> `private` **collectMembershipsFromBatch**(`meps`, `organizationCandidates`, `abortSignal?`): `Promise`\<\{ `memberIds`: `Set`\<`string`\>; `memberships`: [`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)[]; `viceChairIds`: `Set`\<`string`\>; `chairId?`: `string`; \}\>
 
-Defined in: [clients/ep/committeeClient.ts:200](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L200)
+Defined in: [clients/ep/committeeClient.ts:222](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L222)
 
 #### Parameters
 
@@ -234,7 +246,7 @@ Defined in: [clients/ep/committeeClient.ts:200](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<\{ `memberIds`: `Set`\<`string`\>; `viceChairIds`: `Set`\<`string`\>; `chairId?`: `string`; \}\>
+`Promise`\<\{ `memberIds`: `Set`\<`string`\>; `memberships`: [`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)[]; `viceChairIds`: `Set`\<`string`\>; `chairId?`: `string`; \}\>
 
 ***
 
@@ -242,7 +254,7 @@ Defined in: [clients/ep/committeeClient.ts:200](https://github.com/Hack23/Europe
 
 > `private` **enrichCommitteeMembership**(`committee`, `apiData`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:105](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L105)
+Defined in: [clients/ep/committeeClient.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L129)
 
 #### Parameters
 
@@ -304,9 +316,9 @@ Optional query parameters (same value passed to [get](../../baseClient/classes/B
 
 ### extractMembershipSummary()
 
-> `private` **extractMembershipSummary**(`details`, `organizationCandidates`): `object`
+> `private` **extractMembershipSummary**(`details`, `organizationCandidates`): `MembershipRoleSummary`
 
-Defined in: [clients/ep/committeeClient.ts:321](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L321)
+Defined in: [clients/ep/committeeClient.ts:353](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L353)
 
 #### Parameters
 
@@ -320,19 +332,7 @@ Defined in: [clients/ep/committeeClient.ts:321](https://github.com/Hack23/Europe
 
 #### Returns
 
-`object`
-
-##### chair
-
-> **chair**: `boolean`
-
-##### member
-
-> **member**: `boolean`
-
-##### viceChair
-
-> **viceChair**: `boolean`
+`MembershipRoleSummary`
 
 ***
 
@@ -340,7 +340,7 @@ Defined in: [clients/ep/committeeClient.ts:321](https://github.com/Hack23/Europe
 
 > `private` **fetchCommitteeDirectly**(`bodyId`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
-Defined in: [clients/ep/committeeClient.ts:430](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L430)
+Defined in: [clients/ep/committeeClient.ts:492](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L492)
 
 Attempts a direct corporate-body lookup by ID.
 
@@ -475,7 +475,7 @@ Returns cache statistics for monitoring and debugging.
 
 > `private` **getCommitteeFilterValue**(`committee`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:68](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L68)
+Defined in: [clients/ep/committeeClient.ts:92](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L92)
 
 #### Parameters
 
@@ -493,7 +493,7 @@ Defined in: [clients/ep/committeeClient.ts:68](https://github.com/Hack23/Europea
 
 > **getCommitteeInfo**(`params`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:474](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L474)
+Defined in: [clients/ep/committeeClient.ts:542](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L542)
 
 Retrieves committee (corporate body) information by ID or abbreviation.
 
@@ -533,7 +533,7 @@ Audit logged per GDPR Article 30
 
 > **getCorporateBodiesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/committeeClient.ts:504](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L504)
+Defined in: [clients/ep/committeeClient.ts:572](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L572)
 
 Retrieves recently updated corporate bodies via the feed endpoint.
 **EP API Endpoint:** `GET /corporate-bodies/feed`
@@ -559,7 +559,7 @@ Extended timeout applied (120 s minimum).
 
 > **getCurrentCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/ep/committeeClient.ts:514](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L514)
+Defined in: [clients/ep/committeeClient.ts:582](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L582)
 
 Returns the list of all current EP Corporate Bodies for today's date.
 **EP API Endpoint:** `GET /corporate-bodies/show-current`
@@ -586,11 +586,29 @@ Returns the list of all current EP Corporate Bodies for today's date.
 
 ***
 
+### getMembershipKey()
+
+> `private` **getMembershipKey**(`membership`): `string`
+
+Defined in: [clients/ep/committeeClient.ts:389](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L389)
+
+#### Parameters
+
+##### membership
+
+[`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)
+
+#### Returns
+
+`string`
+
+***
+
 ### getMembershipRoleCode()
 
 > `private` **getMembershipRoleCode**(`membership`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:378](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L378)
+Defined in: [clients/ep/committeeClient.ts:439](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L439)
 
 #### Parameters
 
@@ -606,9 +624,9 @@ Defined in: [clients/ep/committeeClient.ts:378](https://github.com/Hack23/Europe
 
 ### getMEPMembershipSummary()
 
-> `private` **getMEPMembershipSummary**(`mep`, `organizationCandidates`, `abortSignal?`, `inferMemberFromRoster?`): `Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `mepId`: `string`; `viceChair`: `boolean`; \}\>
+> `private` **getMEPMembershipSummary**(`mep`, `organizationCandidates`, `abortSignal?`, `inferMemberFromRoster?`): `Promise`\<`MEPMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:239](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L239)
+Defined in: [clients/ep/committeeClient.ts:271](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L271)
 
 #### Parameters
 
@@ -630,7 +648,7 @@ Defined in: [clients/ep/committeeClient.ts:239](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `mepId`: `string`; `viceChair`: `boolean`; \}\>
+`Promise`\<`MEPMembershipSummary`\>
 
 ***
 
@@ -638,7 +656,7 @@ Defined in: [clients/ep/committeeClient.ts:239](https://github.com/Hack23/Europe
 
 > `private` **hasMembershipDetails**(`details`): `boolean`
 
-Defined in: [clients/ep/committeeClient.ts:312](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L312)
+Defined in: [clients/ep/committeeClient.ts:344](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L344)
 
 #### Parameters
 
@@ -656,23 +674,31 @@ Defined in: [clients/ep/committeeClient.ts:312](https://github.com/Hack23/Europe
 
 > `private` **hasMembershipSummary**(`summary`): `boolean`
 
-Defined in: [clients/ep/committeeClient.ts:317](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L317)
+Defined in: [clients/ep/committeeClient.ts:349](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L349)
 
 #### Parameters
 
 ##### summary
 
-###### chair
+`MembershipRoleSummary`
+
+#### Returns
 
 `boolean`
 
-###### member
+***
 
-`boolean`
+### isCurrentMembership()
 
-###### viceChair
+> `private` **isCurrentMembership**(`membership`): `boolean`
 
-`boolean`
+Defined in: [clients/ep/committeeClient.ts:398](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L398)
+
+#### Parameters
+
+##### membership
+
+`Record`\<`string`, `unknown`\>
 
 #### Returns
 
@@ -684,7 +710,7 @@ Defined in: [clients/ep/committeeClient.ts:317](https://github.com/Hack23/Europe
 
 > `private` **isRecord**(`value`): `value is Record<string, unknown>`
 
-Defined in: [clients/ep/committeeClient.ts:64](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L64)
+Defined in: [clients/ep/committeeClient.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L88)
 
 #### Parameters
 
@@ -700,9 +726,9 @@ Defined in: [clients/ep/committeeClient.ts:64](https://github.com/Hack23/Europea
 
 ### loadCommitteeMemberships()
 
-> `private` **loadCommitteeMemberships**(`organizationCandidates`, `abortSignal?`): `Promise`\<\{ `members`: `string`[]; `viceChairs`: `string`[]; `chair?`: `string`; \}\>
+> `private` **loadCommitteeMemberships**(`organizationCandidates`, `abortSignal?`): `Promise`\<`CommitteeMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L148)
+Defined in: [clients/ep/committeeClient.ts:165](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L165)
 
 #### Parameters
 
@@ -716,15 +742,15 @@ Defined in: [clients/ep/committeeClient.ts:148](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<\{ `members`: `string`[]; `viceChairs`: `string`[]; `chair?`: `string`; \}\>
+`Promise`\<`CommitteeMembershipSummary`\>
 
 ***
 
 ### loadMEPMembershipSummaryFromDetails()
 
-> `private` **loadMEPMembershipSummaryFromDetails**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `viceChair`: `boolean`; \}\>
+> `private` **loadMEPMembershipSummaryFromDetails**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MembershipRoleSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:291](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L291)
+Defined in: [clients/ep/committeeClient.ts:323](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L323)
 
 #### Parameters
 
@@ -742,7 +768,7 @@ Defined in: [clients/ep/committeeClient.ts:291](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `viceChair`: `boolean`; \}\>
+`Promise`\<`MembershipRoleSummary`\>
 
 ***
 
@@ -750,7 +776,7 @@ Defined in: [clients/ep/committeeClient.ts:291](https://github.com/Hack23/Europe
 
 > `private` **matchesCommitteeOrganization**(`membership`, `organizationCandidates`): `boolean`
 
-Defined in: [clients/ep/committeeClient.ts:349](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L349)
+Defined in: [clients/ep/committeeClient.ts:410](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L410)
 
 #### Parameters
 
@@ -772,7 +798,7 @@ Defined in: [clients/ep/committeeClient.ts:349](https://github.com/Hack23/Europe
 
 > `private` **normalizeMembershipClassificationCode**(`value`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:372](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L372)
+Defined in: [clients/ep/committeeClient.ts:433](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L433)
 
 #### Parameters
 
@@ -790,7 +816,7 @@ Defined in: [clients/ep/committeeClient.ts:372](https://github.com/Hack23/Europe
 
 > `private` **normalizeMEPId**(`mepId`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:45](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L45)
+Defined in: [clients/ep/committeeClient.ts:66](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L66)
 
 #### Parameters
 
@@ -808,7 +834,7 @@ Defined in: [clients/ep/committeeClient.ts:45](https://github.com/Hack23/Europea
 
 > `private` **normalizeOrganizationId**(`value`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:58](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L58)
+Defined in: [clients/ep/committeeClient.ts:79](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L79)
 
 #### Parameters
 
@@ -826,7 +852,7 @@ Defined in: [clients/ep/committeeClient.ts:58](https://github.com/Hack23/Europea
 
 > `private` **resolveCommittee**(`searchTerm`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:414](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L414)
+Defined in: [clients/ep/committeeClient.ts:476](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L476)
 
 Resolves a committee by trying direct lookup then list search.
 
@@ -854,9 +880,9 @@ If committee not found
 
 ### resolveDetailMembershipSummary()
 
-> `private` **resolveDetailMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `mepId`: `string`; `viceChair`: `boolean`; \}\>
+> `private` **resolveDetailMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MEPMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:278](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L278)
+Defined in: [clients/ep/committeeClient.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L310)
 
 #### Parameters
 
@@ -874,15 +900,15 @@ Defined in: [clients/ep/committeeClient.ts:278](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `mepId`: `string`; `viceChair`: `boolean`; \}\>
+`Promise`\<`MEPMembershipSummary`\>
 
 ***
 
 ### resolveRosterMembershipSummary()
 
-> `private` **resolveRosterMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `mepId`: `string`; `viceChair`: `boolean`; \}\>
+> `private` **resolveRosterMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MEPMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:262](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L262)
+Defined in: [clients/ep/committeeClient.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L294)
 
 #### Parameters
 
@@ -900,7 +926,7 @@ Defined in: [clients/ep/committeeClient.ts:262](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<\{ `chair`: `boolean`; `member`: `boolean`; `mepId`: `string`; `viceChair`: `boolean`; \}\>
+`Promise`\<`MEPMembershipSummary`\>
 
 ***
 
@@ -908,7 +934,7 @@ Defined in: [clients/ep/committeeClient.ts:262](https://github.com/Hack23/Europe
 
 > `private` **searchCommitteeInList**(`searchTerm`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
-Defined in: [clients/ep/committeeClient.ts:449](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L449)
+Defined in: [clients/ep/committeeClient.ts:517](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L517)
 
 Searches the corporate-bodies list for a matching committee.
 
@@ -934,7 +960,7 @@ Searches the corporate-bodies list for a matching committee.
 
 > `private` **transformCorporateBody**(`apiData`): [`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
 
-Defined in: [clients/ep/committeeClient.ts:41](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L41)
+Defined in: [clients/ep/committeeClient.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L62)
 
 #### Parameters
 

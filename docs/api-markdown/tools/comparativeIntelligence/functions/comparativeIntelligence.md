@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **comparativeIntelligence**(`params`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/comparativeIntelligence.ts:798](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L798)
+Defined in: [tools/comparativeIntelligence.ts:819](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/comparativeIntelligence.ts#L819)
 
 Build a comparative-intelligence profile across 2-10 MEPs.
 

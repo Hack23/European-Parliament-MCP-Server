@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -17,4 +17,5 @@ MEP-related Zod validation schemas.
 - [GetMEPsSchema](variables/GetMEPsSchema.md)
 - [GetOutgoingMEPsSchema](variables/GetOutgoingMEPsSchema.md)
 - [MEPDetailsSchema](variables/MEPDetailsSchema.md)
+- [MEPMembershipSchema](variables/MEPMembershipSchema.md)
 - [MEPSchema](variables/MEPSchema.md)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../README.md)
 
 ***
 
@@ -17,3 +17,4 @@ https://data.europarl.europa.eu/api/v2/
 ## Interfaces
 
 - [Committee](interfaces/Committee.md)
+- [CommitteeMembership](interfaces/CommitteeMembership.md)

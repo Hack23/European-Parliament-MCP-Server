@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: Committee
 
-Defined in: [types/ep/committee.ts:62](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L62)
+Defined in: [types/ep/committee.ts:70](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L70)
 
 European Parliament committee information.
 
@@ -69,7 +69,7 @@ const minimalCommittee: Committee = {
 
 > **abbreviation**: `string`
 
-Defined in: [types/ep/committee.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L132)
+Defined in: [types/ep/committee.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L140)
 
 Committee abbreviation.
 
@@ -122,7 +122,7 @@ are stable and widely used in EP documentation.
 
 > **id**: `string`
 
-Defined in: [types/ep/committee.ts:77](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L77)
+Defined in: [types/ep/committee.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L85)
 
 Unique committee identifier.
 
@@ -153,7 +153,7 @@ ID remains consistent even if committee name or mandate changes.
 
 > **members**: `string`[]
 
-Defined in: [types/ep/committee.ts:150](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L150)
+Defined in: [types/ep/committee.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L158)
 
 Committee members.
 
@@ -182,7 +182,7 @@ MEP for member details
 
 > **name**: `string`
 
-Defined in: [types/ep/committee.ts:94](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L94)
+Defined in: [types/ep/committee.ts:102](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L102)
 
 Full committee name.
 
@@ -214,7 +214,7 @@ EP multilingual API.
 
 > `optional` **chair?**: `string`
 
-Defined in: [types/ep/committee.ts:166](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L166)
+Defined in: [types/ep/committee.ts:177](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L177)
 
 Committee chair.
 
@@ -241,7 +241,7 @@ MEP for chair details
 
 > `optional` **meetingSchedule?**: `string`[]
 
-Defined in: [types/ep/committee.ts:202](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L202)
+Defined in: [types/ep/committee.ts:213](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L213)
 
 Scheduled committee meetings.
 
@@ -265,11 +265,21 @@ during parliamentary session weeks. Extraordinary meetings may be scheduled.
 
 ***
 
+### memberships?
+
+> `optional` **memberships?**: [`CommitteeMembership`](CommitteeMembership.md)[]
+
+Defined in: [types/ep/committee.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L161)
+
+Complete current membership records used to derive the committee roster.
+
+***
+
 ### responsibilities?
 
 > `optional` **responsibilities?**: `string`[]
 
-Defined in: [types/ep/committee.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L227)
+Defined in: [types/ep/committee.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L238)
 
 Committee responsibilities and mandate.
 
@@ -305,7 +315,7 @@ May include Treaty article references.
 
 > `optional` **viceChairs?**: `string`[]
 
-Defined in: [types/ep/committee.ts:183](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L183)
+Defined in: [types/ep/committee.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/committee.ts#L194)
 
 Committee vice-chairs.
 

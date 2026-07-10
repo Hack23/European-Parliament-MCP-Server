@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Interface: MEPDetails
 
-Defined in: [types/ep/mep.ts:251](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L251)
+Defined in: [types/ep/mep.ts:296](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L296)
 
 Detailed MEP information including biography and social media.
 
@@ -338,7 +338,7 @@ For replacements, may be mid-term.
 
 > `optional` **address?**: `string`
 
-Defined in: [types/ep/mep.ts:297](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L297)
+Defined in: [types/ep/mep.ts:393](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L393)
 
 Official office address.
 
@@ -364,11 +364,21 @@ Personal data - requires audit logging per ISMS AU-002
 
 ***
 
+### bday?
+
+> `optional` **bday?**: `string`
+
+Defined in: [types/ep/mep.ts:313](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L313)
+
+Date of birth in ISO 8601 date format.
+
+***
+
 ### biography?
 
 > `optional` **biography?**: `string`
 
-Defined in: [types/ep/mep.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L265)
+Defined in: [types/ep/mep.ts:361](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L361)
 
 Biographical information.
 
@@ -385,6 +395,16 @@ and political career highlights. Content may be in multiple languages.
 ```ts
 "Member of the European Parliament since 2019, focusing on development and environmental issues. Former municipal councillor (2010-2019)."
 ```
+
+***
+
+### citizenship?
+
+> `optional` **citizenship?**: `string`
+
+Defined in: [types/ep/mep.ts:325](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L325)
+
+EU authority URI identifying citizenship.
 
 ***
 
@@ -423,7 +443,7 @@ Personal data - requires audit logging per ISMS AU-002
 
 > `optional` **facebook?**: `string`
 
-Defined in: [types/ep/mep.ts:342](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L342)
+Defined in: [types/ep/mep.ts:438](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L438)
 
 Facebook profile identifier.
 
@@ -445,11 +465,111 @@ username (facebook.com/username) or numeric ID (facebook.com/12345).
 
 ***
 
+### familyName?
+
+> `optional` **familyName?**: `string`
+
+Defined in: [types/ep/mep.ts:331](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L331)
+
+Family name with source capitalization.
+
+***
+
+### givenName?
+
+> `optional` **givenName?**: `string`
+
+Defined in: [types/ep/mep.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L334)
+
+Given name with source capitalization.
+
+***
+
+### hasEmail?
+
+> `optional` **hasEmail?**: `string`
+
+Defined in: [types/ep/mep.ts:307](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L307)
+
+Official EP email URI as returned by the API (`mailto:...`).
+
+***
+
+### hasGender?
+
+> `optional` **hasGender?**: `string`
+
+Defined in: [types/ep/mep.ts:316](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L316)
+
+EU authority URI identifying gender.
+
+***
+
+### hasHonorificPrefix?
+
+> `optional` **hasHonorificPrefix?**: `string`
+
+Defined in: [types/ep/mep.ts:319](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L319)
+
+EU authority URI identifying the honorific prefix.
+
+***
+
+### hasMembership?
+
+> `optional` **hasMembership?**: [`MEPMembership`](MEPMembership.md)[]
+
+Defined in: [types/ep/mep.ts:322](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L322)
+
+Complete EP membership history, including mandate and function records.
+
+***
+
+### identifier?
+
+> `optional` **identifier?**: `string`
+
+Defined in: [types/ep/mep.ts:301](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L301)
+
+Numeric EP person identifier.
+
+***
+
+### img?
+
+> `optional` **img?**: `string`
+
+Defined in: [types/ep/mep.ts:337](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L337)
+
+Official MEP portrait URL.
+
+***
+
+### label?
+
+> `optional` **label?**: `string`
+
+Defined in: [types/ep/mep.ts:304](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L304)
+
+Official display label.
+
+***
+
+### notation\_codictPersonId?
+
+> `optional` **notation\_codictPersonId?**: `string`
+
+Defined in: [types/ep/mep.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L310)
+
+CODICT person identifier from the source response.
+
+***
+
 ### phone?
 
 > `optional` **phone?**: `string`
 
-Defined in: [types/ep/mep.ts:281](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L281)
+Defined in: [types/ep/mep.ts:377](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L377)
 
 Contact phone number.
 
@@ -475,11 +595,21 @@ Personal data - requires audit logging per ISMS AU-002
 
 ***
 
+### placeOfBirth?
+
+> `optional` **placeOfBirth?**: `string`
+
+Defined in: [types/ep/mep.ts:328](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L328)
+
+Place of birth as supplied by the EP.
+
+***
+
 ### roles?
 
 > `optional` **roles?**: `string`[]
 
-Defined in: [types/ep/mep.ts:376](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L376)
+Defined in: [types/ep/mep.ts:472](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L472)
 
 Parliamentary roles and positions.
 
@@ -504,6 +634,16 @@ special assignments. Roles are current as of data fetch.
 ```ts
 ["Chair of FEMM Committee", "Quaestor"]
 ```
+
+***
+
+### sortLabel?
+
+> `optional` **sortLabel?**: `string`
+
+Defined in: [types/ep/mep.ts:340](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L340)
+
+EP sorting label.
 
 ***
 
@@ -543,7 +683,7 @@ completed their term, resigned, or were replaced.
 
 > `optional` **twitter?**: `string`
 
-Defined in: [types/ep/mep.ts:328](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L328)
+Defined in: [types/ep/mep.ts:424](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L424)
 
 Twitter/X handle.
 
@@ -567,11 +707,41 @@ availability.
 
 ***
 
+### type?
+
+> `optional` **type?**: `string`
+
+Defined in: [types/ep/mep.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L298)
+
+EP entity type (`Person`).
+
+***
+
+### upperFamilyName?
+
+> `optional` **upperFamilyName?**: `string`
+
+Defined in: [types/ep/mep.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L343)
+
+Uppercase family name supplied by the EP.
+
+***
+
+### upperGivenName?
+
+> `optional` **upperGivenName?**: `string`
+
+Defined in: [types/ep/mep.ts:346](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L346)
+
+Uppercase given name supplied by the EP.
+
+***
+
 ### votingStatistics?
 
 > `optional` **votingStatistics?**: [`VotingStatistics`](VotingStatistics.md)
 
-Defined in: [types/ep/mep.ts:356](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L356)
+Defined in: [types/ep/mep.ts:452](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L452)
 
 Voting behavior statistics.
 
@@ -592,7 +762,7 @@ session roll-call votes.
 
 > `optional` **website?**: `string`
 
-Defined in: [types/ep/mep.ts:312](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L312)
+Defined in: [types/ep/mep.ts:408](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/mep.ts#L408)
 
 Personal or official website URL.
 

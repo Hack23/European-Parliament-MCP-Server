@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.41**](../../../../README.md)
+[**European Parliament MCP Server API v1.3.42**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **GetCommitteeInfoSchema**: `ZodObject`\<\{ `abbreviation`: `ZodOptional`\<`ZodString`\>; `id`: `ZodOptional`\<`ZodString`\>; `showCurrent`: `ZodOptional`\<`ZodDefault`\<`ZodBoolean`\>\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/committee.ts:12](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/committee.ts#L12)
+Defined in: [schemas/ep/committee.ts:13](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/committee.ts#L13)
 
 Get committee info input schema
