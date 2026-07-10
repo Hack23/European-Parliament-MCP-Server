@@ -61,7 +61,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           # Built-in npm cache for the local project install (single source of truth).
           cache: "npm"
-  
+
+      - name: Install Node.js 26 system-wide for Copilot agent
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates curl gnupg
+          curl -fsSL https://deb.nodesource.com/setup_26.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          echo "Node: $(node --version)"
+          echo "npm: $(npm --version)"
+
       - name: Install packages
         # Wrap with timeout + retry to survive transient registry hiccups.
         run: |
