@@ -191,6 +191,7 @@ async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: numb
   const pending = meps.filter((mep) => !hasCachedDetail(mepDetails, mep.id) && !missingDetailIds.has(mep.id));
   const batch = pending.slice(0, batchSize);
   const failedDetailIds: string[] = [];
+  let successfulFetches = 0;
 
   for (const mep of batch) {
     try {
@@ -199,6 +200,7 @@ async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: numb
       if (details.identifier !== undefined) {
         cacheMEPDetail(mepDetails, details.identifier, details);
       }
+      successfulFetches += 1;
     } catch (error: unknown) {
       if (isNotFoundError(error)) {
         console.warn(`[weekly-cache] MEP details not found for ${mep.id}; skipping future retries this week.`);
@@ -226,7 +228,7 @@ async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: numb
     missingDetailIds: Array.from(missingDetailIds).sort(),
     progress: {
       batchSize,
-      fetchedInRun: batch.length - failedDetailIds.length,
+      fetchedInRun: successfulFetches,
       failedInRun: failedDetailIds.length,
       remainingDetails: pendingAfterBatch.length,
       complete: pendingAfterBatch.length === 0,

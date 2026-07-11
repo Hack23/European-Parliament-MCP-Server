@@ -53,7 +53,8 @@ jobs:
           STATE_BRANCH="automation/weekly-meps-cache"
           git fetch origin "$STATE_BRANCH:refs/remotes/origin/$STATE_BRANCH" || true
           mkdir -p data/weekly/meps
-          if git show "origin/$STATE_BRANCH:data/weekly/meps/latest.json" > data/weekly/meps/latest.json 2>/dev/null; then
+          if git cat-file -e "origin/$STATE_BRANCH:data/weekly/meps/latest.json" 2>/dev/null; then
+            git show "origin/$STATE_BRANCH:data/weekly/meps/latest.json" > data/weekly/meps/latest.json
             echo "Restored weekly MEP cache baseline from $STATE_BRANCH."
           else
             echo "No existing weekly MEP cache baseline found."
