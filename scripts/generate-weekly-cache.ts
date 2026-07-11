@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { CommitteeSchema, MEPDetailsSchema, MEPSchema } from '../src/schemas/europeanParliament.js';
+import { fetchAllMEPs } from '../src/utils/allMepFetcher.js';
 
 type Dataset = 'meps' | 'corporate-bodies' | 'controlled-vocabularies';
 
@@ -67,19 +68,6 @@ async function writeDataset(dataset: Dataset, payload: unknown): Promise<void> {
   const json = `${JSON.stringify(payload, null, 2)}\n`;
   await writeFile(path.join(weeklyDir, 'index.json'), json, 'utf-8');
   await writeFile(path.join(baseDir, 'latest.json'), json, 'utf-8');
-}
-
-async function fetchAllMEPs(client: EuropeanParliamentClient): Promise<unknown[]> {
-  const result: unknown[] = [];
-  let offset = 0;
-  const limit = 100;
-  for (;;) {
-    const page = await client.getMEPs({ active: false, limit, offset });
-    result.push(...page.data);
-    if (!page.hasMore) break;
-    offset += limit;
-  }
-  return result;
 }
 
 function getMEPLatestPath(): string {
@@ -176,7 +164,7 @@ async function fetchAllVocabularies(client: EuropeanParliamentClient): Promise<R
 
 async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: number): Promise<void> {
   const existing = readExistingMEPCache();
-  const mepsRaw = await fetchAllMEPs(client);
+  const mepsRaw = await fetchAllMEPs(client, batchSize);
   const meps = mepsRaw.map((mep) => MEPSchema.parse(mep));
   const mepDetails: Record<string, unknown> = { ...existing.mepDetails };
   const missingDetailIds = new Set(existing.missingDetailIds);
