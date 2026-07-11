@@ -40,7 +40,7 @@ function getWeeklyCachePath(dataset: 'meps' | 'corporate-bodies' | 'controlled-v
   return path.resolve(process.cwd(), 'data', 'weekly', dataset, 'latest.json');
 }
 
-async function loadAndValidate<T>(filePath: string, schema: z.ZodSchema<T>): Promise<T | null> {
+async function loadAndValidate<T>(filePath: string, schema: z.ZodType<T>): Promise<T | null> {
   try {
     const raw = await readFile(filePath, 'utf-8');
     const parsed: unknown = JSON.parse(raw);

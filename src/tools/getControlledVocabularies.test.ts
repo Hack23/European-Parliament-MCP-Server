@@ -132,16 +132,6 @@ describe('get_controlled_vocabularies Tool', () => {
     });
 
     it('should bypass cache when live=true', async () => {
-      vi.mocked(weeklyCacheModule.loadWeeklyVocabulariesCache).mockResolvedValueOnce({
-        metadata: {
-          schemaVersion: 1,
-          generatedAt: '2026-01-01T00:00:00.000Z',
-          weekKey: '2026-W01',
-          source: 'test',
-        },
-        vocabularies: [{ id: 'voc-cached', label: 'Cached vocabulary' }],
-      });
-
       await handleGetControlledVocabularies({ vocId: 'voc-1', live: true });
       expect(epClientModule.epClient.getControlledVocabularyById).toHaveBeenCalledWith('voc-1');
     });

@@ -24,6 +24,34 @@ import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 import { loadWeeklyVocabulariesCache } from '../utils/weeklyDataCache.js';
 
+type GetControlledVocabulariesParams = ReturnType<typeof GetControlledVocabulariesSchema.parse>;
+
+async function getCachedVocabularyResponse(params: GetControlledVocabulariesParams): Promise<ToolResult | null> {
+  if (params.live) return null;
+  const cached = await loadWeeklyVocabulariesCache();
+  if (cached === null) return null;
+
+  if (params.vocId !== undefined) {
+    const fromDetails = cached.vocabularyDetails?.[params.vocId];
+    if (fromDetails !== undefined) return buildToolResponse(fromDetails);
+
+    const vocabulary = cached.vocabularies.find((item) => {
+      const id = item['id'];
+      return typeof id === 'string' && id === params.vocId;
+    });
+    return vocabulary !== undefined ? buildToolResponse(vocabulary) : null;
+  }
+
+  const paged = cached.vocabularies.slice(params.offset, params.offset + params.limit);
+  return buildToolResponse({
+    data: paged,
+    total: cached.vocabularies.length,
+    limit: params.limit,
+    offset: params.offset,
+    hasMore: params.offset + paged.length < cached.vocabularies.length,
+  });
+}
+
 /**
  * Handles the get_controlled_vocabularies MCP tool request.
  *
@@ -56,7 +84,7 @@ import { loadWeeklyVocabulariesCache } from '../utils/weeklyDataCache.js';
  * @see {@link handleSearchDocuments} for tools that consume vocabulary terms as filter values
  */
 export async function handleGetControlledVocabularies(args: unknown): Promise<ToolResult> {
-  let params: ReturnType<typeof GetControlledVocabulariesSchema.parse>;
+  let params: GetControlledVocabulariesParams;
   try {
     params = GetControlledVocabulariesSchema.parse(args);
   } catch (error: unknown) {
@@ -74,30 +102,8 @@ export async function handleGetControlledVocabularies(args: unknown): Promise<To
   }
 
   try {
-    if (!params.live) {
-      const cached = await loadWeeklyVocabulariesCache();
-      if (cached !== null) {
-        if (params.vocId !== undefined) {
-          const fromDetails = cached.vocabularyDetails?.[params.vocId];
-          if (fromDetails !== undefined) return buildToolResponse(fromDetails);
-
-          const vocabulary = cached.vocabularies.find((item) => {
-            const id = item['id'];
-            return typeof id === 'string' && id === params.vocId;
-          });
-          if (vocabulary !== undefined) return buildToolResponse(vocabulary);
-        } else {
-          const paged = cached.vocabularies.slice(params.offset, params.offset + params.limit);
-          return buildToolResponse({
-            data: paged,
-            total: cached.vocabularies.length,
-            limit: params.limit,
-            offset: params.offset,
-            hasMore: params.offset + paged.length < cached.vocabularies.length,
-          });
-        }
-      }
-    }
+    const cachedResponse = await getCachedVocabularyResponse(params);
+    if (cachedResponse !== null) return cachedResponse;
 
     if (params.vocId !== undefined) {
       const result = await epClient.getControlledVocabularyById(params.vocId);

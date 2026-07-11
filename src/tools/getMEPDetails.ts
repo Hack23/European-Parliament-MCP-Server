@@ -24,6 +24,28 @@ import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
 
+type GetMEPDetailsParams = ReturnType<typeof GetMEPDetailsSchema.parse>;
+
+function normalizeMepIdentifier(id: string): string {
+  if (id.startsWith('MEP-')) return id.substring(4);
+  if (id.startsWith('person/')) return id.substring(7);
+  return id;
+}
+
+async function getCachedMEPDetailsResponse(params: GetMEPDetailsParams): Promise<ToolResult | null> {
+  if (params.live) return null;
+  const cached = await loadWeeklyMEPCache();
+  if (cached === null) return null;
+
+  const normalizedId = normalizeMepIdentifier(params.id);
+  const cachedRecord = cached.mepDetails[params.id]
+    ?? cached.mepDetails[normalizedId]
+    ?? cached.mepDetails[`MEP-${normalizedId}`]
+    ?? cached.mepDetails[`person/${normalizedId}`];
+  if (cachedRecord === undefined) return null;
+  return buildToolResponse(MEPDetailsSchema.parse(cachedRecord));
+}
+
 /**
  * Handles the get_mep_details MCP tool request.
  *
@@ -52,7 +74,7 @@ import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
 export async function handleGetMEPDetails(
   args: unknown
 ): Promise<ToolResult> {
-  let params: ReturnType<typeof GetMEPDetailsSchema.parse>;
+  let params: GetMEPDetailsParams;
   try {
     params = GetMEPDetailsSchema.parse(args);
   } catch (error: unknown) {
@@ -70,22 +92,8 @@ export async function handleGetMEPDetails(
   }
 
   try {
-    if (!params.live) {
-      const cached = await loadWeeklyMEPCache();
-      if (cached !== null) {
-        const normalizedId = params.id.startsWith('MEP-')
-          ? params.id.substring(4)
-          : params.id.startsWith('person/')
-            ? params.id.substring(7)
-            : params.id;
-        const cachedRecord = cached.mepDetails[params.id]
-          ?? cached.mepDetails[normalizedId]
-          ?? cached.mepDetails[`MEP-${normalizedId}`];
-        if (cachedRecord !== undefined) {
-          return buildToolResponse(MEPDetailsSchema.parse(cachedRecord));
-        }
-      }
-    }
+    const cachedResponse = await getCachedMEPDetailsResponse(params);
+    if (cachedResponse !== null) return cachedResponse;
 
     const result = await epClient.getMEPDetails(params.id);
 

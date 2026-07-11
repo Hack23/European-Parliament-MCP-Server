@@ -103,17 +103,6 @@ describe('get_mep_details Tool', () => {
     });
 
     it('should bypass cache when live=true', async () => {
-      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
-        metadata: {
-          schemaVersion: 1,
-          generatedAt: '2026-01-01T00:00:00.000Z',
-          weekKey: '2026-W01',
-          source: 'test',
-        },
-        meps: [],
-        mepDetails: {},
-      });
-
       await handleGetMEPDetails({ id: 'MEP-124810', live: true });
       expect(epClientModule.epClient.getMEPDetails).toHaveBeenCalled();
     });
