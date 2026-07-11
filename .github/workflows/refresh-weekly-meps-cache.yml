@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       batch_size:
-        description: 'Number of MEP detail profiles to refresh this run'
+        description: 'Number of MEPs requested per listing page and detail profiles refreshed this run'
         required: false
         default: '250'
         type: string
