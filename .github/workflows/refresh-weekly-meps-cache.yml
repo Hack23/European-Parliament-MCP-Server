@@ -2,12 +2,22 @@ name: Refresh Weekly MEP Cache
 
 on:
   schedule:
-    - cron: '0 2 * * 1'
+    - cron: '0 2 * * 1-5'
   workflow_dispatch:
+    inputs:
+      batch_size:
+        description: 'Number of MEP detail profiles to refresh this run'
+        required: false
+        default: '250'
+        type: string
 
 permissions:
   contents: write
   pull-requests: write
+
+concurrency:
+  group: refresh-weekly-meps-cache
+  cancel-in-progress: false
 
 env:
   NPM_CONFIG_FETCH_RETRIES: "5"
@@ -37,10 +47,51 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore current weekly MEP cache state
+        run: |
+          set -euo pipefail
+          STATE_BRANCH="automation/weekly-meps-cache"
+          git fetch origin "$STATE_BRANCH:refs/remotes/origin/$STATE_BRANCH" || true
+          mkdir -p data/weekly/meps
+          if git cat-file -e "origin/$STATE_BRANCH:data/weekly/meps/latest.json" 2>/dev/null; then
+            git show "origin/$STATE_BRANCH:data/weekly/meps/latest.json" > data/weekly/meps/latest.json
+            echo "Restored weekly MEP cache baseline from $STATE_BRANCH."
+          else
+            echo "No existing weekly MEP cache baseline found."
+          fi
+
       - name: Generate weekly MEP cache
-        run: npm run generate:weekly-cache:meps
+        run: |
+          set -euo pipefail
+          BATCH_SIZE="${MEP_BATCH_SIZE:-250}"
+          if ! [[ "$BATCH_SIZE" =~ ^[0-9]+$ ]] || [ "$BATCH_SIZE" -lt 1 ]; then
+            echo "Invalid batch size '$BATCH_SIZE' (must be a positive integer)." >&2
+            exit 1
+          fi
+          npm run generate:weekly-cache:meps -- --batch-size "$BATCH_SIZE"
         env:
           NODE_ENV: production
+          MEP_BATCH_SIZE: ${{ github.event.inputs.batch_size }}
+
+      - name: Report MEP cache progress
+        run: |
+          set -euo pipefail
+          node -e '
+            const fs = require("node:fs");
+            const p = "data/weekly/meps/latest.json";
+            if (!fs.existsSync(p)) {
+              console.log("No weekly cache file generated.");
+              process.exit(0);
+            }
+            const data = JSON.parse(fs.readFileSync(p, "utf8"));
+            const progress = data.progress ?? {};
+            const meps = Array.isArray(data.meps) ? data.meps.length : 0;
+            const remaining = typeof progress.remainingDetails === "number" ? progress.remainingDetails : "unknown";
+            const fetchedInRun = typeof progress.fetchedInRun === "number" ? progress.fetchedInRun : "unknown";
+            const failedInRun = typeof progress.failedInRun === "number" ? progress.failedInRun : "unknown";
+            const complete = progress.complete === true ? "yes" : "no";
+            console.log(`MEP cache progress: total=${meps}, fetchedInRun=${fetchedInRun}, failedInRun=${failedInRun}, remaining=${remaining}, complete=${complete}`);
+          '
 
       - name: Create pull request with refreshed cache
         env:
@@ -52,13 +103,21 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          BRANCH="automation/weekly-meps-cache-$(date -u +%Y%m%d-%H%M%S)"
-          git checkout -b "$BRANCH"
+          BRANCH="automation/weekly-meps-cache"
           git add data/weekly/meps
+          if git diff --cached --quiet; then
+            echo "No staged MEP cache changes detected."
+            exit 0
+          fi
           git commit -m "chore: refresh weekly MEP cache [skip ci]"
-          git push --set-upstream origin "$BRANCH"
-          gh pr create \
-            --title "chore: refresh weekly MEP cache" \
-            --body "Automated weekly refresh of MEP list and full MEP detail cache data from EP Open Data API." \
-            --base main \
-            --head "$BRANCH"
+          git push --force-with-lease origin "HEAD:$BRANCH"
+
+          if gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
+            echo "PR for $BRANCH already exists; updated branch with latest cache progress."
+          else
+            gh pr create \
+              --title "chore: refresh weekly MEP cache" \
+              --body "Automated weekly refresh of MEP list and incremental MEP detail cache data from EP Open Data API." \
+              --base main \
+              --head "$BRANCH"
+          fi
