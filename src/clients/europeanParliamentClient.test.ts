@@ -1056,7 +1056,7 @@ describe('EuropeanParliamentClient', () => {
       expect(result.members.length).toBeGreaterThan(0);
     });
 
-    it('should enrich committee roster and include leadership in members', async () => {
+    it('should return committee data without enriching committee roster', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1110,29 +1110,13 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(result.members).toEqual(['person/124810', 'person/124811']);
-      expect(result.chair).toBe('person/124810');
-      expect(result.viceChairs).toEqual(['person/124811']);
-      expect(result.memberships).toHaveLength(3);
-      expect(result.memberships?.find(({ id }) => id === 'membership/chair')).toMatchObject({
-        member: 'person/124810',
-        memberDuring: {
-          id: 'time-period/20240716',
-          type: 'PeriodOfTime',
-          startDate: '2024-07-16',
-        },
-        organization: 'org/6570',
-        role: 'def/ep-roles/CHAIR',
-        membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
-        contactPoint: [{ email: 'chair@example.eu' }],
-      });
-      expect(result.memberships?.find(({ role }) => role === 'def/ep-roles/CHAIR_VICE')).toMatchObject({
-        member: 'person/124811',
-        organization: 'org/6570',
-      });
+      expect(result.members).toEqual([]);
+      expect(result.chair).toBeUndefined();
+      expect(result.viceChairs ?? []).toEqual([]);
+      expect(result.memberships ?? []).toEqual([]);
     });
 
-    it('should derive committee rosters from JSON-LD object references', async () => {
+    it('should skip roster derivation from JSON-LD object references', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1172,17 +1156,12 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(result.members).toEqual(['person/124810']);
-      expect(result.chair).toBe('person/124810');
-      expect(result.memberships).toEqual(expect.arrayContaining([expect.objectContaining({
-        member: 'person/124810',
-        organization: 'org/6570',
-        role: 'def/ep-roles/CHAIR',
-        membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING',
-      })]));
+      expect(result.members).toEqual([]);
+      expect(result.chair).toBeUndefined();
+      expect(result.memberships ?? []).toEqual([]);
     });
 
-    it('should derive committee rosters from current MEP memberships and ignore non-committee classifications', async () => {
+    it('should not request current MEP memberships for committee roster derivation', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1217,16 +1196,20 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/meps/show-current'),
-        expect.anything()
-      );
+      const requestedUrls = mockFetch.mock.calls.map(([url]) => (
+        typeof url === 'string'
+          ? url
+          : url instanceof URL
+            ? url.toString()
+            : url.url
+      ));
+      expect(requestedUrls.some((url) => url.includes('/meps/show-current'))).toBe(false);
       expect(result.members).toEqual([]);
       expect(result.chair).toBeUndefined();
-      expect(result.viceChairs).toEqual([]);
+      expect(result.viceChairs ?? []).toEqual([]);
     });
 
-    it('should page through all committee members when the roster exceeds one page', async () => {
+    it('should not page through committee members when roster enrichment is disabled', async () => {
       const firstPageMembers = Array.from({ length: 100 }, (_, index) => ({
         id: `person/${1000 + index}`,
         identifier: String(1000 + index),
@@ -1325,9 +1308,15 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(result.members).toHaveLength(101);
-      expect(result.members).toContain('person/2000');
-      expect(result.members).toContain('person/1000');
+      const requestedUrls = mockFetch.mock.calls.map(([url]) => (
+        typeof url === 'string'
+          ? url
+          : url instanceof URL
+            ? url.toString()
+            : url.url
+      ));
+      expect(requestedUrls.some((url) => url.includes('/meps/show-current'))).toBe(false);
+      expect(result.members).toEqual([]);
     });
 
     it('should not include members when MEP detail lookups fail to establish committee membership', async () => {
@@ -1367,10 +1356,10 @@ describe('EuropeanParliamentClient', () => {
 
       expect(result.members).toEqual([]);
       expect(result.chair).toBeUndefined();
-      expect(result.viceChairs).toEqual([]);
+      expect(result.viceChairs ?? []).toEqual([]);
     });
 
-    it('should normalize full URI MEP ids before loading MEP details', async () => {
+    it('should not load MEP details when committee roster enrichment is disabled', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         headers: new Headers(),
@@ -1417,11 +1406,15 @@ describe('EuropeanParliamentClient', () => {
 
       const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/meps/124810'),
-        expect.anything()
-      );
-      expect(result.members).toContain('person/124810');
+      const requestedUrls = mockFetch.mock.calls.map(([url]) => (
+        typeof url === 'string'
+          ? url
+          : url instanceof URL
+            ? url.toString()
+            : url.url
+      ));
+      expect(requestedUrls.some((url) => url.includes('/meps/124810'))).toBe(false);
+      expect(result.members).toEqual([]);
     });
 
     it('should not assume chair from member order', async () => {
