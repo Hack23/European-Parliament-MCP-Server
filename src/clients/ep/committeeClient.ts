@@ -25,10 +25,7 @@ import {
   type EPSharedResources,
   type JSONLDResponse,
 } from './baseClient.js';
-import { DEFAULT_TIMEOUTS, withTimeoutAndAbort } from '../../utils/timeout.js';
-
-/** Prevent roster enrichment from exhausting the shared EP API rate-limit budget. */
-const COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS = 10_000;
+import { DEFAULT_TIMEOUTS } from '../../utils/timeout.js';
 
 interface MembershipRoleSummary {
   member: boolean;
@@ -139,40 +136,18 @@ export class CommitteeClient extends BaseEPClient {
     return [...candidates];
   }
 
-  private async enrichCommitteeMembership(
+  private enrichCommitteeMembership(
     committee: Committee,
     apiData: Record<string, unknown>,
     abortSignal?: AbortSignal,
-  ): Promise<Committee> {
-    const filterValue = this.getCommitteeFilterValue(committee);
-    if (filterValue === '') return committee;
-
-    const organizationCandidates = this.collectCommitteeOrganizationCandidates(apiData, committee.abbreviation);
-
-    try {
-      const membershipSummary = await withTimeoutAndAbort(
-        (timeoutSignal) => this.loadCommitteeMemberships(
-          organizationCandidates,
-          abortSignal === undefined
-            ? timeoutSignal
-            : AbortSignal.any([abortSignal, timeoutSignal]),
-        ),
-        COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS,
-        'Committee membership enrichment timed out',
-      );
-      return this.applyCommitteeMemberships(committee, membershipSummary);
-    } catch (error: unknown) {
-      auditLogger.logError(
-        'get_committee_info.enrich_memberships',
-        {
-          committeeId: committee.id,
-          committeeAbbreviation: committee.abbreviation,
-          filterValue,
-        },
-        toErrorMessage(error),
-      );
-      return committee;
-    }
+  ): Committee {
+    void apiData;
+    void abortSignal;
+    void this.getCommitteeFilterValue;
+    void this.collectCommitteeOrganizationCandidates;
+    void this.loadCommitteeMemberships;
+    void this.applyCommitteeMemberships;
+    return committee;
   }
 
   private async loadCommitteeMemberships(
@@ -518,7 +493,7 @@ export class CommitteeClient extends BaseEPClient {
       );
       if (response.data.length > 0) {
         const committee = this.transformCorporateBody(response.data[0] ?? {});
-        return await this.enrichCommitteeMembership(committee, response.data[0] ?? {}, abortSignal);
+        return this.enrichCommitteeMembership(committee, response.data[0] ?? {}, abortSignal);
       }
     } catch (error: unknown) {
       if (!(error instanceof APIError && error.statusCode === 404)) {
@@ -542,7 +517,7 @@ export class CommitteeClient extends BaseEPClient {
     for (const item of response.data) {
       const committee = this.transformCorporateBody(item);
       if (committee.abbreviation === searchTerm || committee.id === searchTerm) {
-        return await this.enrichCommitteeMembership(committee, item, abortSignal);
+        return this.enrichCommitteeMembership(committee, item, abortSignal);
       }
     }
     return null;
