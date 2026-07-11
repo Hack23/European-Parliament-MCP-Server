@@ -51,11 +51,15 @@ jobs:
         run: |
           set -euo pipefail
           STATE_BRANCH="automation/weekly-meps-cache"
-          git fetch origin "$STATE_BRANCH:refs/remotes/origin/$STATE_BRANCH" || true
           mkdir -p data/weekly/meps
-          if git cat-file -e "origin/$STATE_BRANCH:data/weekly/meps/latest.json" 2>/dev/null; then
-            git show "origin/$STATE_BRANCH:data/weekly/meps/latest.json" > data/weekly/meps/latest.json
-            echo "Restored weekly MEP cache baseline from $STATE_BRANCH."
+          if git ls-remote --exit-code --heads origin "$STATE_BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$STATE_BRANCH:refs/remotes/origin/$STATE_BRANCH"
+            if git cat-file -e "origin/$STATE_BRANCH:data/weekly/meps/latest.json" 2>/dev/null; then
+              git show "origin/$STATE_BRANCH:data/weekly/meps/latest.json" > data/weekly/meps/latest.json
+              echo "Restored in-progress weekly MEP cache baseline from $STATE_BRANCH."
+            fi
+          elif [ -f data/weekly/meps/latest.json ]; then
+            echo "Using weekly MEP cache baseline checked out from main."
           else
             echo "No existing weekly MEP cache baseline found."
           fi
