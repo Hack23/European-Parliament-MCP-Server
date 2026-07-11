@@ -18,7 +18,7 @@ env:
 jobs:
   refresh-weekly-corporate-bodies-cache:
     runs-on: ubuntu-26.04
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -41,6 +41,8 @@ jobs:
         run: npm run generate:weekly-cache:corporate-bodies
         env:
           NODE_ENV: production
+          EP_REQUEST_TIMEOUT_MS: 120000
+          EP_COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS: 45000
 
       - name: Create pull request with refreshed cache
         env:

@@ -28,7 +28,20 @@ import {
 import { DEFAULT_TIMEOUTS, withTimeoutAndAbort } from '../../utils/timeout.js';
 
 /** Prevent roster enrichment from exhausting the shared EP API rate-limit budget. */
-const COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS = 10_000;
+const DEFAULT_COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS = 10_000;
+
+function resolveCommitteeMembershipEnrichmentTimeoutMs(): number {
+  const raw = process.env['EP_COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS'];
+  if (typeof raw === 'string' && raw.trim().length > 0) {
+    const parsed = Number.parseInt(raw, 10);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+  return DEFAULT_COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS;
+}
+
+const COMMITTEE_MEMBERSHIP_ENRICHMENT_TIMEOUT_MS = resolveCommitteeMembershipEnrichmentTimeoutMs();
 
 interface MembershipRoleSummary {
   member: boolean;
