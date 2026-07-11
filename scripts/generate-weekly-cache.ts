@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { CommitteeSchema, MEPDetailsSchema, MEPSchema } from '../src/schemas/europeanParliament.js';
-import { fetchMEPBatch } from '../src/utils/allMepFetcher.js';
+import { fetchAllMEPs } from '../src/utils/allMepFetcher.js';
 
 type Dataset = 'meps' | 'corporate-bodies' | 'controlled-vocabularies';
 
@@ -164,7 +164,7 @@ async function fetchAllVocabularies(client: EuropeanParliamentClient): Promise<R
 
 async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: number): Promise<void> {
   const existing = readExistingMEPCache();
-  const mepsRaw = await fetchMEPBatch(client, batchSize);
+  const mepsRaw = await fetchAllMEPs(client, batchSize);
   const meps = mepsRaw.map((mep) => MEPSchema.parse(mep));
   const mepDetails: Record<string, unknown> = { ...existing.mepDetails };
   const missingDetailIds = new Set(existing.missingDetailIds);
