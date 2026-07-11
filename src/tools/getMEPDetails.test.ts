@@ -6,6 +6,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetMEPDetails } from './getMEPDetails.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
+import * as auditLoggerModule from '../utils/auditLogger.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -16,6 +17,12 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
 
 vi.mock('../utils/weeklyDataCache.js', () => ({
   loadWeeklyMEPCache: vi.fn(),
+}));
+
+vi.mock('../utils/auditLogger.js', () => ({
+  auditLogger: {
+    logDataAccess: vi.fn(),
+  },
 }));
 
 describe('get_mep_details Tool', () => {
@@ -100,6 +107,11 @@ describe('get_mep_details Tool', () => {
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { name?: string };
       expect(parsed.name).toBe('Cached MEP');
       expect(epClientModule.epClient.getMEPDetails).not.toHaveBeenCalled();
+      expect(auditLoggerModule.auditLogger.logDataAccess).toHaveBeenCalledWith(
+        'get_mep_details',
+        { id: 'MEP-124810' },
+        1,
+      );
     });
 
     it('should bypass cache when live=true', async () => {

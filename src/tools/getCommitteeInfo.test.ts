@@ -6,6 +6,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetCommitteeInfo } from './getCommitteeInfo.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
+import * as auditLoggerModule from '../utils/auditLogger.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -17,6 +18,12 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
 
 vi.mock('../utils/weeklyDataCache.js', () => ({
   loadWeeklyCorporateBodiesCache: vi.fn(),
+}));
+
+vi.mock('../utils/auditLogger.js', () => ({
+  auditLogger: {
+    logDataAccess: vi.fn(),
+  },
 }));
 
 describe('get_committee_info Tool', () => {
@@ -209,6 +216,11 @@ describe('get_committee_info Tool', () => {
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { name?: string };
       expect(parsed.name).toBe('Cached Committee');
       expect(epClientModule.epClient.getCommitteeInfo).not.toHaveBeenCalled();
+      expect(auditLoggerModule.auditLogger.logDataAccess).toHaveBeenCalledWith(
+        'get_committee_info',
+        { id: undefined, abbreviation: 'ENVI' },
+        1,
+      );
     });
 
     it('should bypass cache when live=true', async () => {
@@ -234,6 +246,40 @@ describe('get_committee_info Tool', () => {
       const parsed = JSON.parse(result.content[0].text) as Record<string, unknown>;
       expect(parsed).toHaveProperty('data');
       expect(Array.isArray(parsed.data)).toBe(true);
+    });
+
+    it('should bypass weekly cache when showCurrent is true', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        corporateBodies: [
+          {
+            id: 'HIST',
+            name: 'Historical Body',
+            abbreviation: 'HIST',
+            members: [],
+            responsibilities: [],
+          },
+        ],
+      });
+      vi.mocked(epClientModule.epClient.getCurrentCorporateBodies).mockResolvedValue({
+        data: [
+          { id: 'ENVI', name: 'Current Body', abbreviation: 'ENVI', members: [], responsibilities: [] },
+        ],
+        total: 1,
+        limit: 50,
+        offset: 0,
+        hasMore: false,
+      });
+
+      const result = await handleGetCommitteeInfo({ showCurrent: true });
+      const parsed = JSON.parse(result.content[0].text) as { data: Array<{ id: string }> };
+      expect(parsed.data[0]?.id).toBe('ENVI');
+      expect(epClientModule.epClient.getCurrentCorporateBodies).toHaveBeenCalledTimes(1);
     });
   });
 });

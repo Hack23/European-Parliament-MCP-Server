@@ -6,6 +6,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetMEPs } from './getMEPs.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
 import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
+import * as auditLoggerModule from '../utils/auditLogger.js';
 import { setupToolTest } from '../../tests/helpers/mockFactory.js';
 import { expectValidMCPResponse, expectValidPaginatedMCPResponse, expectToolError } from '../../tests/helpers/assertions.js';
 
@@ -18,6 +19,12 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
 
 vi.mock('../utils/weeklyDataCache.js', () => ({
   loadWeeklyMEPCache: vi.fn(),
+}));
+
+vi.mock('../utils/auditLogger.js', () => ({
+  auditLogger: {
+    logDataAccess: vi.fn(),
+  },
 }));
 
 // Registers beforeEach(vi.clearAllMocks) for all tests in this file
@@ -271,6 +278,11 @@ describe('get_meps Tool', () => {
       const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { data: Array<{ id: string }> };
       expect(parsed.data[0]?.id).toBe('MEP-2');
       expect(epClientModule.epClient.getMEPs).not.toHaveBeenCalled();
+      expect(auditLoggerModule.auditLogger.logDataAccess).toHaveBeenCalledWith(
+        'get_meps',
+        expect.objectContaining({ active: true, limit: 50, offset: 0 }),
+        1,
+      );
     });
 
     it('should bypass cache when live=true', async () => {

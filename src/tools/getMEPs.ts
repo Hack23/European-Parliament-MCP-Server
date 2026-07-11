@@ -23,6 +23,7 @@ import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
+import { auditLogger } from '../utils/auditLogger.js';
 
 type GetMEPsParams = ReturnType<typeof GetMEPsSchema.parse>;
 
@@ -46,6 +47,14 @@ async function getCachedMEPResponse(params: GetMEPsParams): Promise<ToolResult |
     offset: params.offset,
     hasMore: params.offset + paged.length < filtered.length,
   });
+  auditLogger.logDataAccess('get_meps', {
+    country: params.country,
+    group: params.group,
+    committee: params.committee,
+    active: params.active,
+    limit: params.limit,
+    offset: params.offset,
+  }, validated.data.length);
   return buildToolResponse(validated);
 }
 

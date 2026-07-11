@@ -23,33 +23,29 @@ import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 import { loadWeeklyCorporateBodiesCache } from '../utils/weeklyDataCache.js';
+import { auditLogger } from '../utils/auditLogger.js';
 
 type GetCommitteeInfoParams = ReturnType<typeof GetCommitteeInfoSchema.parse>;
 
 async function getCachedCommitteeResponse(params: GetCommitteeInfoParams): Promise<ToolResult | null> {
   if (params.live) return null;
+  if (params.showCurrent === true) return null;
   const cached = await loadWeeklyCorporateBodiesCache();
   if (cached === null) return null;
-
-  if (params.showCurrent === true) {
-    const validated = PaginatedResponseSchema(CommitteeSchema).parse({
-      data: cached.corporateBodies,
-      total: cached.corporateBodies.length,
-      limit: Math.max(1, cached.corporateBodies.length),
-      offset: 0,
-      hasMore: false,
-    });
-    return buildToolResponse(validated);
-  }
 
   const lookup = params.abbreviation ?? params.id;
   if (lookup === undefined) return null;
 
   const fromDetails = cached.corporateBodyDetails?.[lookup];
-  if (fromDetails !== undefined) return buildToolResponse(CommitteeSchema.parse(fromDetails));
+  if (fromDetails !== undefined) {
+    auditLogger.logDataAccess('get_committee_info', { id: params.id, abbreviation: params.abbreviation }, 1);
+    return buildToolResponse(CommitteeSchema.parse(fromDetails));
+  }
 
   const byId = cached.corporateBodies.find((body) => body.id === lookup || body.abbreviation === lookup);
-  return byId !== undefined ? buildToolResponse(CommitteeSchema.parse(byId)) : null;
+  if (byId === undefined) return null;
+  auditLogger.logDataAccess('get_committee_info', { id: params.id, abbreviation: params.abbreviation }, 1);
+  return buildToolResponse(CommitteeSchema.parse(byId));
 }
 
 /**

@@ -44,7 +44,8 @@ async function loadAndValidate<T>(filePath: string, schema: z.ZodType<T>): Promi
   try {
     const raw = await readFile(filePath, 'utf-8');
     const parsed: unknown = JSON.parse(raw);
-    return schema.safeParse(parsed).success ? schema.parse(parsed) : null;
+    const validated = schema.safeParse(parsed);
+    return validated.success ? validated.data : null;
   } catch {
     return null;
   }

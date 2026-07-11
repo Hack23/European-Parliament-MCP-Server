@@ -23,6 +23,7 @@ import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
 import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
+import { auditLogger } from '../utils/auditLogger.js';
 
 type GetMEPDetailsParams = ReturnType<typeof GetMEPDetailsSchema.parse>;
 
@@ -43,6 +44,7 @@ async function getCachedMEPDetailsResponse(params: GetMEPDetailsParams): Promise
     ?? cached.mepDetails[`MEP-${normalizedId}`]
     ?? cached.mepDetails[`person/${normalizedId}`];
   if (cachedRecord === undefined) return null;
+  auditLogger.logDataAccess('get_mep_details', { id: params.id }, 1);
   return buildToolResponse(MEPDetailsSchema.parse(cachedRecord));
 }
 
