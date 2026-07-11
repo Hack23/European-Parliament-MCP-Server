@@ -47,7 +47,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- data/weekly/corporate-bodies; then
+          # Generated cache files are untracked on a clean checkout, so git diff
+          # alone cannot detect the first refresh or newly created weekly files.
+          if [ -z "$(git status --porcelain=v1 --untracked-files=all -- data/weekly/corporate-bodies)" ]; then
             echo "No corporate bodies cache changes detected."
             exit 0
           fi
@@ -55,7 +57,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           BRANCH="automation/weekly-corporate-bodies-cache-$(date -u +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
-          git add data/weekly/corporate-bodies
+          git add -A -- data/weekly/corporate-bodies
           git commit -m "chore: refresh weekly corporate bodies cache [skip ci]"
           git push --set-upstream origin "$BRANCH"
           gh pr create \

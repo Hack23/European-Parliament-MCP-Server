@@ -97,14 +97,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- data/weekly/meps; then
+          # Generated cache files are untracked on a clean checkout, so git diff
+          # alone cannot detect the first refresh or newly created weekly files.
+          if [ -z "$(git status --porcelain=v1 --untracked-files=all -- data/weekly/meps)" ]; then
             echo "No MEP cache changes detected."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           BRANCH="automation/weekly-meps-cache"
-          git add data/weekly/meps
+          git add -A -- data/weekly/meps
           if git diff --cached --quiet; then
             echo "No staged MEP cache changes detected."
             exit 0

@@ -46,7 +46,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- data/weekly/controlled-vocabularies; then
+          # Generated cache files are untracked on a clean checkout, so git diff
+          # alone cannot detect the first refresh or newly created weekly files.
+          if [ -z "$(git status --porcelain=v1 --untracked-files=all -- data/weekly/controlled-vocabularies)" ]; then
             echo "No controlled vocabularies cache changes detected."
             exit 0
           fi
@@ -54,7 +56,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           BRANCH="automation/weekly-controlled-vocabularies-cache-$(date -u +%Y%m%d-%H%M%S)"
           git checkout -b "$BRANCH"
-          git add data/weekly/controlled-vocabularies
+          git add -A -- data/weekly/controlled-vocabularies
           git commit -m "chore: refresh weekly controlled vocabularies cache [skip ci]"
           git push --set-upstream origin "$BRANCH"
           gh pr create \
