@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetControlledVocabularies, getControlledVocabulariesToolMetadata } from './getControlledVocabularies.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -12,6 +13,10 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
     getControlledVocabularies: vi.fn(),
     getControlledVocabularyById: vi.fn()
   }
+}));
+
+vi.mock('../utils/weeklyDataCache.js', () => ({
+  loadWeeklyVocabulariesCache: vi.fn(),
 }));
 
 describe('get_controlled_vocabularies Tool', () => {
@@ -37,6 +42,7 @@ describe('get_controlled_vocabularies Tool', () => {
       id: 'voc-1',
       label: 'Test Vocabulary'
     });
+    vi.mocked(weeklyCacheModule.loadWeeklyVocabulariesCache).mockResolvedValue(null);
   });
 
   describe('Input Validation', () => {
@@ -108,6 +114,38 @@ describe('get_controlled_vocabularies Tool', () => {
   });
 
   describe('Single Vocabulary Lookup', () => {
+    it('should use weekly cache by default when available', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyVocabulariesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        vocabularies: [{ id: 'voc-cached', label: 'Cached vocabulary' }],
+      });
+
+      const result = await handleGetControlledVocabularies({ vocId: 'voc-cached' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { label?: string };
+      expect(parsed.label).toBe('Cached vocabulary');
+      expect(epClientModule.epClient.getControlledVocabularyById).not.toHaveBeenCalled();
+    });
+
+    it('should bypass cache when live=true', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyVocabulariesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        vocabularies: [{ id: 'voc-cached', label: 'Cached vocabulary' }],
+      });
+
+      await handleGetControlledVocabularies({ vocId: 'voc-1', live: true });
+      expect(epClientModule.epClient.getControlledVocabularyById).toHaveBeenCalledWith('voc-1');
+    });
+
     it('should call getControlledVocabularyById when vocId is provided', async () => {
       const result = await handleGetControlledVocabularies({ vocId: 'voc-1' });
 

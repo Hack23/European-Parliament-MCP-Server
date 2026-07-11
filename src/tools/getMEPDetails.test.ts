@@ -5,12 +5,17 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetMEPDetails } from './getMEPDetails.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
     getMEPDetails: vi.fn()
   }
+}));
+
+vi.mock('../utils/weeklyDataCache.js', () => ({
+  loadWeeklyMEPCache: vi.fn(),
 }));
 
 describe('get_mep_details Tool', () => {
@@ -36,6 +41,7 @@ describe('get_mep_details Tool', () => {
         attendanceRate: 92.5
       }
     });
+    vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
   });
 
   describe('Input Validation', () => {
@@ -68,6 +74,50 @@ describe('get_mep_details Tool', () => {
   });
 
   describe('Response Format', () => {
+    it('should use weekly cache by default when available', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        meps: [],
+        mepDetails: {
+          'MEP-124810': {
+            id: 'MEP-124810',
+            name: 'Cached MEP',
+            country: 'SE',
+            politicalGroup: 'EPP',
+            committees: [],
+            active: true,
+            termStart: '2024-07-16',
+          },
+        },
+      });
+
+      const result = await handleGetMEPDetails({ id: 'MEP-124810' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { name?: string };
+      expect(parsed.name).toBe('Cached MEP');
+      expect(epClientModule.epClient.getMEPDetails).not.toHaveBeenCalled();
+    });
+
+    it('should bypass cache when live=true', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        meps: [],
+        mepDetails: {},
+      });
+
+      await handleGetMEPDetails({ id: 'MEP-124810', live: true });
+      expect(epClientModule.epClient.getMEPDetails).toHaveBeenCalled();
+    });
+
     it('should return MCP-compliant response structure', async () => {
       const result = await handleGetMEPDetails({ id: 'MEP-124810' });
 

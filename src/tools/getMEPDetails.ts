@@ -22,6 +22,7 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
 
 /**
  * Handles the get_mep_details MCP tool request.
@@ -69,6 +70,23 @@ export async function handleGetMEPDetails(
   }
 
   try {
+    if (!params.live) {
+      const cached = await loadWeeklyMEPCache();
+      if (cached !== null) {
+        const normalizedId = params.id.startsWith('MEP-')
+          ? params.id.substring(4)
+          : params.id.startsWith('person/')
+            ? params.id.substring(7)
+            : params.id;
+        const cachedRecord = cached.mepDetails[params.id]
+          ?? cached.mepDetails[normalizedId]
+          ?? cached.mepDetails[`MEP-${normalizedId}`];
+        if (cachedRecord !== undefined) {
+          return buildToolResponse(MEPDetailsSchema.parse(cachedRecord));
+        }
+      }
+    }
+
     const result = await epClient.getMEPDetails(params.id);
 
     const validated = MEPDetailsSchema.parse(result);
@@ -109,6 +127,11 @@ export const getMEPDetailsToolMetadata = {
         description: 'MEP identifier (e.g., "MEP-124810")',
         minLength: 1,
         maxLength: 100
+      },
+      live: {
+        type: 'boolean',
+        description: 'When true, bypasses weekly cache and fetches directly from the live EP API.',
+        default: false,
       }
     },
     required: ['id']

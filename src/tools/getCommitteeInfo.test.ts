@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetCommitteeInfo } from './getCommitteeInfo.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -12,6 +13,10 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
     getCommitteeInfo: vi.fn(),
     getCurrentCorporateBodies: vi.fn()
   }
+}));
+
+vi.mock('../utils/weeklyDataCache.js', () => ({
+  loadWeeklyCorporateBodiesCache: vi.fn(),
 }));
 
 describe('get_committee_info Tool', () => {
@@ -28,6 +33,7 @@ describe('get_committee_info Tool', () => {
       viceChairs: ['person/124811'],
       responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING']
     });
+    vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValue(null);
   });
 
   describe('Input Validation', () => {
@@ -180,6 +186,46 @@ describe('get_committee_info Tool', () => {
   });
 
   describe('showCurrent branch', () => {
+    it('should use weekly cache by default when available', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        corporateBodies: [
+          {
+            id: 'ENVI',
+            name: 'Cached Committee',
+            abbreviation: 'ENVI',
+            members: [],
+            responsibilities: [],
+          },
+        ],
+      });
+
+      const result = await handleGetCommitteeInfo({ abbreviation: 'ENVI' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { name?: string };
+      expect(parsed.name).toBe('Cached Committee');
+      expect(epClientModule.epClient.getCommitteeInfo).not.toHaveBeenCalled();
+    });
+
+    it('should bypass cache when live=true', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        corporateBodies: [],
+      });
+
+      await handleGetCommitteeInfo({ abbreviation: 'ENVI', live: true });
+      expect(epClientModule.epClient.getCommitteeInfo).toHaveBeenCalled();
+    });
+
     it('should call getCurrentCorporateBodies when showCurrent is true', async () => {
       const mockBodies = {
         data: [

@@ -22,6 +22,7 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+import { loadWeeklyVocabulariesCache } from '../utils/weeklyDataCache.js';
 
 /**
  * Handles the get_controlled_vocabularies MCP tool request.
@@ -73,6 +74,31 @@ export async function handleGetControlledVocabularies(args: unknown): Promise<To
   }
 
   try {
+    if (!params.live) {
+      const cached = await loadWeeklyVocabulariesCache();
+      if (cached !== null) {
+        if (params.vocId !== undefined) {
+          const fromDetails = cached.vocabularyDetails?.[params.vocId];
+          if (fromDetails !== undefined) return buildToolResponse(fromDetails);
+
+          const vocabulary = cached.vocabularies.find((item) => {
+            const id = item['id'];
+            return typeof id === 'string' && id === params.vocId;
+          });
+          if (vocabulary !== undefined) return buildToolResponse(vocabulary);
+        } else {
+          const paged = cached.vocabularies.slice(params.offset, params.offset + params.limit);
+          return buildToolResponse({
+            data: paged,
+            total: cached.vocabularies.length,
+            limit: params.limit,
+            offset: params.offset,
+            hasMore: params.offset + paged.length < cached.vocabularies.length,
+          });
+        }
+      }
+    }
+
     if (params.vocId !== undefined) {
       const result = await epClient.getControlledVocabularyById(params.vocId);
       return buildToolResponse(result);
@@ -105,6 +131,11 @@ export const getControlledVocabulariesToolMetadata = {
       vocId: { type: 'string', description: 'Vocabulary ID for single vocabulary lookup' },
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
+      live: {
+        type: 'boolean',
+        description: 'When true, bypasses weekly cache and fetches directly from the live EP API.',
+        default: false,
+      },
     },
   },
 };

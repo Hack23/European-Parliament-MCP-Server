@@ -210,7 +210,11 @@ export const GetControlledVocabulariesSchema = z.object({
     .int()
     .min(0)
     .default(0)
-    .describe('Pagination offset')
+    .describe('Pagination offset'),
+  live: z.boolean()
+    .optional()
+    .default(false)
+    .describe('When true, bypasses weekly cache and fetches directly from live EP API'),
 });
 
 /**

@@ -22,6 +22,7 @@ import { buildApiParams } from './shared/paramBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+import { loadWeeklyCorporateBodiesCache } from '../utils/weeklyDataCache.js';
 
 /**
  * Handles the get_committee_info MCP tool request.
@@ -74,6 +75,31 @@ export async function handleGetCommitteeInfo(
   }
 
   try {
+    if (!params.live) {
+      const cached = await loadWeeklyCorporateBodiesCache();
+      if (cached !== null) {
+        if (params.showCurrent === true) {
+          const validated = PaginatedResponseSchema(CommitteeSchema).parse({
+            data: cached.corporateBodies,
+            total: cached.corporateBodies.length,
+            limit: cached.corporateBodies.length,
+            offset: 0,
+            hasMore: false,
+          });
+          return buildToolResponse(validated);
+        }
+
+        const lookup = params.abbreviation ?? params.id;
+        if (lookup !== undefined) {
+          const fromDetails = cached.corporateBodyDetails?.[lookup];
+          if (fromDetails !== undefined) return buildToolResponse(CommitteeSchema.parse(fromDetails));
+
+          const byId = cached.corporateBodies.find((body) => body.id === lookup || body.abbreviation === lookup);
+          if (byId !== undefined) return buildToolResponse(CommitteeSchema.parse(byId));
+        }
+      }
+    }
+
     if (params.showCurrent === true) {
       const result = await epClient.getCurrentCorporateBodies();
       const outputSchema = PaginatedResponseSchema(CommitteeSchema);
@@ -137,6 +163,11 @@ export const getCommitteeInfoToolMetadata = {
         type: 'boolean',
         description: 'If true, returns all current active corporate bodies',
         default: false
+      },
+      live: {
+        type: 'boolean',
+        description: 'When true, bypasses weekly cache and fetches directly from the live EP API.',
+        default: false,
       }
     }
   }
