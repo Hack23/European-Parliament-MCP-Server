@@ -581,6 +581,46 @@ export class CommitteeClient extends BaseEPClient {
   }
 
   /**
+   * Returns the list of all EP Corporate Bodies.
+   * **EP API Endpoint:** `GET /corporate-bodies`
+   */
+  async getCorporateBodies(params: {
+    limit?: number;
+    offset?: number;
+    abortSignal?: AbortSignal;
+  } = {}): Promise<PaginatedResponse<Committee>> {
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+
+    const response = await this.get<JSONLDResponse>(
+      'corporate-bodies',
+      { format: 'application/ld+json', offset, limit },
+      undefined,
+      params.abortSignal,
+    );
+
+    const items = Array.isArray(response.data) ? response.data : [];
+    const bodies = items.map((item) => this.transformCorporateBody(item));
+    const hasMore = bodies.length === limit;
+    return { data: bodies, total: bodies.length + offset + (hasMore ? 1 : 0), limit, offset, hasMore };
+  }
+
+  /**
+   * Returns a single EP Corporate Body by ID.
+   * **EP API Endpoint:** `GET /corporate-bodies/{body-id}`
+   */
+  async getCorporateBodyById(
+    bodyId: string,
+    options: { abortSignal?: AbortSignal } = {},
+  ): Promise<Committee> {
+    const committee = await this.fetchCommitteeDirectly(bodyId, options.abortSignal);
+    if (committee === null) {
+      throw new APIError(`Corporate body not found: ${bodyId}`, 404);
+    }
+    return committee;
+  }
+
+  /**
    * Retrieves recently updated corporate bodies via the feed endpoint.
    * **EP API Endpoint:** `GET /corporate-bodies/feed`
    *

@@ -5,6 +5,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGetMEPs } from './getMEPs.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
+import * as auditLoggerModule from '../utils/auditLogger.js';
 import { setupToolTest } from '../../tests/helpers/mockFactory.js';
 import { expectValidMCPResponse, expectValidPaginatedMCPResponse, expectToolError } from '../../tests/helpers/assertions.js';
 
@@ -13,6 +15,16 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
   epClient: {
     getMEPs: vi.fn()
   }
+}));
+
+vi.mock('../utils/weeklyDataCache.js', () => ({
+  loadWeeklyMEPCache: vi.fn(),
+}));
+
+vi.mock('../utils/auditLogger.js', () => ({
+  auditLogger: {
+    logDataAccess: vi.fn(),
+  },
 }));
 
 // Registers beforeEach(vi.clearAllMocks) for all tests in this file
@@ -38,6 +50,7 @@ describe('get_meps Tool', () => {
       offset: 0,
       hasMore: false
     });
+    vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
   });
 
   describe('Input Validation', () => {
@@ -239,7 +252,46 @@ describe('get_meps Tool', () => {
   });
 
   describe('Edge Cases', () => {
+    it('should use weekly cache by default when available', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        meps: [
+          {
+            id: 'MEP-2',
+            name: 'Cached MEP',
+            country: 'SE',
+            politicalGroup: 'EPP',
+            committees: ['ENVI'],
+            active: true,
+            termStart: '2024-07-16',
+          },
+        ],
+        mepDetails: {},
+      });
+
+      const result = await handleGetMEPs({});
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { data: Array<{ id: string }> };
+      expect(parsed.data[0]?.id).toBe('MEP-2');
+      expect(epClientModule.epClient.getMEPs).not.toHaveBeenCalled();
+      expect(auditLoggerModule.auditLogger.logDataAccess).toHaveBeenCalledWith(
+        'get_meps',
+        expect.objectContaining({ active: true, limit: 50, offset: 0 }),
+        1,
+      );
+    });
+
+    it('should bypass cache when live=true', async () => {
+      await handleGetMEPs({ live: true, limit: 10 });
+      expect(epClientModule.epClient.getMEPs).toHaveBeenCalled();
+    });
+
     it('should handle empty API response gracefully', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
       vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({
         data: [],
         total: 0,

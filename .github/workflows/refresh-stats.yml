@@ -62,6 +62,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 # Resilience against transient npm registry / mirror failures.
 env:
@@ -122,15 +123,23 @@ jobs:
       - name: Type-check updated stats
         run: npx tsc --noEmit
 
-      - name: Commit updated stats
+      - name: Create pull request with updated stats
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/generatedStats.ts
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
+          if git diff --quiet -- src/data/generatedStats.ts; then
+            echo "No stats changes detected."
           else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            BRANCH="automation/refresh-ep-stats-$(date -u +%Y%m%d-%H%M%S)"
+            git checkout -b "$BRANCH"
+            git add src/data/generatedStats.ts
             git commit -m "chore: refresh EP stats from live API data [skip ci]"
-            git push
-            echo "Updated stats committed and pushed."
+            git push --set-upstream origin "$BRANCH"
+            gh pr create \
+              --title "chore: refresh EP stats from live API data" \
+              --body "Automated refresh of precomputed generated statistics using live EP API verification." \
+              --base main \
+              --head "$BRANCH"
           fi

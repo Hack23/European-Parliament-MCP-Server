@@ -22,6 +22,31 @@ import { buildApiParams } from './shared/paramBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+import { loadWeeklyCorporateBodiesCache } from '../utils/weeklyDataCache.js';
+import { auditLogger } from '../utils/auditLogger.js';
+
+type GetCommitteeInfoParams = ReturnType<typeof GetCommitteeInfoSchema.parse>;
+
+async function getCachedCommitteeResponse(params: GetCommitteeInfoParams): Promise<ToolResult | null> {
+  if (params.live) return null;
+  if (params.showCurrent === true) return null;
+  const cached = await loadWeeklyCorporateBodiesCache();
+  if (cached === null) return null;
+
+  const lookup = params.abbreviation ?? params.id;
+  if (lookup === undefined) return null;
+
+  const fromDetails = cached.corporateBodyDetails?.[lookup];
+  if (fromDetails !== undefined) {
+    auditLogger.logDataAccess('get_committee_info', { id: params.id, abbreviation: params.abbreviation }, 1);
+    return buildToolResponse(CommitteeSchema.parse(fromDetails));
+  }
+
+  const byId = cached.corporateBodies.find((body) => body.id === lookup || body.abbreviation === lookup);
+  if (byId === undefined) return null;
+  auditLogger.logDataAccess('get_committee_info', { id: params.id, abbreviation: params.abbreviation }, 1);
+  return buildToolResponse(CommitteeSchema.parse(byId));
+}
 
 /**
  * Handles the get_committee_info MCP tool request.
@@ -56,7 +81,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetCommitteeInfo(
   args: unknown
 ): Promise<ToolResult> {
-  let params: ReturnType<typeof GetCommitteeInfoSchema.parse>;
+  let params: GetCommitteeInfoParams;
   try {
     params = GetCommitteeInfoSchema.parse(args);
   } catch (error: unknown) {
@@ -74,6 +99,9 @@ export async function handleGetCommitteeInfo(
   }
 
   try {
+    const cachedResponse = await getCachedCommitteeResponse(params);
+    if (cachedResponse !== null) return cachedResponse;
+
     if (params.showCurrent === true) {
       const result = await epClient.getCurrentCorporateBodies();
       const outputSchema = PaginatedResponseSchema(CommitteeSchema);
@@ -137,6 +165,11 @@ export const getCommitteeInfoToolMetadata = {
         type: 'boolean',
         description: 'If true, returns all current active corporate bodies',
         default: false
+      },
+      live: {
+        type: 'boolean',
+        description: 'When true, bypasses weekly cache and fetches directly from the live EP API.',
+        default: false,
       }
     }
   }

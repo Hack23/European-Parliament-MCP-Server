@@ -35,7 +35,11 @@ export const GetMEPsSchema = z.object({
     .int()
     .min(0)
     .default(0)
-    .describe('Pagination offset')
+    .describe('Pagination offset'),
+  live: z.boolean()
+    .optional()
+    .default(false)
+    .describe('When true, bypasses weekly cache and fetches directly from live EP API'),
 });
 
 /**
@@ -43,7 +47,11 @@ export const GetMEPsSchema = z.object({
  */
 export const GetMEPDetailsSchema = z.object({
   id: MepIdSchema
-    .describe('MEP identifier')
+    .describe('MEP identifier'),
+  live: z.boolean()
+    .optional()
+    .default(false)
+    .describe('When true, bypasses weekly cache and fetches directly from live EP API'),
 });
 
 /**

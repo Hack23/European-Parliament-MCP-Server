@@ -573,6 +573,26 @@ export class EuropeanParliamentClient {
   }
 
   /**
+   * Returns the list of all EP Corporate Bodies.
+   * **EP API Endpoint:** `GET /corporate-bodies`
+   */
+  async getCorporateBodies(params: {
+    limit?: number;
+    offset?: number;
+    abortSignal?: AbortSignal;
+  } = {}): Promise<PaginatedResponse<Committee>> {
+    return this.committeeClient.getCorporateBodies(params);
+  }
+
+  /**
+   * Returns a single EP Corporate Body by body ID.
+   * **EP API Endpoint:** `GET /corporate-bodies/{body-id}`
+   */
+  async getCorporateBodyById(bodyId: string, options: { abortSignal?: AbortSignal } = {}): Promise<Committee> {
+    return this.committeeClient.getCorporateBodyById(bodyId, options);
+  }
+
+  /**
    * Retrieves recently updated corporate bodies via the feed endpoint.
    * **EP API Endpoint:** `GET /corporate-bodies/feed`
    * Fixed-window feed — no parameters per OpenAPI spec.

@@ -22,6 +22,41 @@ import { buildApiParams } from './shared/paramBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
+import { auditLogger } from '../utils/auditLogger.js';
+
+type GetMEPsParams = ReturnType<typeof GetMEPsSchema.parse>;
+
+async function getCachedMEPResponse(params: GetMEPsParams): Promise<ToolResult | null> {
+  if (params.live) return null;
+  const cached = await loadWeeklyMEPCache();
+  if (cached === null) return null;
+
+  const filtered = cached.meps.filter((mep) => {
+    if (params.country !== undefined && mep.country.toUpperCase() !== params.country.toUpperCase()) return false;
+    if (params.group !== undefined && mep.politicalGroup !== params.group) return false;
+    if (params.committee !== undefined && !mep.committees.includes(params.committee)) return false;
+    if (mep.active !== params.active) return false;
+    return true;
+  });
+  const paged = filtered.slice(params.offset, params.offset + params.limit);
+  const validated = PaginatedResponseSchema(MEPSchema).parse({
+    data: paged,
+    total: filtered.length,
+    limit: params.limit,
+    offset: params.offset,
+    hasMore: params.offset + paged.length < filtered.length,
+  });
+  auditLogger.logDataAccess('get_meps', {
+    country: params.country,
+    group: params.group,
+    committee: params.committee,
+    active: params.active,
+    limit: params.limit,
+    offset: params.offset,
+  }, validated.data.length);
+  return buildToolResponse(validated);
+}
 
 /**
  * Handles the get_meps MCP tool request.
@@ -73,7 +108,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetMEPs(
   args: unknown
 ): Promise<ToolResult> {
-  let params: ReturnType<typeof GetMEPsSchema.parse>;
+  let params: GetMEPsParams;
   try {
     params = GetMEPsSchema.parse(args);
   } catch (error: unknown) {
@@ -91,6 +126,9 @@ export async function handleGetMEPs(
   }
 
   try {
+    const cachedResponse = await getCachedMEPResponse(params);
+    if (cachedResponse !== null) return cachedResponse;
+
     const apiParams = {
       active: params.active,
       limit: params.limit,
@@ -174,6 +212,11 @@ export const getMEPsToolMetadata = {
         description: 'Pagination offset',
         minimum: 0,
         default: 0
+      },
+      live: {
+        type: 'boolean',
+        description: 'When true, bypasses weekly cache and fetches directly from the live EP API.',
+        default: false,
       }
     }
   }

@@ -22,6 +22,31 @@ import { buildToolResponse } from './shared/responseBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
+import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
+import { auditLogger } from '../utils/auditLogger.js';
+
+type GetMEPDetailsParams = ReturnType<typeof GetMEPDetailsSchema.parse>;
+
+function normalizeMepIdentifier(id: string): string {
+  if (id.startsWith('MEP-')) return id.substring(4);
+  if (id.startsWith('person/')) return id.substring(7);
+  return id;
+}
+
+async function getCachedMEPDetailsResponse(params: GetMEPDetailsParams): Promise<ToolResult | null> {
+  if (params.live) return null;
+  const cached = await loadWeeklyMEPCache();
+  if (cached === null) return null;
+
+  const normalizedId = normalizeMepIdentifier(params.id);
+  const cachedRecord = cached.mepDetails[params.id]
+    ?? cached.mepDetails[normalizedId]
+    ?? cached.mepDetails[`MEP-${normalizedId}`]
+    ?? cached.mepDetails[`person/${normalizedId}`];
+  if (cachedRecord === undefined) return null;
+  auditLogger.logDataAccess('get_mep_details', { id: params.id }, 1);
+  return buildToolResponse(MEPDetailsSchema.parse(cachedRecord));
+}
 
 /**
  * Handles the get_mep_details MCP tool request.
@@ -51,7 +76,7 @@ import type { ToolResult } from './shared/types.js';
 export async function handleGetMEPDetails(
   args: unknown
 ): Promise<ToolResult> {
-  let params: ReturnType<typeof GetMEPDetailsSchema.parse>;
+  let params: GetMEPDetailsParams;
   try {
     params = GetMEPDetailsSchema.parse(args);
   } catch (error: unknown) {
@@ -69,6 +94,9 @@ export async function handleGetMEPDetails(
   }
 
   try {
+    const cachedResponse = await getCachedMEPDetailsResponse(params);
+    if (cachedResponse !== null) return cachedResponse;
+
     const result = await epClient.getMEPDetails(params.id);
 
     const validated = MEPDetailsSchema.parse(result);
@@ -109,6 +137,11 @@ export const getMEPDetailsToolMetadata = {
         description: 'MEP identifier (e.g., "MEP-124810")',
         minLength: 1,
         maxLength: 100
+      },
+      live: {
+        type: 'boolean',
+        description: 'When true, bypasses weekly cache and fetches directly from the live EP API.',
+        default: false,
       }
     },
     required: ['id']

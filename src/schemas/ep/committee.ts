@@ -24,7 +24,11 @@ export const GetCommitteeInfoSchema = z.object({
   showCurrent: z.boolean()
     .default(false)
     .optional()
-    .describe('If true, returns only current active bodies')
+    .describe('If true, returns only current active bodies'),
+  live: z.boolean()
+    .optional()
+    .default(false)
+    .describe('When true, bypasses weekly cache and fetches directly from live EP API'),
 }).refine(
   data => data.showCurrent === true || data.id !== undefined || data.abbreviation !== undefined,
   { message: 'Either showCurrent=true, id, or abbreviation is required' }
