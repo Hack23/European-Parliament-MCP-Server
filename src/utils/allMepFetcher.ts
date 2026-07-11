@@ -18,6 +18,18 @@ export interface MEPPageClient {
 }
 
 /**
+ * Fetches one MEP listing page for an incremental detail-cache refresh.
+ *
+ * @param client - Client used to retrieve the MEP page.
+ * @param batchSize - Number of MEPs requested for this refresh.
+ * @returns MEP records from the first listing page.
+ */
+export async function fetchMEPBatch(client: MEPPageClient, batchSize: number): Promise<unknown[]> {
+  const page = await client.getMEPs({ active: false, limit: batchSize, offset: 0 });
+  return page.data;
+}
+
+/**
  * Fetches every MEP page, preserving the configured page size for each request.
  *
  * @param client - Client used to retrieve MEP pages.

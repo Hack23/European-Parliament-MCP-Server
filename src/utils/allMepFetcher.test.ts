@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchAllMEPs, type MEPPageClient } from './allMepFetcher.js';
+import { fetchAllMEPs, fetchMEPBatch, type MEPPageClient } from './allMepFetcher.js';
 
 describe('fetchAllMEPs', () => {
   it('uses the configured batch size for every MEP listing page', async () => {
@@ -27,5 +27,21 @@ describe('fetchAllMEPs', () => {
 
     expect(getMEPs).toHaveBeenNthCalledWith(1, { active: false, limit: 250, offset: 0 });
     expect(getMEPs).toHaveBeenNthCalledWith(2, { active: false, limit: 250, offset: 250 });
+  });
+});
+
+describe('fetchMEPBatch', () => {
+  it('fetches only the first listing page with the configured batch size', async () => {
+    const getMEPs = vi.fn().mockResolvedValue({
+      data: [{ id: '1' }, { id: '2' }],
+      hasMore: true,
+    });
+    const client: MEPPageClient = { getMEPs };
+
+    const meps = await fetchMEPBatch(client, 250);
+
+    expect(meps).toEqual([{ id: '1' }, { id: '2' }]);
+    expect(getMEPs).toHaveBeenCalledOnce();
+    expect(getMEPs).toHaveBeenCalledWith({ active: false, limit: 250, offset: 0 });
   });
 });
