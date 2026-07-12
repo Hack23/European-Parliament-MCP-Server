@@ -50,7 +50,7 @@ jobs:
       - name: Restore current weekly corporate bodies cache state
         run: |
           set -euo pipefail
-          STATE_BRANCH="automation/weekly-corporate-bodies-cache"
+          STATE_BRANCH="automation/weekly-corporate-bodies-cache-state"
           mkdir -p data/weekly/corporate-bodies
           if git ls-remote --exit-code --heads origin "$STATE_BRANCH" >/dev/null 2>&1; then
             git fetch origin "$STATE_BRANCH:refs/remotes/origin/$STATE_BRANCH"
@@ -110,21 +110,24 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          BRANCH="automation/weekly-corporate-bodies-cache"
+          STATE_BRANCH="automation/weekly-corporate-bodies-cache-state"
+          SUCCESS_BRANCH="automation/weekly-corporate-bodies-cache-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           git add -A -- data/weekly/corporate-bodies
           if git diff --cached --quiet; then
             echo "No staged corporate bodies cache changes detected."
             exit 0
           fi
           git commit -m "chore: refresh weekly corporate bodies cache [skip ci]"
-          git push --force-with-lease origin "HEAD:$BRANCH"
+          git push --force-with-lease origin "HEAD:$STATE_BRANCH"
+          git push --force-with-lease origin "HEAD:$SUCCESS_BRANCH"
 
-          if gh pr view "$BRANCH" --json number >/dev/null 2>&1; then
-            echo "PR for $BRANCH already exists; updated branch with latest cache progress."
+          PR_NUMBER=$(gh pr list --head "$SUCCESS_BRANCH" --state open --json number --jq '.[0].number')
+          if [ -n "$PR_NUMBER" ]; then
+            echo "PR for $SUCCESS_BRANCH already exists (#$PR_NUMBER); updated branch with latest cache progress."
           else
             gh pr create \
               --title "chore: refresh weekly corporate bodies cache" \
               --body "Automated weekly refresh of corporate bodies list and incremental detail cache data from EP Open Data API." \
               --base main \
-              --head "$BRANCH"
+              --head "$SUCCESS_BRANCH"
           fi
