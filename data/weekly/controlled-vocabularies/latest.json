@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-07-12T21:34:40.084Z",
+    "weekKey": "2026-W28",
+    "source": "EP Open Data Portal API v2"
+  },
+  "vocabularies": [
+    {
+      "id": "def/ep-decision-methods",
+      "type": "ConceptScheme",
+      "versionInfo": "20250930_1"
+    },
+    {
+      "id": "def/ep-document-types",
+      "type": "ConceptScheme",
+      "versionInfo": "20260131_1"
+    },
+    {
+      "id": "def/ep-procedure-types",
+      "type": "ConceptScheme",
+      "versionInfo": "20260131_1"
+    },
+    {
+      "id": "def/ep-roles",
+      "type": "ConceptScheme",
+      "versionInfo": "20250930_1"
+    },
+    {
+      "id": "def/ep-statuses",
+      "type": "ConceptScheme",
+      "versionInfo": "20250930_1"
+    }
+  ],
+  "vocabularyDetails": {},
+  "missingDetailIds": [
+    "def/ep-decision-methods",
+    "def/ep-document-types",
+    "def/ep-procedure-types",
+    "def/ep-roles",
+    "def/ep-statuses"
+  ],
+  "progress": {
+    "batchSize": 250,
+    "fetchedInRun": 0,
+    "failedInRun": 0,
+    "remainingDetails": 0,
+    "complete": true,
+    "failedDetailIds": []
+  }
+}
