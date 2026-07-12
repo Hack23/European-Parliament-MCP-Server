@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { fetchAllMEPs, fetchMEPBatch, type MEPPageClient } from './allMepFetcher.js';
+import {
+  fetchAllCurrentMEPs,
+  fetchAllMEPs,
+  fetchMEPBatch,
+  type CurrentMEPPageClient,
+  type MEPPageClient,
+} from './allMepFetcher.js';
 
 describe('fetchAllMEPs', () => {
   it('uses the configured batch size for every MEP listing page', async () => {
@@ -43,5 +49,44 @@ describe('fetchMEPBatch', () => {
     expect(meps).toEqual([{ id: '1' }, { id: '2' }]);
     expect(getMEPs).toHaveBeenCalledOnce();
     expect(getMEPs).toHaveBeenCalledWith({ active: false, limit: 250, offset: 0 });
+  });
+});
+
+describe('fetchAllCurrentMEPs', () => {
+  it('pages the current-MEP endpoint until it is exhausted', async () => {
+    const getCurrentMEPs = vi.fn()
+      .mockResolvedValueOnce({ data: [{ id: 'person/1' }, { id: 'person/2' }], hasMore: true })
+      .mockResolvedValueOnce({ data: [{ id: 'person/3' }], hasMore: false });
+    const client: CurrentMEPPageClient = { getCurrentMEPs };
+
+    const meps = await fetchAllCurrentMEPs(client, 2);
+
+    expect(meps).toEqual([{ id: 'person/1' }, { id: 'person/2' }, { id: 'person/3' }]);
+    expect(getCurrentMEPs).toHaveBeenNthCalledWith(1, { limit: 2, offset: 0 });
+    expect(getCurrentMEPs).toHaveBeenNthCalledWith(2, { limit: 2, offset: 2 });
+  });
+
+  it('stops after a single page when there is no more data', async () => {
+    const getCurrentMEPs = vi.fn().mockResolvedValue({ data: [{ id: 'person/9' }], hasMore: false });
+    const client: CurrentMEPPageClient = { getCurrentMEPs };
+
+    const meps = await fetchAllCurrentMEPs(client, 100);
+
+    expect(meps).toEqual([{ id: 'person/9' }]);
+    expect(getCurrentMEPs).toHaveBeenCalledOnce();
+    expect(getCurrentMEPs).toHaveBeenCalledWith({ limit: 100, offset: 0 });
+  });
+
+  it('caps oversized requests at the endpoint limit while preserving pagination', async () => {
+    const getCurrentMEPs = vi.fn()
+      .mockResolvedValueOnce({ data: Array.from({ length: 100 }, (_, index) => ({ id: `person/${index}` })), hasMore: true })
+      .mockResolvedValueOnce({ data: [{ id: 'person/100' }], hasMore: false });
+    const client: CurrentMEPPageClient = { getCurrentMEPs };
+
+    const meps = await fetchAllCurrentMEPs(client, 250);
+
+    expect(meps).toHaveLength(101);
+    expect(getCurrentMEPs).toHaveBeenNthCalledWith(1, { limit: 100, offset: 0 });
+    expect(getCurrentMEPs).toHaveBeenNthCalledWith(2, { limit: 100, offset: 100 });
   });
 });

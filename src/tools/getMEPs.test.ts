@@ -290,6 +290,34 @@ describe('get_meps Tool', () => {
       expect(epClientModule.epClient.getMEPs).toHaveBeenCalled();
     });
 
+    it('should bypass stale cache when it contains no active MEPs', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-01-01T00:00:00.000Z',
+          weekKey: '2026-W01',
+          source: 'test',
+        },
+        meps: [
+          {
+            id: 'person/57',
+            name: 'Legacy MEP',
+            country: 'Unknown',
+            politicalGroup: 'Unknown',
+            committees: [],
+            active: false,
+            termStart: '',
+          },
+        ],
+        mepDetails: {},
+      });
+
+      await handleGetMEPs({ active: true, limit: 10 });
+      expect(epClientModule.epClient.getMEPs).toHaveBeenCalledWith(
+        expect.objectContaining({ active: true, limit: 10 }),
+      );
+    });
+
     it('should handle empty API response gracefully', async () => {
       vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
       vi.mocked(epClientModule.epClient.getMEPs).mockResolvedValue({

@@ -136,6 +136,50 @@ export class MEPClient extends BaseEPClient {
     return { data: meps, total, limit, offset, hasMore };
   }
 
+  private shouldUseCurrentMEPList(params: {
+    country?: string;
+    group?: string;
+    committee?: string;
+    active?: boolean;
+  }): boolean {
+    const active = params.active ?? true;
+    return (
+      active &&
+      params.country === undefined &&
+      params.group === undefined &&
+      params.committee === undefined
+    );
+  }
+
+  private async getMEPsFromLegacyEndpoint(
+    params: {
+      country?: string;
+      group?: string;
+      committee?: string;
+      active?: boolean;
+      limit?: number;
+      offset?: number;
+      abortSignal?: AbortSignal;
+    },
+    limit: number,
+    offset: number,
+  ): Promise<PaginatedResponse<MEP>> {
+    const apiParams = this.buildMEPParams(params);
+    apiParams['limit'] = limit;
+    apiParams['offset'] = offset;
+
+    const response = await this.get<JSONLDResponse>('meps', apiParams, undefined, params.abortSignal);
+    const meps = response.data.map((item) => this.transformMEP(item));
+    const hasMore = meps.length === limit;
+    return {
+      data: meps,
+      total: offset + meps.length + (hasMore ? 1 : 0),
+      limit,
+      offset,
+      hasMore,
+    };
+  }
+
   /**
    * Retrieves Members of the European Parliament with filtering and pagination.
    *
@@ -157,20 +201,17 @@ export class MEPClient extends BaseEPClient {
       const limit = params.limit ?? 50;
       const offset = params.offset ?? 0;
 
-      const apiParams = this.buildMEPParams(params);
-      apiParams['limit'] = limit;
-      apiParams['offset'] = offset;
+      if (this.shouldUseCurrentMEPList(params)) {
+        const currentParams =
+          params.abortSignal === undefined
+            ? { limit, offset }
+            : { limit, offset, abortSignal: params.abortSignal };
+        const result = await this.getCurrentMEPs(currentParams);
+        auditLogger.logDataAccess(action, params, result.data.length);
+        return result;
+      }
 
-      const response = await this.get<JSONLDResponse>('meps', apiParams, undefined, params.abortSignal);
-      const meps = response.data.map((item) => this.transformMEP(item));
-      const hasMore = meps.length === limit;
-      const result: PaginatedResponse<MEP> = {
-        data: meps,
-        total: offset + meps.length + (hasMore ? 1 : 0),
-        limit,
-        offset,
-        hasMore,
-      };
+      const result = await this.getMEPsFromLegacyEndpoint(params, limit, offset);
 
       auditLogger.logDataAccess(action, params, result.data.length);
       return result;

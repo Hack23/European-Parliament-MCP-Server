@@ -31,6 +31,9 @@ async function getCachedMEPResponse(params: GetMEPsParams): Promise<ToolResult |
   if (params.live) return null;
   const cached = await loadWeeklyMEPCache();
   if (cached === null) return null;
+  if (params.active && cached.meps.length > 0 && !cached.meps.some((mep) => mep.active)) {
+    return null;
+  }
 
   const filtered = cached.meps.filter((mep) => {
     if (params.country !== undefined && mep.country.toUpperCase() !== params.country.toUpperCase()) return false;
