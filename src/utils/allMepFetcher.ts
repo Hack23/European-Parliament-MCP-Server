@@ -9,6 +9,8 @@ interface MEPPage {
   hasMore: boolean;
 }
 
+const CURRENT_MEP_PAGE_LIMIT = 100;
+
 export interface MEPPageClient {
   getMEPs(params: {
     active: boolean;
@@ -74,11 +76,12 @@ export async function fetchAllCurrentMEPs(
 ): Promise<unknown[]> {
   const result: unknown[] = [];
   let offset = 0;
+  const pageLimit = Math.min(batchSize, CURRENT_MEP_PAGE_LIMIT);
 
   for (;;) {
-    const page = await client.getCurrentMEPs({ limit: batchSize, offset });
+    const page = await client.getCurrentMEPs({ limit: pageLimit, offset });
     result.push(...page.data);
     if (!page.hasMore) return result;
-    offset += batchSize;
+    offset += pageLimit;
   }
 }

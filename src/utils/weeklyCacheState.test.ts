@@ -13,7 +13,7 @@ describe('readIncrementalDetailState', () => {
       { mepDetails: { '1': { name: 'A' } }, missingDetailIds: ['2', '3'] },
       'mepDetails',
     );
-    expect(state.details).toEqual({ '1': { name: 'A' } });
+    expect({ ...state.details }).toEqual({ '1': { name: 'A' } });
     expect([...state.missingIds]).toEqual(['2', '3']);
   });
 
@@ -29,14 +29,14 @@ describe('readIncrementalDetailState', () => {
       { corporateBodyDetails: { ENVI: {} } },
       'corporateBodyDetails',
     );
-    expect(state.details).toEqual({ ENVI: {} });
+    expect({ ...state.details }).toEqual({ ENVI: {} });
   });
 
   it.each([null, undefined, 42, 'x', { mepDetails: 'bad', missingDetailIds: 'bad' }])(
     'yields empty state for malformed input %p',
     (input) => {
       const state = readIncrementalDetailState(input, 'mepDetails');
-      expect(state.details).toEqual({});
+      expect({ ...state.details }).toEqual({});
       expect(state.missingIds.size).toBe(0);
     },
   );

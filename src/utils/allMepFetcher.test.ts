@@ -76,4 +76,17 @@ describe('fetchAllCurrentMEPs', () => {
     expect(getCurrentMEPs).toHaveBeenCalledOnce();
     expect(getCurrentMEPs).toHaveBeenCalledWith({ limit: 100, offset: 0 });
   });
+
+  it('caps oversized requests at the endpoint limit while preserving pagination', async () => {
+    const getCurrentMEPs = vi.fn()
+      .mockResolvedValueOnce({ data: Array.from({ length: 100 }, (_, index) => ({ id: `person/${index}` })), hasMore: true })
+      .mockResolvedValueOnce({ data: [{ id: 'person/100' }], hasMore: false });
+    const client: CurrentMEPPageClient = { getCurrentMEPs };
+
+    const meps = await fetchAllCurrentMEPs(client, 250);
+
+    expect(meps).toHaveLength(101);
+    expect(getCurrentMEPs).toHaveBeenNthCalledWith(1, { limit: 100, offset: 0 });
+    expect(getCurrentMEPs).toHaveBeenNthCalledWith(2, { limit: 100, offset: 100 });
+  });
 });
