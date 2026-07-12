@@ -4,7 +4,13 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { CommitteeSchema, MEPDetailsSchema, MEPSchema } from '../src/schemas/europeanParliament.js';
-import { fetchAllMEPs } from '../src/utils/allMepFetcher.js';
+import { fetchAllCurrentMEPs } from '../src/utils/allMepFetcher.js';
+import {
+  readIncrementalDetailState,
+  pruneMissingIds,
+  refreshDetailBatch,
+  type DetailBatchResult,
+} from '../src/utils/weeklyCacheState.js';
 
 type Dataset = 'meps' | 'corporate-bodies' | 'controlled-vocabularies';
 
@@ -18,11 +24,6 @@ interface WeeklyMetadata {
 interface ScriptOptions {
   dataset: Dataset;
   batchSize: number;
-}
-
-interface ExistingMEPCache {
-  mepDetails: Record<string, unknown>;
-  missingDetailIds: string[];
 }
 
 function parseScriptArgs(): ScriptOptions {
@@ -59,6 +60,15 @@ function getIsoWeekInfo(date: Date): { year: number; week: number; weekKey: stri
   };
 }
 
+function buildMetadata(): WeeklyMetadata {
+  return {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    weekKey: getIsoWeekInfo(new Date()).weekKey,
+    source: 'EP Open Data Portal API v2',
+  };
+}
+
 async function writeDataset(dataset: Dataset, payload: unknown): Promise<void> {
   const now = new Date();
   const iso = getIsoWeekInfo(now);
@@ -70,8 +80,15 @@ async function writeDataset(dataset: Dataset, payload: unknown): Promise<void> {
   await writeFile(path.join(baseDir, 'latest.json'), json, 'utf-8');
 }
 
-function getMEPLatestPath(): string {
-  return path.resolve(process.cwd(), 'data', 'weekly', 'meps', 'latest.json');
+/** Reads the previously written `latest.json` for a dataset for incremental refresh. */
+function readExistingLatest(dataset: Dataset): unknown {
+  const latestPath = path.resolve(process.cwd(), 'data', 'weekly', dataset, 'latest.json');
+  if (!existsSync(latestPath)) return null;
+  try {
+    return JSON.parse(readFileSync(latestPath, 'utf-8'));
+  } catch {
+    return null;
+  }
 }
 
 function normalizeMepIdentifier(id: string): string {
@@ -80,60 +97,28 @@ function normalizeMepIdentifier(id: string): string {
   return id;
 }
 
-function readExistingMEPCache(): ExistingMEPCache {
-  const latestPath = getMEPLatestPath();
-  if (!existsSync(latestPath)) {
-    return {
-      mepDetails: {},
-      missingDetailIds: [],
-    };
-  }
-
-  try {
-    const raw = readFileSync(latestPath, 'utf-8');
-    const parsed: unknown = JSON.parse(raw);
-    if (typeof parsed !== 'object' || parsed === null) {
-      return { mepDetails: {}, missingDetailIds: [] };
-    }
-    const candidate = parsed as {
-      mepDetails?: unknown;
-      missingDetailIds?: unknown;
-    };
-    const mepDetails = typeof candidate.mepDetails === 'object' && candidate.mepDetails !== null
-      ? candidate.mepDetails as Record<string, unknown>
-      : {};
-    const missingDetailIds = Array.isArray(candidate.missingDetailIds)
-      ? candidate.missingDetailIds.filter((id): id is string => typeof id === 'string')
-      : [];
-    return { mepDetails, missingDetailIds };
-  } catch {
-    return {
-      mepDetails: {},
-      missingDetailIds: [],
-    };
-  }
-}
-
-function hasCachedDetail(mepDetails: Record<string, unknown>, id: string): boolean {
+/** All identifier variants an MEP detail record should be cached and looked up under. */
+function mepKeyVariants(id: string): string[] {
   const normalized = normalizeMepIdentifier(id);
-  return mepDetails[id] !== undefined
-    || mepDetails[normalized] !== undefined
-    || mepDetails[`MEP-${normalized}`] !== undefined
-    || mepDetails[`person/${normalized}`] !== undefined;
-}
-
-function cacheMEPDetail(mepDetails: Record<string, unknown>, id: string, details: unknown): void {
-  const normalized = normalizeMepIdentifier(id);
-  mepDetails[id] = details;
-  mepDetails[normalized] = details;
-  mepDetails[`MEP-${normalized}`] = details;
-  mepDetails[`person/${normalized}`] = details;
+  return [id, normalized, `MEP-${normalized}`, `person/${normalized}`];
 }
 
 function isNotFoundError(error: unknown): boolean {
   if (typeof error !== 'object' || error === null) return false;
   const candidate = error as { statusCode?: unknown };
   return candidate.statusCode === 404;
+}
+
+/** Progress block appended to every incrementally built dataset payload. */
+function toProgress(batchSize: number, result: DetailBatchResult): Record<string, unknown> {
+  return {
+    batchSize,
+    fetchedInRun: result.fetchedInRun,
+    failedInRun: result.failedDetailIds.length,
+    remainingDetails: result.remainingDetails,
+    complete: result.complete,
+    failedDetailIds: result.failedDetailIds,
+  };
 }
 
 async function fetchAllCorporateBodies(client: EuropeanParliamentClient): Promise<unknown[]> {
@@ -163,100 +148,106 @@ async function fetchAllVocabularies(client: EuropeanParliamentClient): Promise<R
 }
 
 async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: number): Promise<void> {
-  const existing = readExistingMEPCache();
-  const mepsRaw = await fetchAllMEPs(client, batchSize);
+  const { details: mepDetails, missingIds } = readIncrementalDetailState(
+    readExistingLatest('meps'),
+    'mepDetails',
+  );
+  const mepsRaw = await fetchAllCurrentMEPs(client, batchSize);
   const meps = mepsRaw.map((mep) => MEPSchema.parse(mep));
-  const mepDetails: Record<string, unknown> = { ...existing.mepDetails };
-  const missingDetailIds = new Set(existing.missingDetailIds);
 
-  const activeMepIds = new Set(meps.map((mep) => mep.id));
-  for (const missingId of Array.from(missingDetailIds)) {
-    if (!activeMepIds.has(missingId)) {
-      missingDetailIds.delete(missingId);
-    }
-  }
+  pruneMissingIds(missingIds, new Set(meps.map((mep) => mep.id)));
 
-  const pending = meps.filter((mep) => !hasCachedDetail(mepDetails, mep.id) && !missingDetailIds.has(mep.id));
-  const batch = pending.slice(0, batchSize);
-  const failedDetailIds: string[] = [];
-  let successfulFetches = 0;
-
-  for (const mep of batch) {
-    try {
-      const details = MEPDetailsSchema.parse(await client.getMEPDetails(mep.id));
-      cacheMEPDetail(mepDetails, mep.id, details);
-      if (details.identifier !== undefined) {
-        cacheMEPDetail(mepDetails, details.identifier, details);
-      }
-      successfulFetches += 1;
-    } catch (error: unknown) {
-      if (isNotFoundError(error)) {
-        console.warn(`[weekly-cache] MEP details not found for ${mep.id}; skipping future retries this week.`);
-        missingDetailIds.add(mep.id);
-        continue;
-      }
-      console.warn(`[weekly-cache] Failed to fetch MEP details for ${mep.id}; will retry in a future run.`);
-      failedDetailIds.push(mep.id);
-    }
-  }
-
-  const pendingAfterBatch = meps.filter((mep) => !hasCachedDetail(mepDetails, mep.id) && !missingDetailIds.has(mep.id));
-
-  const metadata: WeeklyMetadata = {
-    schemaVersion: 1,
-    generatedAt: new Date().toISOString(),
-    weekKey: getIsoWeekInfo(new Date()).weekKey,
-    source: 'EP Open Data Portal API v2',
-  };
+  const result = await refreshDetailBatch({
+    items: meps,
+    batchSize,
+    details: mepDetails,
+    missingIds,
+    idFor: (mep) => mep.id,
+    keysFor: (mep) => mepKeyVariants(mep.id),
+    fetchDetail: async (mep) => MEPDetailsSchema.parse(await client.getMEPDetails(mep.id)),
+    extraKeysFromDetail: (detail) => {
+      const identifier = (detail as { identifier?: unknown }).identifier;
+      return typeof identifier === 'string' ? mepKeyVariants(identifier) : [];
+    },
+    isNotFound: isNotFoundError,
+    onSkip: (id) => { console.warn(`[weekly-cache] MEP details not found for ${id}; skipping future retries this week.`); },
+    onRetry: (id) => { console.warn(`[weekly-cache] Failed to fetch MEP details for ${id}; will retry in a future run.`); },
+  });
 
   await writeDataset('meps', {
-    metadata,
+    metadata: buildMetadata(),
     meps,
     mepDetails,
-    missingDetailIds: Array.from(missingDetailIds).sort(),
-    progress: {
-      batchSize,
-      fetchedInRun: successfulFetches,
-      failedInRun: failedDetailIds.length,
-      remainingDetails: pendingAfterBatch.length,
-      complete: pendingAfterBatch.length === 0,
-      failedDetailIds,
-    },
+    missingDetailIds: Array.from(missingIds).sort(),
+    progress: toProgress(batchSize, result),
   });
 }
 
-async function buildCorporateBodiesDataset(client: EuropeanParliamentClient): Promise<void> {
+async function buildCorporateBodiesDataset(client: EuropeanParliamentClient, batchSize: number): Promise<void> {
+  const { details: corporateBodyDetails, missingIds } = readIncrementalDetailState(
+    readExistingLatest('corporate-bodies'),
+    'corporateBodyDetails',
+  );
   const bodiesRaw = await fetchAllCorporateBodies(client);
   const corporateBodies = bodiesRaw.map((body) => CommitteeSchema.parse(body));
-  const corporateBodyDetails: Record<string, unknown> = {};
-  for (const body of corporateBodies) {
-    corporateBodyDetails[body.id] = CommitteeSchema.parse(await client.getCorporateBodyById(body.id));
-    corporateBodyDetails[body.abbreviation] = corporateBodyDetails[body.id];
-  }
-  const metadata: WeeklyMetadata = {
-    schemaVersion: 1,
-    generatedAt: new Date().toISOString(),
-    weekKey: getIsoWeekInfo(new Date()).weekKey,
-    source: 'EP Open Data Portal API v2',
-  };
-  await writeDataset('corporate-bodies', { metadata, corporateBodies, corporateBodyDetails });
+
+  pruneMissingIds(missingIds, new Set(corporateBodies.map((body) => body.id)));
+
+  const result = await refreshDetailBatch({
+    items: corporateBodies,
+    batchSize,
+    details: corporateBodyDetails,
+    missingIds,
+    idFor: (body) => body.id,
+    keysFor: (body) => (body.abbreviation.trim() === '' ? [body.id] : [body.id, body.abbreviation]),
+    fetchDetail: async (body) => CommitteeSchema.parse(await client.getCorporateBodyById(body.id)),
+    isNotFound: isNotFoundError,
+    onSkip: (id) => { console.warn(`[weekly-cache] Corporate body not found for ${id}; skipping future retries this week.`); },
+    onRetry: (id) => { console.warn(`[weekly-cache] Failed to fetch corporate body ${id}; will retry in a future run.`); },
+  });
+
+  await writeDataset('corporate-bodies', {
+    metadata: buildMetadata(),
+    corporateBodies,
+    corporateBodyDetails,
+    missingDetailIds: Array.from(missingIds).sort(),
+    progress: toProgress(batchSize, result),
+  });
 }
 
-async function buildControlledVocabulariesDataset(client: EuropeanParliamentClient): Promise<void> {
-  const vocabularies = await fetchAllVocabularies(client);
-  const vocabularyDetails: Record<string, Record<string, unknown>> = {};
-  for (const vocabulary of vocabularies) {
+async function buildControlledVocabulariesDataset(client: EuropeanParliamentClient, batchSize: number): Promise<void> {
+  const { details: vocabularyDetails, missingIds } = readIncrementalDetailState(
+    readExistingLatest('controlled-vocabularies'),
+    'vocabularyDetails',
+  );
+  const allVocabularies = await fetchAllVocabularies(client);
+  const vocabularies = allVocabularies.filter((vocabulary) => {
     const id = vocabulary['id'];
-    if (typeof id !== 'string' || id.trim() === '') continue;
-    vocabularyDetails[id] = await client.getControlledVocabularyById(id);
-  }
-  const metadata: WeeklyMetadata = {
-    schemaVersion: 1,
-    generatedAt: new Date().toISOString(),
-    weekKey: getIsoWeekInfo(new Date()).weekKey,
-    source: 'EP Open Data Portal API v2',
-  };
-  await writeDataset('controlled-vocabularies', { metadata, vocabularies, vocabularyDetails });
+    return typeof id === 'string' && id.trim() !== '';
+  });
+
+  pruneMissingIds(missingIds, new Set(vocabularies.map((vocabulary) => vocabulary['id'] as string)));
+
+  const result = await refreshDetailBatch({
+    items: vocabularies,
+    batchSize,
+    details: vocabularyDetails,
+    missingIds,
+    idFor: (vocabulary) => vocabulary['id'] as string,
+    keysFor: (vocabulary) => [vocabulary['id'] as string],
+    fetchDetail: async (vocabulary) => client.getControlledVocabularyById(vocabulary['id'] as string),
+    isNotFound: isNotFoundError,
+    onSkip: (id) => { console.warn(`[weekly-cache] Vocabulary not found for ${id}; skipping future retries this week.`); },
+    onRetry: (id) => { console.warn(`[weekly-cache] Failed to fetch vocabulary ${id}; will retry in a future run.`); },
+  });
+
+  await writeDataset('controlled-vocabularies', {
+    metadata: buildMetadata(),
+    vocabularies,
+    vocabularyDetails,
+    missingDetailIds: Array.from(missingIds).sort(),
+    progress: toProgress(batchSize, result),
+  });
 }
 
 async function main(): Promise<void> {
@@ -268,10 +259,10 @@ async function main(): Promise<void> {
     return;
   }
   if (options.dataset === 'corporate-bodies') {
-    await buildCorporateBodiesDataset(client);
+    await buildCorporateBodiesDataset(client, options.batchSize);
     return;
   }
-  await buildControlledVocabulariesDataset(client);
+  await buildControlledVocabulariesDataset(client, options.batchSize);
 }
 
 void main();

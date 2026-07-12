@@ -17,6 +17,13 @@ export interface MEPPageClient {
   }): Promise<MEPPage>;
 }
 
+export interface CurrentMEPPageClient {
+  getCurrentMEPs(params: {
+    limit: number;
+    offset: number;
+  }): Promise<MEPPage>;
+}
+
 /**
  * Fetches one MEP listing page for an incremental detail-cache refresh.
  *
@@ -42,6 +49,34 @@ export async function fetchAllMEPs(client: MEPPageClient, batchSize: number): Pr
 
   for (;;) {
     const page = await client.getMEPs({ active: false, limit: batchSize, offset });
+    result.push(...page.data);
+    if (!page.hasMore) return result;
+    offset += batchSize;
+  }
+}
+
+/**
+ * Fetches every currently active MEP via the `/meps/show-current` endpoint.
+ *
+ * Unlike {@link fetchAllMEPs} (which pages `/meps?status=all` and surfaces the
+ * oldest historical members first), this returns the present-day roster with
+ * `active: true`, country of representation, and political-group enrichment —
+ * the data that OSINT tooling (e.g. `get_meps`, defaulting to `active: true`)
+ * actually consumes.
+ *
+ * @param client - Client used to retrieve current MEP pages.
+ * @param batchSize - Number of MEPs requested per page.
+ * @returns All currently active MEP records.
+ */
+export async function fetchAllCurrentMEPs(
+  client: CurrentMEPPageClient,
+  batchSize: number,
+): Promise<unknown[]> {
+  const result: unknown[] = [];
+  let offset = 0;
+
+  for (;;) {
+    const page = await client.getCurrentMEPs({ limit: batchSize, offset });
     result.push(...page.data);
     if (!page.hasMore) return result;
     offset += batchSize;
