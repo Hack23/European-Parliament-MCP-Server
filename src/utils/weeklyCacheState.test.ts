@@ -48,6 +48,16 @@ describe('readIncrementalDetailState', () => {
     );
     expect([...state.missingIds]).toEqual(['1', 'a']);
   });
+
+  it('filters dangerous keys and returns a null-prototype map', () => {
+    const state = readIncrementalDetailState(
+      { mepDetails: { safe: { name: 'A' }, ['__proto__']: { polluted: true } } },
+      'mepDetails',
+    );
+    expect(Object.getPrototypeOf(state.details)).toBeNull();
+    expect(state.details.safe).toEqual({ name: 'A' });
+    expect(state.details['__proto__']).toBeUndefined();
+  });
 });
 
 describe('pruneMissingIds', () => {
@@ -69,6 +79,16 @@ describe('hasCachedDetail / cacheDetail', () => {
     const details: Record<string, unknown> = {};
     cacheDetail(details, ['9', 'MEP-9', 'person/9'], { name: 'X' });
     expect(details).toEqual({ '9': { name: 'X' }, 'MEP-9': { name: 'X' }, 'person/9': { name: 'X' } });
+  });
+
+  it('does not write dangerous identifier keys', () => {
+    const details: Record<string, unknown> = {};
+    cacheDetail(details, ['9', '__proto__', 'constructor', 'prototype'], { name: 'X' });
+    expect(details['9']).toEqual({ name: 'X' });
+    expect(Object.hasOwn(details, '__proto__')).toBe(false);
+    expect(Object.hasOwn(details, 'constructor')).toBe(false);
+    expect(Object.hasOwn(details, 'prototype')).toBe(false);
+    expect(details.constructor).not.toEqual({ name: 'X' });
   });
 });
 

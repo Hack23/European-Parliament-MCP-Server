@@ -3,9 +3,10 @@
  *
  * These helpers let the weekly cache generators resume from whatever detail
  * records were already fetched in a prior run instead of starting over every
- * time. They are pure and side-effect free (the only I/O is the injected
- * `fetchDetail` callback), which keeps the fetch orchestration unit-testable
- * without hitting the European Parliament Open Data API.
+ * time. They keep side effects explicit (state mutation is limited to the
+ * caller-provided `details` map and `missingIds` set, and I/O is limited to
+ * the injected `fetchDetail` callback), which keeps fetch orchestration
+ * unit-testable without hitting the European Parliament Open Data API.
  *
  * @module utils/weeklyCacheState
  */
@@ -18,6 +19,16 @@
 export interface IncrementalDetailState {
   details: Record<string, unknown>;
   missingIds: Set<string>;
+}
+
+const DANGEROUS_CACHE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function createSafeDetailsMap(): Record<string, unknown> {
+  return Object.create(null) as Record<string, unknown>;
+}
+
+function isSafeCacheKey(key: string): boolean {
+  return !DANGEROUS_CACHE_KEYS.has(key);
 }
 
 /**
@@ -36,14 +47,18 @@ export function readIncrementalDetailState(
   missingKey = 'missingDetailIds',
 ): IncrementalDetailState {
   if (typeof parsed !== 'object' || parsed === null) {
-    return { details: {}, missingIds: new Set<string>() };
+    return { details: createSafeDetailsMap(), missingIds: new Set<string>() };
   }
   const record = parsed as Record<string, unknown>;
   const detailsRaw = record[detailsKey];
-  const details =
-    typeof detailsRaw === 'object' && detailsRaw !== null
-      ? { ...(detailsRaw as Record<string, unknown>) }
-      : {};
+  const details = createSafeDetailsMap();
+  if (typeof detailsRaw === 'object' && detailsRaw !== null) {
+    for (const [key, value] of Object.entries(detailsRaw as Record<string, unknown>)) {
+      if (isSafeCacheKey(key)) {
+        details[key] = value;
+      }
+    }
+  }
   const missingRaw = record[missingKey];
   const missingIds = new Set<string>(
     Array.isArray(missingRaw)
@@ -80,7 +95,9 @@ export function cacheDetail(
   value: unknown,
 ): void {
   for (const key of keys) {
-    details[key] = value;
+    if (isSafeCacheKey(key)) {
+      details[key] = value;
+    }
   }
 }
 
