@@ -176,8 +176,8 @@
     "@stryker-mutator/vitest-runner": "9.6.1",
     "@types/jsdom": "28.0.3",
     "@types/node": "26.1.1",
-    "@typescript-eslint/eslint-plugin": "8.63.0",
-    "@typescript-eslint/parser": "8.63.0",
+    "@typescript-eslint/eslint-plugin": "8.64.0",
+    "@typescript-eslint/parser": "8.64.0",
     "@vitest/coverage-v8": "4.1.10",
     "@vitest/ui": "4.1.10",
     "eslint": "10.7.0",
@@ -186,14 +186,14 @@
     "knip": "6.26.0",
     "license-compliance": "3.0.1",
     "prettier": "3.9.5",
-    "tsx": "4.23.0",
+    "tsx": "4.23.1",
     "typedoc": "0.28.20",
     "typedoc-plugin-markdown": "4.12.0",
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-7": "npm:typescript@7.0.1-rc",
-    "typescript-eslint": "8.63.0",
+    "typescript-eslint": "8.64.0",
     "vitest": "4.1.10"
   }
 }
