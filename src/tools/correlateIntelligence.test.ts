@@ -356,6 +356,24 @@ describe('correlate_intelligence Tool', () => {
       expect(elevatedAlert).toBeUndefined();
     });
 
+    it('should query anomalies using a bounded recent date window', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-07-13T00:00:00.000Z'));
+
+      await handleCorrelateIntelligence({
+        mepIds: ['123'],
+        sensitivityLevel: 'MEDIUM',
+      });
+
+      expect(handleDetectVotingAnomalies).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mepId: '123',
+          dateFrom: '2026-04-14',
+          dateTo: '2026-07-13',
+        }),
+      );
+    });
+
     it('should use lower threshold for HIGH sensitivity', async () => {
       vi.mocked(handleAssessMepInfluence).mockResolvedValue(
         makeToolResult({ mepId: '456', mepName: 'Bob Jones', overallScore: 55, rank: 'MID', confidenceLevel: 'MEDIUM' })

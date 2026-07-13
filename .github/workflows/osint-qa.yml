@@ -285,7 +285,14 @@ jobs:
         # the issue. Vitest runner reuses the existing test infrastructure
         # with no per-test fork overhead. Concurrency 4 keeps total runtime
         # within the 15-min CI budget on GitHub-hosted runners.
-        run: npm run test:mutation:ci
+        run: |
+          set +e
+          npm run test:mutation:ci
+          status=$?
+          : > "$GITHUB_STEP_SUMMARY"
+          exit $status
+        env:
+          GITHUB_STEP_SUMMARY: ${{ runner.temp }}/osint-mutation-summary.md
 
       - name: Mutation summary
         if: always()

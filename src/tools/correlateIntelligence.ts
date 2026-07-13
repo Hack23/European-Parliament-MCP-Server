@@ -161,6 +161,26 @@ const INFLUENCE_THRESHOLDS: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
 
 const DEFAULT_COALITION_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID'];
 const OPERATION_TIMEOUT_MS = 90_000;
+const ANOMALY_LOOKBACK_DAYS_BY_SENSITIVITY: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
+  HIGH: 120,
+  MEDIUM: 90,
+  LOW: 60,
+};
+
+function formatIsoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function computeAnomalyWindow(
+  sensitivityLevel: 'HIGH' | 'MEDIUM' | 'LOW',
+  now = new Date()
+): { dateFrom: string; dateTo: string } {
+  const lookbackDays = ANOMALY_LOOKBACK_DAYS_BY_SENSITIVITY[sensitivityLevel];
+  const to = new Date(now);
+  const from = new Date(now);
+  from.setUTCDate(from.getUTCDate() - lookbackDays);
+  return { dateFrom: formatIsoDate(from), dateTo: formatIsoDate(to) };
+}
 
 /**
  * Safely parses the JSON payload from a {@link ToolResult} returned by a dependent tool.
@@ -269,9 +289,13 @@ async function fetchInfluenceData(mepId: string): Promise<InfluenceResult | null
  * @param mepId - MEP identifier string
  * @returns Parsed {@link AnomalyResult}, or a zeroed result with LOW confidence on failure
  */
-async function fetchAnomalyData(mepId: string): Promise<AnomalyResult> {
+async function fetchAnomalyData(
+  mepId: string,
+  sensitivityLevel: 'HIGH' | 'MEDIUM' | 'LOW'
+): Promise<AnomalyResult> {
+  const anomalyWindow = computeAnomalyWindow(sensitivityLevel);
   try {
-    const ar = await handleDetectVotingAnomalies({ mepId });
+    const ar = await handleDetectVotingAnomalies({ mepId, ...anomalyWindow });
     return parseToolResult(ar) as AnomalyResult;
   } catch (error: unknown) {
     auditLogger.logError('correlate_intelligence.fetch_anomaly_data', { mepId }, toErrorMessage(error));
@@ -295,7 +319,8 @@ async function fetchAnomalyData(mepId: string): Promise<AnomalyResult> {
  */
 async function correlateInfluenceAnomaly(
   mepId: string,
-  influenceThreshold: number
+  influenceThreshold: number,
+  sensitivityLevel: 'HIGH' | 'MEDIUM' | 'LOW'
 ): Promise<{
   correlation: InfluenceAnomalyCorrelation | null;
   alert: CorrelationAlert | null;
@@ -304,7 +329,7 @@ async function correlateInfluenceAnomaly(
   const influenceData = await fetchInfluenceData(mepId);
   if (influenceData === null) return { correlation: null, alert: null, toolConfidenceLevels: [] };
 
-  const anomalyData = await fetchAnomalyData(mepId);
+  const anomalyData = await fetchAnomalyData(mepId, sensitivityLevel);
   const toolConfidenceLevels = [influenceData.confidenceLevel, anomalyData.confidenceLevel];
 
   const isHighInfluence = influenceData.overallScore >= influenceThreshold;
@@ -856,7 +881,7 @@ export async function handleCorrelateIntelligence(
         const correlationId = `CORR-${randomUUID().replace(/-/g, '').toUpperCase().slice(0, 12)}`;
 
         const influenceAnomalyResults = await Promise.all(
-          mepIds.map((mepId) => correlateInfluenceAnomaly(mepId, influenceThreshold)),
+          mepIds.map((mepId) => correlateInfluenceAnomaly(mepId, influenceThreshold, sensitivityLevel)),
         );
         const influenceAnomalyCorrelations: InfluenceAnomalyCorrelation[] = [];
         const influenceAnomalyAlerts: CorrelationAlert[] = [];
