@@ -164,6 +164,7 @@ describe('correlate_intelligence Tool', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     auditLogger.clear();
   });
 
@@ -266,6 +267,25 @@ describe('correlate_intelligence Tool', () => {
       expect(typeof report.summary.mediumAlerts).toBe('number');
       expect(typeof report.summary.lowAlerts).toBe('number');
       expect(typeof report.summary.correlationsFound).toBe('number');
+    });
+
+    it('should return a timeout response when the correlation workflow exceeds the execution budget', async () => {
+      vi.useFakeTimers();
+      vi.mocked(handleAssessMepInfluence).mockImplementation(() => new Promise(() => {}));
+
+      const pendingResult = handleCorrelateIntelligence({ mepIds: ['123'] });
+      await vi.advanceTimersByTimeAsync(90_000);
+
+      const result = await pendingResult;
+      const report = JSON.parse(result.content[0]!.text) as {
+        timedOut: boolean;
+        status: string;
+        toolName: string;
+      };
+
+      expect(report.timedOut).toBe(true);
+      expect(report.status).toBe('timeout');
+      expect(report.toolName).toBe('correlate_intelligence');
     });
 
     it('should include correlations object with all three scenarios', async () => {

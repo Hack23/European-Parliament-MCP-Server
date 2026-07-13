@@ -13,6 +13,8 @@
 
 import { ComparePoliticalGroupsSchema } from '../schemas/europeanParliament.js';
 import { epClient } from '../clients/europeanParliamentClient.js';
+import { withTimeout, TimeoutError } from '../utils/timeout.js';
+import { buildTimeoutResponse } from './shared/errorHandler.js';
 import { buildToolResponse } from './shared/responseBuilder.js';
 import type { ToolResult } from './shared/types.js';
 
@@ -57,6 +59,7 @@ interface PoliticalGroupComparison {
 }
 
 const ALL_DIMENSIONS = ['votingDiscipline', 'activityLevel', 'legislativeOutput', 'attendance', 'cohesion'] as const;
+const OPERATION_TIMEOUT_MS = 75_000;
 type DimensionName = typeof ALL_DIMENSIONS[number];
 
 const DIMENSION_NAME_MAP: Record<string, DimensionName> = {
@@ -181,56 +184,65 @@ export async function handleComparePoliticalGroups(
   const params = ComparePoliticalGroupsSchema.parse(args);
 
   try {
-    const groups = await buildGroupMetrics(params.groupIds);
-    updateRelativeMetrics(groups);
+    const comparison = await withTimeout(
+      (async (): Promise<PoliticalGroupComparison> => {
+        const groups = await buildGroupMetrics(params.groupIds);
+        updateRelativeMetrics(groups);
 
-    const requestedDimensions: readonly DimensionName[] = params.dimensions
-      ? params.dimensions.map(d => DIMENSION_NAME_MAP[d]).filter((d): d is DimensionName => d !== undefined)
-      : ALL_DIMENSIONS;
+        const requestedDimensions: readonly DimensionName[] = params.dimensions
+          ? params.dimensions.map(d => DIMENSION_NAME_MAP[d]).filter((d): d is DimensionName => d !== undefined)
+          : ALL_DIMENSIONS;
 
-    const rankings = buildRankings(groups, requestedDimensions);
-    const topOverall = [...groups]
-      .sort((a, b) => b.computedAttributes.overallPerformanceScore - a.computedAttributes.overallPerformanceScore)[0]?.groupId ?? 'N/A';
+        const rankings = buildRankings(groups, requestedDimensions);
+        const topOverall = [...groups]
+          .sort((a, b) => b.computedAttributes.overallPerformanceScore - a.computedAttributes.overallPerformanceScore)[0]?.groupId ?? 'N/A';
 
-    const seatShares = groups.map(g => g.computedAttributes.seatShare / 100);
-    const herfindahl = seatShares.reduce((sum, s) => sum + s * s, 0);
-    const balance = 1 - herfindahl;
+        const seatShares = groups.map(g => g.computedAttributes.seatShare / 100);
+        const herfindahl = seatShares.reduce((sum, s) => sum + s * s, 0);
+        const balance = 1 - herfindahl;
 
-    const scores = groups.map(g => g.computedAttributes.overallPerformanceScore);
-    const avgScore = scores.reduce((s, v) => s + v, 0) / scores.length;
-    const variance = scores.reduce((s, v) => s + (v - avgScore) ** 2, 0) / scores.length;
-    const competitiveIndex = Math.round((1 - Math.min(1, variance / 1000)) * 100) / 100;
+        const scores = groups.map(g => g.computedAttributes.overallPerformanceScore);
+        const avgScore = scores.reduce((s, v) => s + v, 0) / scores.length;
+        const variance = scores.reduce((s, v) => s + (v - avgScore) ** 2, 0) / scores.length;
+        const competitiveIndex = Math.round((1 - Math.min(1, variance / 1000)) * 100) / 100;
 
-    const comparison: PoliticalGroupComparison = {
-      period: { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' },
-      groupCount: groups.length,
-      groups,
-      rankings,
-      computedAttributes: {
-        mostDisciplined: topByDimension(groups, 'votingDiscipline'),
-        mostActive: topByDimension(groups, 'activityLevel'),
-        highestAttendance: topByDimension(groups, 'attendance'),
-        mostCohesive: topByDimension(groups, 'cohesion'),
-        strongestOverall: topOverall,
-        parliamentaryBalance: Math.round(balance * 100) / 100,
-        competitiveIndex
-      },
-      confidenceLevel: 'MEDIUM',
-      dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
-      sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-      methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
-        + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
-        + 'voting discipline, activity level, attendance, and cohesion dimensions report zero. '
-        + 'Member counts and group composition are real. '
-        + 'Data source: European Parliament Open Data Portal.',
-      dataQualityWarnings: [
-        'Per-MEP voting statistics unavailable from EP API — voting discipline, activity level, attendance, and cohesion dimensions report zero',
-        'Seat share and member counts are real EP API data; performance scores are not comparable without voting data',
-      ]
-    };
+        return {
+          period: { from: params.dateFrom ?? '2024-01-01', to: params.dateTo ?? '2024-12-31' },
+          groupCount: groups.length,
+          groups,
+          rankings,
+          computedAttributes: {
+            mostDisciplined: topByDimension(groups, 'votingDiscipline'),
+            mostActive: topByDimension(groups, 'activityLevel'),
+            highestAttendance: topByDimension(groups, 'attendance'),
+            mostCohesive: topByDimension(groups, 'cohesion'),
+            strongestOverall: topOverall,
+            parliamentaryBalance: Math.round(balance * 100) / 100,
+            competitiveIndex
+          },
+          confidenceLevel: 'MEDIUM',
+          dataFreshness: 'Real-time EP API data — political group composition from current MEP records',
+          sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
+          methodology: 'Multi-dimensional comparative analysis using real EP Open Data MEP records. '
+            + 'Per-MEP voting statistics are not available from the EP API /meps/{id} endpoint; '
+            + 'voting discipline, activity level, attendance, and cohesion dimensions report zero. '
+            + 'Member counts and group composition are real. '
+            + 'Data source: European Parliament Open Data Portal.',
+          dataQualityWarnings: [
+            'Per-MEP voting statistics unavailable from EP API — voting discipline, activity level, attendance, and cohesion dimensions report zero',
+            'Seat share and member counts are real EP API data; performance scores are not comparable without voting data',
+          ]
+        };
+      })(),
+      OPERATION_TIMEOUT_MS,
+      'compare_political_groups operation timed out'
+    );
 
     return buildToolResponse(comparison);
   } catch (error: unknown) {
+    if (error instanceof TimeoutError) {
+      return buildTimeoutResponse('compare_political_groups', OPERATION_TIMEOUT_MS);
+    }
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to compare political groups: ${errorMessage}`);
   }

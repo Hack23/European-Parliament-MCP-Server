@@ -29,9 +29,11 @@
 import { randomUUID } from 'node:crypto';
 import { CorrelateIntelligenceSchema, OsintStandardOutputSchema } from '../schemas/europeanParliament.js';
 import { buildToolResponse, buildErrorResponse } from './shared/responseBuilder.js';
+import { buildTimeoutResponse } from './shared/errorHandler.js';
 import type { ToolResult, OsintStandardOutput, ConfidenceLevel } from './shared/types.js';
 import type { DataAvailability } from '../types/index.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
+import { TimeoutError, withTimeout } from '../utils/timeout.js';
 
 import { handleAssessMepInfluence } from './assessMepInfluence.js';
 import { handleDetectVotingAnomalies } from './detectVotingAnomalies.js';
@@ -158,6 +160,7 @@ const INFLUENCE_THRESHOLDS: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
 };
 
 const DEFAULT_COALITION_GROUPS = ['EPP', 'S&D', 'Renew', 'Greens/EFA', 'ECR', 'ID'];
+const OPERATION_TIMEOUT_MS = 90_000;
 
 /**
  * Safely parses the JSON payload from a {@link ToolResult} returned by a dependent tool.
@@ -818,94 +821,115 @@ export async function handleCorrelateIntelligence(
   const params = CorrelateIntelligenceSchema.parse(args);
   const { mepIds, groups, sensitivityLevel, includeNetworkAnalysis } = params;
 
-  const resolvedGroups = groups ?? DEFAULT_COALITION_GROUPS;
-  const influenceThreshold = INFLUENCE_THRESHOLDS[sensitivityLevel];
-  const analysisTime = new Date().toISOString();
-  const correlationId = `CORR-${randomUUID().replace(/-/g, '').toUpperCase().slice(0, 12)}`;
-
-  const influenceAnomalyResults = await Promise.all(
-    mepIds.map((mepId) => correlateInfluenceAnomaly(mepId, influenceThreshold)),
-  );
-  const influenceAnomalyCorrelations: InfluenceAnomalyCorrelation[] = [];
-  const influenceAnomalyAlerts: CorrelationAlert[] = [];
-  const influenceToolConfidenceLevels: ConfidenceLevel[] = [];
-
-  for (const { correlation, alert, toolConfidenceLevels } of influenceAnomalyResults) {
-    if (correlation !== null) influenceAnomalyCorrelations.push(correlation);
-    if (alert !== null) influenceAnomalyAlerts.push(alert);
-    influenceToolConfidenceLevels.push(...toolConfidenceLevels);
-  }
-
-  const { correlation: coalitionCorrelation, alert: coalitionAlert, toolConfidenceLevels: coalitionConfidenceLevels } =
-    await correlateCoalitionFracture(resolvedGroups, sensitivityLevel);
-
-  const { correlations: networkCorrelations, alerts: networkAlerts, toolConfidenceLevels: networkConfidenceLevels } =
-    includeNetworkAnalysis
-      ? await correlateNetworkProfiles(mepIds)
-      : { correlations: [], alerts: [], toolConfidenceLevels: [] };
-
-  const allAlerts: CorrelationAlert[] = [
-    ...influenceAnomalyAlerts,
-    ...(coalitionAlert !== null ? [coalitionAlert] : []),
-    ...networkAlerts,
-  ];
-
-  const correlationsFound =
-    influenceAnomalyCorrelations.length +
-    (coalitionCorrelation !== null ? 1 : 0) +
-    networkCorrelations.length;
-
-  const confidenceLevels: ConfidenceLevel[] = [
-    ...influenceToolConfidenceLevels,
-    ...coalitionConfidenceLevels,
-    ...networkConfidenceLevels,
-  ];
-
-  const dataAvailability = computeDataAvailability(correlationsFound, confidenceLevels);
-
-  const report: CorrelatedIntelligenceReport = {
-    correlationId,
-    analysisTime,
-    scope: {
-      mepIds,
-      groups: resolvedGroups,
-      sensitivityLevel,
-      networkAnalysisIncluded: includeNetworkAnalysis,
-    },
-    alerts: allAlerts,
-    correlations: {
-      influenceAnomaly: influenceAnomalyCorrelations,
-      coalitionFracture: coalitionCorrelation,
-      networkProfiles: networkCorrelations,
-    },
-    summary: buildAlertSummary(allAlerts, correlationsFound),
-    confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['LOW']),
-    dataAvailability,
-    methodology: buildMethodology(influenceThreshold, sensitivityLevel, includeNetworkAnalysis),
-    dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
-    sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    dataQualityWarnings: buildCorrelationWarnings(dataAvailability, confidenceLevels, includeNetworkAnalysis),
-  };
-
   try {
-    OsintStandardOutputSchema.parse({
-      confidenceLevel: report.confidenceLevel,
-      methodology: report.methodology,
-      dataFreshness: report.dataFreshness,
-      sourceAttribution: report.sourceAttribution,
-      dataQualityWarnings: report.dataQualityWarnings,
-    });
-  } catch (validationError: unknown) {
+    return await withTimeout(
+      (async (): Promise<ToolResult> => {
+        const resolvedGroups = groups ?? DEFAULT_COALITION_GROUPS;
+        const influenceThreshold = INFLUENCE_THRESHOLDS[sensitivityLevel];
+        const analysisTime = new Date().toISOString();
+        const correlationId = `CORR-${randomUUID().replace(/-/g, '').toUpperCase().slice(0, 12)}`;
+
+        const influenceAnomalyResults = await Promise.all(
+          mepIds.map((mepId) => correlateInfluenceAnomaly(mepId, influenceThreshold)),
+        );
+        const influenceAnomalyCorrelations: InfluenceAnomalyCorrelation[] = [];
+        const influenceAnomalyAlerts: CorrelationAlert[] = [];
+        const influenceToolConfidenceLevels: ConfidenceLevel[] = [];
+
+        for (const { correlation, alert, toolConfidenceLevels } of influenceAnomalyResults) {
+          if (correlation !== null) influenceAnomalyCorrelations.push(correlation);
+          if (alert !== null) influenceAnomalyAlerts.push(alert);
+          influenceToolConfidenceLevels.push(...toolConfidenceLevels);
+        }
+
+        const { correlation: coalitionCorrelation, alert: coalitionAlert, toolConfidenceLevels: coalitionConfidenceLevels } =
+          await correlateCoalitionFracture(resolvedGroups, sensitivityLevel);
+
+        const { correlations: networkCorrelations, alerts: networkAlerts, toolConfidenceLevels: networkConfidenceLevels } =
+          includeNetworkAnalysis
+            ? await correlateNetworkProfiles(mepIds)
+            : { correlations: [], alerts: [], toolConfidenceLevels: [] };
+
+        const allAlerts: CorrelationAlert[] = [
+          ...influenceAnomalyAlerts,
+          ...(coalitionAlert !== null ? [coalitionAlert] : []),
+          ...networkAlerts,
+        ];
+
+        const correlationsFound =
+          influenceAnomalyCorrelations.length +
+          (coalitionCorrelation !== null ? 1 : 0) +
+          networkCorrelations.length;
+
+        const confidenceLevels: ConfidenceLevel[] = [
+          ...influenceToolConfidenceLevels,
+          ...coalitionConfidenceLevels,
+          ...networkConfidenceLevels,
+        ];
+
+        const dataAvailability = computeDataAvailability(correlationsFound, confidenceLevels);
+
+        const report: CorrelatedIntelligenceReport = {
+          correlationId,
+          analysisTime,
+          scope: {
+            mepIds,
+            groups: resolvedGroups,
+            sensitivityLevel,
+            networkAnalysisIncluded: includeNetworkAnalysis,
+          },
+          alerts: allAlerts,
+          correlations: {
+            influenceAnomaly: influenceAnomalyCorrelations,
+            coalitionFracture: coalitionCorrelation,
+            networkProfiles: networkCorrelations,
+          },
+          summary: buildAlertSummary(allAlerts, correlationsFound),
+          confidenceLevel: aggregateConfidence(confidenceLevels.length > 0 ? confidenceLevels : ['LOW']),
+          dataAvailability,
+          methodology: buildMethodology(influenceThreshold, sensitivityLevel, includeNetworkAnalysis),
+          dataFreshness: `Real-time EP API data — correlated at ${analysisTime}`,
+          sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
+          dataQualityWarnings: buildCorrelationWarnings(dataAvailability, confidenceLevels, includeNetworkAnalysis),
+        };
+
+        try {
+          OsintStandardOutputSchema.parse({
+            confidenceLevel: report.confidenceLevel,
+            methodology: report.methodology,
+            dataFreshness: report.dataFreshness,
+            sourceAttribution: report.sourceAttribution,
+            dataQualityWarnings: report.dataQualityWarnings,
+          });
+        } catch (validationError: unknown) {
+          throw new ToolError({
+            toolName: 'correlate_intelligence',
+            operation: 'validateOsintOutput',
+            message: 'Report failed OSINT standard output schema validation',
+            isRetryable: false,
+            cause: validationError,
+          });
+        }
+
+        return buildCorrelationResponse(report);
+      })(),
+      OPERATION_TIMEOUT_MS,
+      'correlate_intelligence operation timed out'
+    );
+  } catch (error: unknown) {
+    if (error instanceof TimeoutError) {
+      auditLogger.logError('correlate_intelligence.operation_timeout', { mepIds }, toErrorMessage(error));
+      return buildTimeoutResponse('correlate_intelligence', OPERATION_TIMEOUT_MS);
+    }
+
     throw new ToolError({
       toolName: 'correlate_intelligence',
-      operation: 'validateOsintOutput',
-      message: 'Report failed OSINT standard output schema validation',
-      isRetryable: false,
-      cause: validationError,
+      operation: 'correlateIntelligence',
+      message: 'Failed to correlate intelligence data',
+      isRetryable: true,
+      cause: error,
     });
   }
-
-  return buildCorrelationResponse(report);
 }
 
 /**

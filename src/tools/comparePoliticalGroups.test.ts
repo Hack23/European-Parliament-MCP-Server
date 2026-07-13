@@ -169,9 +169,34 @@ describe('compare_political_groups Tool', () => {
     it('should wrap API errors', async () => {
       vi.mocked(epClientModule.epClient.getCurrentMEPs)
         .mockRejectedValueOnce(new Error('API Error'));
-
+ 
       await expect(handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'] }))
         .rejects.toThrow('Failed to compare political groups');
+    });
+
+    it('should return a structured timeout response when the upstream fetch hangs', async () => {
+      vi.useFakeTimers();
+ 
+      try {
+        vi.mocked(epClientModule.epClient.getCurrentMEPs).mockImplementation(
+          () => new Promise(() => undefined)
+        );
+ 
+        const pendingResult = handleComparePoliticalGroups({ groupIds: ['EPP', 'S&D'] });
+        vi.advanceTimersByTime(75_000);
+        const result = await pendingResult;
+        const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+          timedOut: boolean;
+          status: string;
+          toolName: string;
+        };
+ 
+        expect(data.timedOut).toBe(true);
+        expect(data.status).toBe('timeout');
+        expect(data.toolName).toBe('compare_political_groups');
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 
