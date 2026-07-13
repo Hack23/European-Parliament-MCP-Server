@@ -759,6 +759,32 @@ function buildMethodology(influenceThreshold: number, sensitivityLevel: string, 
 }
 
 /**
+ * Validates OSINT-standard output fields in the final report envelope.
+ *
+ * @param report - Correlated report containing OSINT metadata fields
+ * @throws ToolError when report metadata violates OSINT output schema
+ */
+function validateOsintStandardOutput(report: CorrelatedIntelligenceReport): void {
+  try {
+    OsintStandardOutputSchema.parse({
+      confidenceLevel: report.confidenceLevel,
+      methodology: report.methodology,
+      dataFreshness: report.dataFreshness,
+      sourceAttribution: report.sourceAttribution,
+      dataQualityWarnings: report.dataQualityWarnings,
+    });
+  } catch (validationError: unknown) {
+    throw new ToolError({
+      toolName: 'correlate_intelligence',
+      operation: 'validateOsintOutput',
+      message: 'Report failed OSINT standard output schema validation',
+      isRetryable: false,
+      cause: validationError,
+    });
+  }
+}
+
+/**
  * Handles the `correlate_intelligence` MCP tool request.
  *
  * Orchestrates six OSINT tools — `assess_mep_influence`,
@@ -893,23 +919,7 @@ export async function handleCorrelateIntelligence(
           dataQualityWarnings: buildCorrelationWarnings(dataAvailability, confidenceLevels, includeNetworkAnalysis),
         };
 
-        try {
-          OsintStandardOutputSchema.parse({
-            confidenceLevel: report.confidenceLevel,
-            methodology: report.methodology,
-            dataFreshness: report.dataFreshness,
-            sourceAttribution: report.sourceAttribution,
-            dataQualityWarnings: report.dataQualityWarnings,
-          });
-        } catch (validationError: unknown) {
-          throw new ToolError({
-            toolName: 'correlate_intelligence',
-            operation: 'validateOsintOutput',
-            message: 'Report failed OSINT standard output schema validation',
-            isRetryable: false,
-            cause: validationError,
-          });
-        }
+        validateOsintStandardOutput(report);
 
         return buildCorrelationResponse(report);
       })(),
