@@ -5,6 +5,9 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 1
+      exclude: ["*"]
     labels:
       - "dependencies"
       - "github-actions"
@@ -15,6 +18,9 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 1
+      exclude: ["*"]
     labels:
       - "dependencies"
       - "npm"
