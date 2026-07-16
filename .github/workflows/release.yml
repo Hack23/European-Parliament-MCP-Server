@@ -11,9 +11,6 @@ on:
         description: "Is this a pre-release?"
         type: boolean
         default: false
-  push:
-    tags:
-      - "v*"
 
 # Restrict top-level permissions to minimum required defaults
 permissions: read-all
