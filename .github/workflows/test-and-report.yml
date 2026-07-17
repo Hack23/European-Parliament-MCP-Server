@@ -49,7 +49,7 @@ jobs:
     # Only requires repository and workflow metadata reads.
     permissions:
       contents: read # Required to check out code
-      actions: read # Required to use GitHub actions
+      actions: read # Required for GitHub Actions API access (artifact/cache metadata)
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -170,7 +170,7 @@ jobs:
     # Only requires repository and workflow metadata reads.
     permissions:
       contents: read # Required to check out code
-      actions: read # Required to use GitHub actions
+      actions: read # Required for GitHub Actions API access (artifact/cache metadata)
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -235,7 +235,7 @@ jobs:
     if: always()
     # Only requires workflow metadata reads for artifact handling.
     permissions:
-      actions: read # Required to use GitHub actions
+      actions: read # Required for GitHub Actions API access (artifact/cache metadata)
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
