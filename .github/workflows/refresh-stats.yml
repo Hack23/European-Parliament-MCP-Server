@@ -60,10 +60,6 @@ on:
         default: ''
         type: string
 
-permissions:
-  contents: write
-  pull-requests: write
-
 # Resilience against transient npm registry / mirror failures.
 env:
   NPM_CONFIG_FETCH_RETRIES: "5"
@@ -76,6 +72,9 @@ jobs:
     name: Update & Validate EP Statistics
     runs-on: ubuntu-26.04
     timeout-minutes: 90
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0

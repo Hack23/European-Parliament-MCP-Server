@@ -13,6 +13,9 @@ on:
       - .github/workflows/copilot-setup-steps.yml
       - .github/copilot-mcp.json
 
+permissions:
+  contents: read
+
 env:
   NODE_VERSION: "26"
   MCP_SERVER_FILESYSTEM_VERSION: "2026.1.14"

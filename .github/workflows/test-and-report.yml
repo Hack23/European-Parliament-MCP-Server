@@ -46,12 +46,10 @@ jobs:
   build-validation:
     needs: prepare
     runs-on: ubuntu-26.04
-    # Needs write permissions to upload artifacts
+    # Only requires repository and workflow metadata reads.
     permissions:
-      contents: write # Required to check out code
+      contents: read # Required to check out code
       actions: read # Required to use GitHub actions
-      id-token: write # Required for attestation
-      pull-requests: write # Required to upload artifacts (implicit permission)
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -169,11 +167,10 @@ jobs:
   unit-tests:
     needs: [prepare, build-validation]
     runs-on: ubuntu-26.04
-    # Needs write permissions to upload artifacts
+    # Only requires repository and workflow metadata reads.
     permissions:
-      contents: write # Required to check out code
+      contents: read # Required to check out code
       actions: read # Required to use GitHub actions
-      checks: write # Required to upload artifacts (implicit permission)
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
@@ -236,11 +233,9 @@ jobs:
     needs: [unit-tests]
     runs-on: ubuntu-26.04
     if: always()
-    # Needs write permissions to upload artifacts
+    # Only requires workflow metadata reads for artifact handling.
     permissions:
-      contents: write # Required to check out code
       actions: read # Required to use GitHub actions
-      checks: write # Required to upload artifacts (implicit permission)
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0

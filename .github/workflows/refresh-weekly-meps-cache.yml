@@ -11,10 +11,6 @@ on:
         default: '250'
         type: string
 
-permissions:
-  contents: write
-  pull-requests: write
-
 concurrency:
   group: refresh-weekly-meps-cache
   cancel-in-progress: false
@@ -29,6 +25,9 @@ jobs:
   refresh-weekly-meps-cache:
     runs-on: ubuntu-26.04
     timeout-minutes: 120
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Harden runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
