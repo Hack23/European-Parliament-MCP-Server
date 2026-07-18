@@ -39,9 +39,18 @@ jobs:
         with:
           egress-policy: audit
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: true
           fetch-depth: 0
 
       - name: Get version
@@ -88,6 +97,8 @@ jobs:
         with:
           commit_message: "chore(release): bump version to ${{ github.event.inputs.version }}"
           tagging_message: "${{ github.event.inputs.version }}"
+          commit_user_name: "hack23-automation[bot]"
+          commit_user_email: "304996498+hack23-automation[bot]@users.noreply.github.com"          
 
       # Documentation as Code - Generate all documentation for this release
       - name: Clean old documentation
@@ -137,6 +148,8 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
         with:
           commit_message: "docs: update documentation for ${{ steps.get-version.outputs.version || github.ref_name }}"
+          commit_user_name: "hack23-automation[bot]"
+          commit_user_email: "304996498+hack23-automation[bot]@users.noreply.github.com"          
           file_pattern: "docs/**"
           skip_fetch: false
           skip_checkout: false
@@ -148,6 +161,9 @@ jobs:
           branch: gh-pages
           clean: false
           commit-message: "docs: deploy documentation for ${{ steps.get-version.outputs.version || github.ref_name }}"
+          commit_user_name: "hack23-automation[bot]"
+          commit_user_email: "304996498+hack23-automation[bot]@users.noreply.github.com"          
+
 
   build:
     name: Build Release Package
@@ -164,11 +180,19 @@ jobs:
         with:
           egress-policy: audit
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: true
           fetch-depth: 0
-          # Use GITHUB_REF directly for tag events
           ref: ${{ github.event_name == 'push' && github.ref || github.event_name == 'workflow_dispatch' && github.event.inputs.version || '' }}
 
       - name: Setup Node.js
@@ -266,10 +290,18 @@ jobs:
         with:
           egress-policy: audit
 
-      # Checkout main branch to get latest documentation
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: true
           fetch-depth: 0
           ref: main # Always use main branch
 
@@ -296,7 +328,7 @@ jobs:
           prerelease: ${{ needs.prepare.outputs.is_prerelease }}
           disable-autolabeler: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
       # Create GitHub Release with all artifacts
       - name: Create GitHub Release
@@ -314,7 +346,8 @@ jobs:
             artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json
             artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.zip.intoto.jsonl
             artifacts/security/european-parliament-mcp-server-${{ needs.prepare.outputs.version }}.spdx.json.intoto.jsonl
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
+
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
