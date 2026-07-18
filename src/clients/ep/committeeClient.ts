@@ -508,9 +508,11 @@ export class CommitteeClient extends BaseEPClient {
           : committee;
       }
     } catch (error: unknown) {
-      if (!(error instanceof APIError && error.statusCode === 404)) {
-        auditLogger.logError('get_committee_info.fetch_direct', { bodyId }, toErrorMessage(error));
+      if (error instanceof APIError && error.statusCode === 404) {
+        return null;
       }
+      auditLogger.logError('get_committee_info.fetch_direct', { bodyId }, toErrorMessage(error));
+      throw error;
     }
     return null;
   }
