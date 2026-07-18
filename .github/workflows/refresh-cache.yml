@@ -50,10 +50,36 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if timeout 600 npm ci --no-audit --no-fund; then
+              exit 0
+            fi
+            echo "npm ci failed on attempt ${attempt}; retrying..."
+            sleep $((attempt * 15))
+          done
+          exit 1
+
+      - name: Validate cache generator
+        run: |
+          npm run lint
+          npm run type-check:scripts
 
       - name: Generate full EP data cache
-        run: npm run generate:cache
+        run: |
+          set -euo pipefail
+          for attempt in 1 2; do
+            if timeout 5400 npm run generate:cache; then
+              exit 0
+            fi
+            if [ "${attempt}" -eq 2 ]; then
+              exit 1
+            fi
+            echo "Cache generation failed on attempt ${attempt}; retrying from a clean working tree..."
+            git restore --worktree --staged -- data/cache
+            sleep 30
+          done
         env:
           NODE_ENV: production
 

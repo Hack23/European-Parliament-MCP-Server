@@ -1064,6 +1064,19 @@ describe('EuropeanParliamentClient', () => {
       expect(result).toHaveProperty('abbreviation');
     });
 
+    it('should propagate rate-limit errors instead of treating them as missing bodies', async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        statusText: 'Too Many Requests',
+        status: 429,
+      });
+
+      await expect(
+        client.getCommitteeInfo({ id: '7007' }),
+      ).rejects.toThrow('EP API request failed: 429 Too Many Requests');
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+    });
+
     it('should use id parameter for direct lookup', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,

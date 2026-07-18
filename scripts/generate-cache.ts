@@ -57,6 +57,7 @@ const MIN_CURRENT_MEPS = 600;
 const MIN_CURRENT_BODIES = 100;
 const MIN_VOCABULARIES = 1;
 const MEP_DETAIL_RETRIES = 4;
+const CORPORATE_BODY_RETRIES = 4;
 
 function metadata(
   dataset: Dataset,
@@ -100,6 +101,29 @@ function isRateLimitError(error: unknown): boolean {
     && (error as { statusCode?: unknown }).statusCode === 429;
 }
 
+function isNotFoundError(error: unknown): boolean {
+  return error instanceof Error
+    && 'statusCode' in error
+    && (error as { statusCode?: unknown }).statusCode === 404;
+}
+
+function extractRetryAfterMs(error: unknown): number | undefined {
+  if (typeof error !== 'object' || error === null || !('details' in error)) return undefined;
+  const details = (error as { details?: unknown }).details;
+  if (typeof details !== 'object' || details === null || !('retryAfterMs' in details)) return undefined;
+  const retryAfterMs = (details as { retryAfterMs?: unknown }).retryAfterMs;
+  return typeof retryAfterMs === 'number' && Number.isFinite(retryAfterMs) && retryAfterMs > 0
+    ? retryAfterMs
+    : undefined;
+}
+
+async function waitForRateLimitRetry(attempt: number, error: unknown): Promise<void> {
+  const retryAfterMs = extractRetryAfterMs(error) ?? (attempt + 1) * 5_000;
+  await new Promise<void>((resolve) => {
+    setTimeout(resolve, retryAfterMs);
+  });
+}
+
 async function fetchMEPDetailsWithRetry(
   client: EuropeanParliamentClient,
   mepId: string,
@@ -109,12 +133,28 @@ async function fetchMEPDetailsWithRetry(
       return await client.getMEPDetails(mepId, { live: true });
     } catch (error: unknown) {
       if (!isRateLimitError(error) || attempt === MEP_DETAIL_RETRIES) throw error;
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, (attempt + 1) * 5_000);
-      });
+      await waitForRateLimitRetry(attempt, error);
     }
   }
   throw new Error('Unreachable MEP detail retry state');
+}
+
+async function fetchCorporateBodyWithRetry(
+  client: EuropeanParliamentClient,
+  bodyId: string,
+): Promise<ReturnType<typeof CommitteeSchema.parse> | null> {
+  for (let attempt = 0; attempt <= CORPORATE_BODY_RETRIES; attempt += 1) {
+    try {
+      return CommitteeSchema.parse(await client.getCorporateBodyById(bodyId, {
+        includeMemberships: false,
+      }));
+    } catch (error: unknown) {
+      if (isNotFoundError(error)) return null;
+      if (!isRateLimitError(error) || attempt === CORPORATE_BODY_RETRIES) throw error;
+      await waitForRateLimitRetry(attempt, error);
+    }
+  }
+  throw new Error('Unreachable corporate-body retry state');
 }
 
 async function fetchAllCurrentCorporateBodies(
@@ -205,9 +245,11 @@ async function buildCorporateBodiesDataset(
   }
   const byId = new Map(listedBodies.map((body) => [shortReference(body.id), body]));
   for (const id of findMissingCurrentCommitteeIds(mepCache, new Set(byId.keys()), generatedAt.slice(0, 10))) {
-    const detail = CommitteeSchema.parse(await client.getCorporateBodyById(id, {
-      includeMemberships: false,
-    }));
+    const detail = await fetchCorporateBodyWithRetry(client, id);
+    if (detail === null) {
+      console.warn(`[cache] Skipping stale or unavailable corporate body reference ${id}`);
+      continue;
+    }
     byId.set(shortReference(detail.id), detail);
   }
   const corporateBodies = [...byId.values()].sort((left, right) => left.id.localeCompare(right.id));
