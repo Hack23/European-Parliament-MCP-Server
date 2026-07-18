@@ -22,30 +22,47 @@ import { buildApiParams } from './shared/paramBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
-import { loadWeeklyCorporateBodiesCache } from '../utils/weeklyDataCache.js';
+import {
+  loadWeeklyCorporateBodiesCache,
+  loadWeeklyMEPCache,
+} from '../utils/weeklyDataCache.js';
+import {
+  findCachedCommittee,
+  listCachedCurrentCorporateBodies,
+} from '../utils/committeeCache.js';
 import { auditLogger } from '../utils/auditLogger.js';
 
 type GetCommitteeInfoParams = ReturnType<typeof GetCommitteeInfoSchema.parse>;
 
 async function getCachedCommitteeResponse(params: GetCommitteeInfoParams): Promise<ToolResult | null> {
   if (params.live) return null;
-  if (params.showCurrent === true) return null;
-  const cached = await loadWeeklyCorporateBodiesCache();
-  if (cached === null) return null;
+  const [cachedBodies, cachedMEPs] = await Promise.all([
+    loadWeeklyCorporateBodiesCache(),
+    loadWeeklyMEPCache(),
+  ]);
+  if (cachedBodies === null) return null;
+
+  if (params.showCurrent === true) {
+    if (cachedBodies.metadata.scope !== 'current') return null;
+    const bodies = listCachedCurrentCorporateBodies(cachedBodies, cachedMEPs);
+    const validated = PaginatedResponseSchema(CommitteeSchema).parse({
+      data: bodies,
+      total: bodies.length,
+      limit: bodies.length,
+      offset: 0,
+      hasMore: false,
+    });
+    auditLogger.logDataAccess('get_committee_info', { showCurrent: true }, bodies.length);
+    return buildToolResponse(validated);
+  }
 
   const lookup = params.abbreviation ?? params.id;
   if (lookup === undefined) return null;
 
-  const fromDetails = cached.corporateBodyDetails?.[lookup];
-  if (fromDetails !== undefined) {
-    auditLogger.logDataAccess('get_committee_info', { id: params.id, abbreviation: params.abbreviation }, 1);
-    return buildToolResponse(CommitteeSchema.parse(fromDetails));
-  }
-
-  const byId = cached.corporateBodies.find((body) => body.id === lookup || body.abbreviation === lookup);
-  if (byId === undefined) return null;
+  const committee = findCachedCommittee(lookup, cachedBodies, cachedMEPs);
+  if (committee === undefined) return null;
   auditLogger.logDataAccess('get_committee_info', { id: params.id, abbreviation: params.abbreviation }, 1);
-  return buildToolResponse(CommitteeSchema.parse(byId));
+  return buildToolResponse(committee);
 }
 
 /**
@@ -103,16 +120,19 @@ export async function handleGetCommitteeInfo(
     if (cachedResponse !== null) return cachedResponse;
 
     if (params.showCurrent === true) {
-      const result = await epClient.getCurrentCorporateBodies();
+      const result = await epClient.getCurrentCorporateBodies({ live: params.live });
       const outputSchema = PaginatedResponseSchema(CommitteeSchema);
       const validated = outputSchema.parse(result);
       return buildToolResponse(validated);
     }
 
-    const apiParams = buildApiParams(params, [
-      { from: 'id', to: 'id' },
-      { from: 'abbreviation', to: 'abbreviation' },
-    ]);
+    const apiParams = {
+      ...buildApiParams(params, [
+        { from: 'id', to: 'id' },
+        { from: 'abbreviation', to: 'abbreviation' },
+      ]),
+      live: params.live,
+    };
 
     const result = await epClient.getCommitteeInfo(apiParams);
 

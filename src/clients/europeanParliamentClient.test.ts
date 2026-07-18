@@ -4,10 +4,16 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EuropeanParliamentClient, APIError } from './europeanParliamentClient.js';
+import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
 
 // Mock the undici fetch
 vi.mock('undici', () => ({
   fetch: vi.fn()
+}));
+
+vi.mock('../utils/weeklyDataCache.js', () => ({
+  loadWeeklyMEPCache: vi.fn(),
+  loadWeeklyCorporateBodiesCache: vi.fn(),
 }));
 
 import { fetch } from 'undici';
@@ -21,6 +27,8 @@ describe('EuropeanParliamentClient', () => {
     client.clearCache();
     mockFetch.mockReset();
     vi.clearAllMocks();
+    vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
+    vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValue(null);
   });
 
   // Country codes used in mock data (matches real EP API format)
@@ -196,6 +204,49 @@ describe('EuropeanParliamentClient', () => {
   });
 
   describe('getMEPs', () => {
+    it('should resolve cached committee abbreviations when weekly cache is enabled', async () => {
+      const cachedClient = new EuropeanParliamentClient({ useWeeklyCache: true });
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 2,
+          generatedAt: '2026-07-18T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+          dataset: 'meps',
+          scope: 'current',
+        },
+        meps: [{
+          id: 'person/1', name: 'Cached MEP', country: 'SE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16',
+        }],
+        mepDetails: {
+          'person/1': {
+            id: 'person/1', name: 'Cached MEP', country: 'SE', politicalGroup: 'EPP',
+            committees: ['org/7913'], active: true, termStart: '2024-07-16',
+          },
+        },
+      });
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 2,
+          generatedAt: '2026-07-18T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+          dataset: 'corporate-bodies',
+          scope: 'current',
+        },
+        corporateBodies: [{
+          id: '7913', name: 'Environment Committee', abbreviation: 'ENVI', members: [],
+          responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING'],
+        }],
+      });
+
+      const result = await cachedClient.getMEPs({ committee: 'ENVI' });
+
+      expect(result.data).toEqual([expect.objectContaining({ id: 'person/1' })]);
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
     it('should return paginated MEP data', async () => {
       // Mock successful API response
       mockFetch.mockResolvedValueOnce({
@@ -942,6 +993,29 @@ describe('EuropeanParliamentClient', () => {
   });
 
   describe('getCommitteeInfo', () => {
+    it('should use cached committee metadata when weekly cache is enabled', async () => {
+      const cachedClient = new EuropeanParliamentClient({ useWeeklyCache: true });
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 2,
+          generatedAt: '2026-07-18T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+          dataset: 'corporate-bodies',
+          scope: 'current',
+        },
+        corporateBodies: [{
+          id: '7913', name: 'Cached Environment Committee', abbreviation: 'ENVI', members: [],
+          responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING'],
+        }],
+      });
+
+      const result = await cachedClient.getCommitteeInfo({ abbreviation: 'ENVI' });
+
+      expect(result.name).toBe('Cached Environment Committee');
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
     it('should return committee details', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -2529,6 +2603,34 @@ describe('EuropeanParliamentClient', () => {
   });
 
   describe('getCurrentMEPs', () => {
+    it('should use the weekly cache when explicitly enabled on the client', async () => {
+      const cachedClient = new EuropeanParliamentClient({ useWeeklyCache: true });
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-07-17T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+        },
+        meps: [{
+          id: 'person/1',
+          name: 'Cached MEP',
+          country: 'SE',
+          politicalGroup: 'EPP',
+          committees: [],
+          active: true,
+          termStart: '2024-07-16',
+        }],
+        mepDetails: {},
+      });
+
+      const result = await cachedClient.getCurrentMEPs({ limit: 10 });
+
+      expect(result.data[0]?.name).toBe('Cached MEP');
+      expect(result.total).toBe(1);
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
     it('should return paginated current MEP data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,

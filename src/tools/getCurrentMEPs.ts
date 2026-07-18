@@ -67,6 +67,7 @@ export async function handleGetCurrentMEPs(args: unknown): Promise<ToolResult> {
     const result = await epClient.getCurrentMEPs({
       limit: params.limit,
       offset: params.offset,
+      live: params.live,
     });
 
     return buildToolResponse(result);
@@ -90,6 +91,11 @@ export const getCurrentMEPsToolMetadata = {
     properties: {
       limit: { type: 'number', description: 'Maximum results to return (1-100)', default: 50 },
       offset: { type: 'number', description: 'Pagination offset', default: 0 },
+      live: {
+        type: 'boolean',
+        description: 'When true, bypasses weekly cache and fetches directly from the live EP API.',
+        default: false,
+      },
     },
   },
 };

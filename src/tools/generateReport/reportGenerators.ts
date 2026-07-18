@@ -10,6 +10,7 @@ import { epClient } from '../../clients/europeanParliamentClient.js';
 import { APIError } from '../../clients/ep/baseClient.js';
 import { auditLogger, toErrorMessage } from '../../utils/auditLogger.js';
 import type { MEPDetails, Committee } from '../../types/europeanParliament.js';
+import { GENERATED_STATS } from '../../data/generatedStats.js';
 import type { Report } from './types.js';
 import { ToolError } from '../shared/errors.js';
 import {
@@ -256,22 +257,57 @@ function throwIfAllDataUnavailable(
 }
 
 /** Build data quality warnings for legislation progress report */
+type AnnualCountSource = 'EP_API' | 'GENERATED_STATS' | 'UNAVAILABLE';
+
+interface AnnualCount {
+  value: number | null;
+  source: AnnualCountSource;
+}
+
+function resolveAnnualCount(liveValue: number | null, generatedValue: number | undefined): AnnualCount {
+  if (liveValue !== null) return { value: liveValue, source: 'EP_API' };
+  if (generatedValue !== undefined) return { value: generatedValue, source: 'GENERATED_STATS' };
+  return { value: null, source: 'UNAVAILABLE' };
+}
+
+function combinedAnnualSource(procedure: AnnualCount, completed: AnnualCount): string {
+  const sources = new Set([procedure.source, completed.source]);
+  sources.delete('UNAVAILABLE');
+  return [...sources].sort().join('+') || 'UNAVAILABLE';
+}
+
 function buildLegislationWarnings(
-  procedureCount: number | null,
-  completedCount: number | null,
-  ongoingCount: number | null
+  procedure: AnnualCount,
+  completed: AnnualCount,
+  ongoingCount: number | null,
+  dateFrom: string,
+  dateTo: string,
 ): string[] {
   const warnings: string[] = [];
-  if (procedureCount === null) {
+  if (procedure.value === null) {
     warnings.push('Legislative procedures count unavailable from EP API.');
   }
-  if (completedCount === null) {
+  if (completed.value === null) {
     warnings.push('Completed procedures (adopted texts) count unavailable from EP API.');
   }
   if (ongoingCount === null) {
     warnings.push('Ongoing procedures count could not be calculated due to missing data.');
   }
-  warnings.push('Counts are lower bounds based on first page of API results (limit 100).');
+  const generatedMetrics = [
+    procedure.source === 'GENERATED_STATS' ? 'procedures' : null,
+    completed.source === 'GENERATED_STATS' ? 'adopted texts' : null,
+  ].filter((value): value is string => value !== null);
+  if (generatedMetrics.length > 0) {
+    warnings.push(
+      `Live EP API data unavailable for ${generatedMetrics.join(' and ')}; substituted precomputed annual statistics generated at ${GENERATED_STATS.generatedAt}.`,
+    );
+    if (!isFullYearRange(dateFrom, dateTo)) {
+      warnings.push('Precomputed fallback values cover the full calendar year derived from dateFrom.');
+    }
+  }
+  if (procedure.source === 'EP_API' || completed.source === 'EP_API') {
+    warnings.push('Live EP API counts are lower bounds based on first page of results (limit 100).');
+  }
   warnings.push('Ongoing count is estimated as total procedures minus adopted texts.');
   return warnings;
 }
@@ -414,13 +450,19 @@ export async function generateLegislationProgressReport(
   const dateTo = params.dateTo ?? '2024-12-31';
   const year = parseInt(dateFrom.substring(0, 4), 10);
 
-  const procedureCount = await fetchProcedureCountLowerBound({ year });
-  const completedCount = await fetchAdoptedTextCount(year);
-  throwIfAllDataUnavailable('LEGISLATION_PROGRESS', [procedureCount, completedCount]);
-  const ongoingCount = (procedureCount !== null && completedCount !== null)
-    ? Math.max(0, procedureCount - completedCount)
+  const [liveProcedureCount, liveCompletedCount] = await Promise.all([
+    fetchProcedureCountLowerBound({ year }),
+    fetchAdoptedTextCount(year),
+  ]);
+  const generated = GENERATED_STATS.yearlyStats.find((stats) => stats.year === year);
+  const procedure = resolveAnnualCount(liveProcedureCount, generated?.procedures);
+  const completed = resolveAnnualCount(liveCompletedCount, generated?.adoptedTexts);
+  throwIfAllDataUnavailable('LEGISLATION_PROGRESS', [procedure.value, completed.value]);
+  const ongoingCount = (procedure.value !== null && completed.value !== null)
+    ? Math.max(0, procedure.value - completed.value)
     : null;
-  const warnings = buildLegislationWarnings(procedureCount, completedCount, ongoingCount);
+  const dataSource = combinedAnnualSource(procedure, completed);
+  const warnings = buildLegislationWarnings(procedure, completed, ongoingCount, dateFrom, dateTo);
 
   return {
     reportType: 'LEGISLATION_PROGRESS',
@@ -430,16 +472,17 @@ export async function generateLegislationProgressReport(
       to: dateTo
     },
     generatedAt: new Date().toISOString(),
-    summary: 'Progress report on legislative procedures based on EP Open Data (lower bounds, first page).',
+    summary: `Progress report on legislative procedures based on EP Open Data (${dataSource}).`,
     sections: [
-      createNewProposalsSection(procedureCount),
-      createCompletedProceduresSection(completedCount),
+      createNewProposalsSection(procedure.value),
+      createCompletedProceduresSection(completed.value),
       createOngoingProceduresSection(ongoingCount)
     ],
     statistics: {
-      totalProcedures: procedureCount ?? 0,
-      completed: completedCount ?? 0,
-      ongoing: ongoingCount ?? 0
+      totalProcedures: procedure.value ?? 0,
+      completed: completed.value ?? 0,
+      ongoing: ongoingCount ?? 0,
+      dataSource,
     },
     dataQualityWarnings: warnings
   };

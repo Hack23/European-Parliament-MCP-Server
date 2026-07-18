@@ -20,9 +20,13 @@
  * @see https://github.com/Hack23/ISMS-PUBLIC/blob/main/Open_Source_Policy.md#distribution
  */
 
-import { readFileSync, existsSync, statSync } from 'fs';
+import { readFileSync, existsSync, globSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import {
+  flattenDiagnosticMessageText,
+  parseConfigFileTextToJson,
+} from 'typescript';
 
 // ---------------------------------------------------------------------------
 // Interfaces
@@ -76,15 +80,20 @@ interface TsConfig {
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Expected entry-point path for the published package */
-const ENTRY_POINT = 'dist/index.js' as const;
+/** Expected library entry-point path for programmatic imports. */
+const LIBRARY_ENTRY_POINT = 'dist/index.js' as const;
+
+/** Expected executable entry-point path for npm/npx. */
+const BIN_ENTRY_POINT = 'dist/main.js' as const;
 
 /** Files that must exist in dist/ after a successful build */
 const REQUIRED_DIST_FILES: readonly string[] = [
-  ENTRY_POINT,
+  LIBRARY_ENTRY_POINT,
   'dist/index.d.ts',
   'dist/index.js.map',
   'dist/index.d.ts.map',
+  BIN_ENTRY_POINT,
+  'dist/main.js.map',
 ] as const;
 
 /** Documentation files required by the ISMS Open Source Policy */
@@ -94,6 +103,17 @@ const REQUIRED_DOCS: readonly string[] = [
   'SECURITY.md',
   'CHANGELOG.md',
 ] as const;
+
+/** Runtime cache snapshots required for cache-first MCP tool behavior. */
+const REQUIRED_CACHE_FILES: readonly string[] = [
+  'data/cache/meps.json',
+  'data/cache/corporate-bodies.json',
+  'data/cache/controlled-vocabularies.json',
+  'data/cache/manifest.json',
+] as const;
+
+/** Publish-manifest entry that includes only the flat bundled cache files. */
+const REQUIRED_CACHE_PACKAGE_PATTERN = 'data/cache/*.json' as const;
 
 // ---------------------------------------------------------------------------
 // Path helpers
@@ -179,7 +199,7 @@ for (const file of REQUIRED_DIST_FILES) {
   } else {
     try {
       const stats = statSync(filePath);
-      success(state, `${file} (${stats.size} bytes)`);
+      success(state, `${file} (${String(stats.size)} bytes)`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       error(state, `Failed to stat ${file}: ${message}`);
@@ -195,7 +215,7 @@ for (const file of REQUIRED_DOCS) {
   } else {
     try {
       const stats = statSync(filePath);
-      success(state, `${file} (${stats.size} bytes)`);
+      success(state, `${file} (${String(stats.size)} bytes)`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       error(state, `Failed to stat ${file}: ${message}`);
@@ -203,39 +223,48 @@ for (const file of REQUIRED_DOCS) {
   }
 }
 
+for (const file of REQUIRED_CACHE_FILES) {
+  const filePath = join(ROOT_DIR, file);
+  if (!existsSync(filePath)) {
+    error(state, `Required runtime cache missing: ${file}`);
+  } else {
+    success(state, `Runtime cache present: ${file}`);
+  }
+}
+
 // ── Check 4: Shebang in entry point ────────────────────────────────────────
-console.log('\n🔨 Checking entry point...');
-const indexPath = join(ROOT_DIR, ENTRY_POINT);
-if (existsSync(indexPath)) {
-  let indexContent: string;
+console.log('\n🔨 Checking executable entry point...');
+const binEntryPath = join(ROOT_DIR, BIN_ENTRY_POINT);
+if (existsSync(binEntryPath)) {
+  let binEntryContent: string;
   try {
-    indexContent = readFileSync(indexPath, 'utf8');
+    binEntryContent = readFileSync(binEntryPath, 'utf8');
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    error(state, `Failed to read ${ENTRY_POINT}: ${message}`);
-    indexContent = '';
+    error(state, `Failed to read ${BIN_ENTRY_POINT}: ${message}`);
+    binEntryContent = '';
   }
 
-  if (indexContent.length > 0) {
-    if (!indexContent.startsWith('#!/usr/bin/env node')) {
-      error(state, `${ENTRY_POINT} missing shebang (#!/usr/bin/env node)`);
+  if (binEntryContent.length > 0) {
+    if (!binEntryContent.startsWith('#!/usr/bin/env node')) {
+      error(state, `${BIN_ENTRY_POINT} missing shebang (#!/usr/bin/env node)`);
     } else {
-      success(state, `Shebang present in ${ENTRY_POINT}`);
+      success(state, `Shebang present in ${BIN_ENTRY_POINT}`);
     }
 
     // Check module format using a simple heuristic
-    const hasImportSyntax = indexContent.includes('import ');
+    const hasImportSyntax = binEntryContent.includes('import ');
     const hasCommonJsSyntax =
-      indexContent.includes('require(') ||
-      indexContent.includes('module.exports') ||
-      indexContent.includes('exports.');
+      binEntryContent.includes('require(') ||
+      binEntryContent.includes('module.exports') ||
+      binEntryContent.includes('exports.');
 
     if (hasImportSyntax && !hasCommonJsSyntax) {
       success(state, 'ES module format detected');
     } else if (hasCommonJsSyntax && !hasImportSyntax) {
-      warn(state, `${ENTRY_POINT} appears to be CommonJS format`);
+      warn(state, `${BIN_ENTRY_POINT} appears to be CommonJS format`);
     } else {
-      warn(state, `${ENTRY_POINT} module format could not be reliably determined`);
+      warn(state, `${BIN_ENTRY_POINT} module format could not be reliably determined`);
     }
   }
 }
@@ -257,12 +286,15 @@ if (!existsSync(pkgPath)) {
       success(state, `Package: ${pkg.name ?? '(unnamed)'}@${pkg.version ?? '(no version)'}`);
 
       // Required fields
-      if (!pkg.name) error(state, 'package.json missing "name" field');
-      if (!pkg.version) error(state, 'package.json missing "version" field');
-      if (!pkg.description) warn(state, 'package.json missing "description" field');
-      if (!pkg.license) error(state, 'package.json missing "license" field');
-      if (!pkg.repository) warn(state, 'package.json missing "repository" field');
-      if (!pkg.main) error(state, 'package.json missing "main" field');
+      if (pkg.name === undefined || pkg.name === '') error(state, 'package.json missing "name" field');
+      if (pkg.version === undefined || pkg.version === '') error(state, 'package.json missing "version" field');
+      if (pkg.description === undefined || pkg.description === '') warn(state, 'package.json missing "description" field');
+      if (pkg.license === undefined || pkg.license === '') error(state, 'package.json missing "license" field');
+      if (pkg.repository === undefined || pkg.repository === null) warn(state, 'package.json missing "repository" field');
+      if (pkg.main === undefined || pkg.main === '') error(state, 'package.json missing "main" field');
+      if (pkg.main !== undefined && pkg.main !== LIBRARY_ENTRY_POINT) {
+        error(state, `Package main points to ${pkg.main}, expected ${LIBRARY_ENTRY_POINT}`);
+      }
       if (!pkg.bin) error(state, 'package.json missing "bin" field');
       if (!pkg.files) error(state, 'package.json missing "files" field');
 
@@ -291,19 +323,35 @@ if (!existsSync(pkgPath)) {
 
         for (const binName of binKeys) {
           const binPath = pkg.bin[binName];
-          if (binPath !== ENTRY_POINT) {
-            warn(state, `Binary "${binName}" points to ${binPath}, expected ${ENTRY_POINT}`);
+          if (binPath !== BIN_ENTRY_POINT) {
+            error(state, `Binary "${binName}" points to ${String(binPath)}, expected ${BIN_ENTRY_POINT}`);
           }
         }
       }
 
       // Check files array
       if (pkg.files) {
-        success(state, `Package files: ${pkg.files.length} entries`);
+        success(state, `Package files: ${String(pkg.files.length)} entries`);
         console.log(`   Files to include: ${pkg.files.join(', ')}`);
+
+        if (!pkg.files.includes(REQUIRED_CACHE_PACKAGE_PATTERN)) {
+          error(
+            state,
+            `package.json files must include "${REQUIRED_CACHE_PACKAGE_PATTERN}"`,
+          );
+        }
 
         // Verify each listed file exists
         for (const file of pkg.files) {
+          if (/[*?[\]{}]/u.test(file)) {
+            const matches = globSync(file, { cwd: ROOT_DIR });
+            if (matches.length === 0) {
+              error(state, `Package file pattern matched no files: ${file}`);
+            } else {
+              success(state, `Package file pattern ${file} matched ${String(matches.length)} files`);
+            }
+            continue;
+          }
           const filePath = join(ROOT_DIR, file);
           if (!existsSync(filePath)) {
             error(state, `Package file not found: ${file}`);
@@ -314,7 +362,7 @@ if (!existsSync(pkgPath)) {
       // Check dependencies
       if (pkg.dependencies) {
         const depCount = Object.keys(pkg.dependencies).length;
-        success(state, `Dependencies: ${depCount}`);
+        success(state, `Dependencies: ${String(depCount)}`);
         console.log(`   Runtime deps: ${Object.keys(pkg.dependencies).join(', ')}`);
       } else {
         warn(state, 'No dependencies declared');
@@ -322,13 +370,13 @@ if (!existsSync(pkgPath)) {
 
       if (pkg.devDependencies) {
         const devDepCount = Object.keys(pkg.devDependencies).length;
-        success(state, `DevDependencies: ${devDepCount}`);
+        success(state, `DevDependencies: ${String(devDepCount)}`);
       }
 
       // Check engines
       if (pkg.engines) {
         success(state, `Node version requirement: ${pkg.engines.node ?? 'not specified'}`);
-        if (pkg.engines.npm) {
+        if (pkg.engines.npm !== undefined && pkg.engines.npm !== '') {
           success(state, `npm version requirement: ${pkg.engines.npm}`);
         }
       } else {
@@ -369,7 +417,15 @@ if (!existsSync(tsconfigPath)) {
   warn(state, 'tsconfig.json not found');
 } else {
   try {
-    const rawTsconfig: unknown = JSON.parse(readFileSync(tsconfigPath, 'utf8'));
+    const parsedTsconfig = parseConfigFileTextToJson(
+      tsconfigPath,
+      readFileSync(tsconfigPath, 'utf8'),
+    );
+    if (parsedTsconfig.error !== undefined) {
+      const message = flattenDiagnosticMessageText(parsedTsconfig.error.messageText, '\n');
+      warn(state, `Could not parse tsconfig.json: ${message}`);
+    }
+    const rawTsconfig: unknown = parsedTsconfig.config;
 
     if (!isTsConfig(rawTsconfig)) {
       warn(state, 'tsconfig.json could not be parsed as an object');
@@ -427,8 +483,8 @@ if (existsSync(join(ROOT_DIR, 'dist', 'node_modules'))) {
 // ── Summary ─────────────────────────────────────────────────────────────────
 console.log('\n═══════════════════════════════════════════════════');
 console.log('📊 Verification Summary:');
-console.log(`   ${state.errors === 0 ? '✅ No errors' : `❌ ${state.errors} error(s)`}`);
-console.log(`   ⚠️  ${state.warnings === 0 ? 'No warnings' : `${state.warnings} warning(s)`}`);
+console.log(`   ${state.errors === 0 ? '✅ No errors' : `❌ ${String(state.errors)} error(s)`}`);
+console.log(`   ⚠️  ${state.warnings === 0 ? 'No warnings' : `${String(state.warnings)} warning(s)`}`);
 console.log('═══════════════════════════════════════════════════');
 
 if (state.errors > 0) {

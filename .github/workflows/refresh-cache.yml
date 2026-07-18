@@ -1,0 +1,89 @@
+name: Refresh EP Data Cache
+
+# Full refresh of the bundled EP Open Data Portal cache
+# (data/cache/{meps,corporate-bodies,controlled-vocabularies}.json +
+# manifest.json). Replaces the previous three incremental/resumable
+# "weekly cache" workflows: this generator fetches every current MEP,
+# corporate body and controlled vocabulary (plus full details) in a
+# single run, validates 100% completeness, and atomically publishes a
+# SHA-256-verified manifest. Generation fails outright (non-zero exit)
+# rather than publishing a partial/incomplete cache.
+#
+# ISMS Policy: AU-002 (Audit Logging), SC-002 (Input Validation)
+# Data source: European Parliament Open Data Portal — data.europarl.europa.eu
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'
+  workflow_dispatch: {}
+
+concurrency:
+  group: refresh-cache
+  cancel-in-progress: false
+
+env:
+  NPM_CONFIG_FETCH_RETRIES: "5"
+  NPM_CONFIG_FETCH_RETRY_MINTIMEOUT: "20000"
+  NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT: "120000"
+  NPM_CONFIG_FETCH_TIMEOUT: "300000"
+
+jobs:
+  refresh-cache:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 120
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '26'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate full EP data cache
+        run: npm run generate:cache
+        env:
+          NODE_ENV: production
+
+      - name: Create pull request with refreshed cache
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain=v1 --untracked-files=all -- data/cache)" ]; then
+            echo "No cache changes detected."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BRANCH="automation/refresh-cache-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git add -A -- data/cache
+          if git diff --cached --quiet; then
+            echo "No staged cache changes detected."
+            exit 0
+          fi
+          git commit -m "chore: refresh EP data cache [skip ci]"
+          git push --force-with-lease origin "HEAD:$BRANCH"
+
+          PR_NUMBER=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -n "$PR_NUMBER" ]; then
+            echo "PR for $BRANCH already exists (#$PR_NUMBER)."
+          else
+            gh pr create \
+              --title "chore: refresh EP data cache" \
+              --body "Automated full refresh of the bundled MEP, corporate-bodies and controlled-vocabularies cache from the EP Open Data API v2, with SHA-256 manifest verification." \
+              --base main \
+              --head "$BRANCH"
+          fi

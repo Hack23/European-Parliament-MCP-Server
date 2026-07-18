@@ -97,7 +97,7 @@ export async function handleGetMEPDetails(
     const cachedResponse = await getCachedMEPDetailsResponse(params);
     if (cachedResponse !== null) return cachedResponse;
 
-    const result = await epClient.getMEPDetails(params.id);
+    const result = await epClient.getMEPDetails(params.id, { live: params.live });
 
     const validated = MEPDetailsSchema.parse(result);
 

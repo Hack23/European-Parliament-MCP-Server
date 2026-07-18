@@ -22,6 +22,8 @@ import { epClient } from '../clients/europeanParliamentClient.js';
 import { auditLogger, toErrorMessage } from '../utils/auditLogger.js';
 import { fetchAllCurrentMEPs } from '../utils/mepFetcher.js';
 import { normalizePoliticalGroup } from '../utils/politicalGroupNormalization.js';
+import { deriveCurrentPoliticalComposition } from '../utils/politicalComposition.js';
+import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
 import type { ToolResult } from './shared/types.js';
 import { withTimeout, TimeoutError } from '../utils/timeout.js';
 import { buildTimeoutResponse } from './shared/errorHandler.js';
@@ -45,7 +47,11 @@ export const GeneratePoliticalLandscapeSchema = z.object({
   dateTo: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
     .optional()
-    .describe('End date for analysis period')
+    .describe('End date for analysis period'),
+  live: z.boolean()
+    .optional()
+    .default(false)
+    .describe('When true, bypasses the bundled cache and fetches current MEPs from EP API v2'),
 });
 
 /**
@@ -82,6 +88,7 @@ interface PoliticalLandscape {
   };
   computedAttributes: {
     fragmentationIndex: string;
+    effectiveNumberOfParties: number;
     majorityType: string;
     politicalBalance: string;
     overallEngagement: string;
@@ -119,6 +126,11 @@ function computeFragmentation(groupCount: number): string {
   if (groupCount >= 8) return 'HIGH';
   if (groupCount >= 5) return 'MODERATE';
   return 'LOW';
+}
+
+function computeEffectiveNumberOfParties(groups: readonly GroupSummary[]): number {
+  const sumSquares = groups.reduce((sum, group) => sum + (group.seatShare / 100) ** 2, 0);
+  return sumSquares === 0 ? 0 : Math.round((1 / sumSquares) * 100) / 100;
 }
 
 /**
@@ -197,7 +209,7 @@ function computePowerDynamics(
   totalMEPs: number
 ): PoliticalLandscape['powerDynamics'] {
   const largestGroup = groups[0]?.name ?? 'Unknown';
-  const majorityThreshold = Math.ceil(totalMEPs / 2) + 1;
+  const majorityThreshold = Math.floor(totalMEPs / 2) + 1;
   const grandSize = (groups[0]?.memberCount ?? 0) + (groups[1]?.memberCount ?? 0);
 
   let progressive = 0;
@@ -218,18 +230,99 @@ function computePowerDynamics(
 }
 
 /**
+ * Composition source resolved for a landscape build — either derived from
+ * the bundled cache (default) or fetched live from the EP API.
+ */
+interface ResolvedComposition {
+  groups: GroupSummary[];
+  countriesRepresented: number;
+  totalMEPs: number;
+  cachedGeneratedAt: string | null;
+  cachedWarnings: string[];
+  mepComplete: boolean | null;
+  mepFailureOffset: number | undefined;
+}
+
+/**
+ * Resolve group composition either from the bundled cache (default) or via
+ * a live EP API fetch (when `live` is true or no cache is available).
+ */
+async function resolveComposition(live: boolean): Promise<ResolvedComposition> {
+  const cached = live ? null : await loadWeeklyMEPCache();
+  if (cached !== null) {
+    const composition = deriveCurrentPoliticalComposition(cached);
+    return {
+      groups: composition.groups,
+      countriesRepresented: composition.countriesRepresented,
+      totalMEPs: composition.totalMEPs,
+      cachedGeneratedAt: cached.metadata.generatedAt,
+      cachedWarnings: composition.dataQualityWarnings,
+      mepComplete: null,
+      mepFailureOffset: undefined,
+    };
+  }
+
+  const mepResult = await fetchAllCurrentMEPs();
+  const liveComposition = aggregateByGroup(mepResult.meps);
+  return {
+    groups: liveComposition.groups,
+    countriesRepresented: liveComposition.countriesRepresented,
+    totalMEPs: liveComposition.totalMEPs,
+    cachedGeneratedAt: null,
+    cachedWarnings: [],
+    mepComplete: mepResult.complete,
+    mepFailureOffset: mepResult.failureOffset,
+  };
+}
+
+/** Fetch the recent plenary session count for the given date range, tolerating failures. */
+async function fetchRecentSessionCount(dateFrom: string, dateTo: string): Promise<number> {
+  try {
+    const year = parseInt(dateFrom.substring(0, 4), 10);
+    const sessions = await epClient.getPlenarySessions({ year, limit: 100 });
+    return sessions.data.length;
+  } catch (error: unknown) {
+    auditLogger.logError('generate_political_landscape.fetch_sessions', { dateFrom, dateTo }, toErrorMessage(error));
+    return 0;
+  }
+}
+
+/** Classify overall confidence in the collected composition. */
+function computeConfidenceLevel(mepComplete: boolean | null, totalMEPs: number): 'HIGH' | 'MEDIUM' | 'LOW' {
+  if (mepComplete === false) return 'LOW';
+  if (totalMEPs >= 600) return 'HIGH';
+  if (totalMEPs >= 200) return 'MEDIUM';
+  return 'LOW';
+}
+
+/** Build the list of data-quality warnings for the resolved composition. */
+function buildDataQualityWarnings(resolved: ResolvedComposition): string[] {
+  const warnings: string[] = [
+    ...resolved.cachedWarnings,
+    'Bloc classification (progressive/conservative/centre) uses hardcoded group mapping — NI members classified as centre by default',
+    'Attendance data unavailable from EP API — average attendance reported as zero',
+  ];
+  if (resolved.mepComplete === false) {
+    const offsetLabel = resolved.mepFailureOffset !== undefined
+      ? `offset ${String(resolved.mepFailureOffset)}`
+      : 'an unknown offset';
+    warnings.push(
+      `MEP pagination failed at ${offsetLabel}; seat shares are computed from the partial roster collected before the failure.`
+    );
+  }
+  return warnings;
+}
+
+/**
  * Build political landscape from EP data
  */
 async function buildLandscape(
   dateFrom: string,
-  dateTo: string
+  dateTo: string,
+  live: boolean,
 ): Promise<PoliticalLandscape> {
-  const mepResult = await fetchAllCurrentMEPs();
-  const meps = mepResult.meps;
-
-  const { groups, countriesRepresented, totalMEPs } = aggregateByGroup(
-    meps
-  );
+  const resolved = await resolveComposition(live);
+  const { groups, countriesRepresented, totalMEPs } = resolved;
 
   const powerDynamics = computePowerDynamics(groups, totalMEPs);
   const largestShare = groups[0]?.seatShare ?? 0;
@@ -237,41 +330,9 @@ async function buildLandscape(
     (powerDynamics.grandCoalitionSize / Math.max(1, totalMEPs)) * 10000
   ) / 100;
 
-  let recentSessionCount = 0;
-  try {
-    const year = parseInt(dateFrom.substring(0, 4), 10);
-    const sessions = await epClient.getPlenarySessions({
-      year,
-      limit: 100
-    });
-    recentSessionCount = sessions.data.length;
-  } catch (error: unknown) {
-    auditLogger.logError('generate_political_landscape.fetch_sessions', { dateFrom, dateTo }, toErrorMessage(error));
-  }
-
-  let confidenceLevel: 'HIGH' | 'MEDIUM' | 'LOW';
-  if (!mepResult.complete) {
-    confidenceLevel = 'LOW';
-  } else if (totalMEPs >= 600) {
-    confidenceLevel = 'HIGH';
-  } else if (totalMEPs >= 200) {
-    confidenceLevel = 'MEDIUM';
-  } else {
-    confidenceLevel = 'LOW';
-  }
-
-  const dataQualityWarnings: string[] = [
-    'Bloc classification (progressive/conservative/centre) uses hardcoded group mapping — NI members classified as centre by default',
-    'Attendance data unavailable from EP API — average attendance reported as zero',
-  ];
-  if (!mepResult.complete) {
-    const offsetLabel = mepResult.failureOffset !== undefined
-      ? `offset ${String(mepResult.failureOffset)}`
-      : 'an unknown offset';
-    dataQualityWarnings.push(
-      `MEP pagination failed at ${offsetLabel}; seat shares are computed from the partial roster collected before the failure.`
-    );
-  }
+  const recentSessionCount = await fetchRecentSessionCount(dateFrom, dateTo);
+  const confidenceLevel = computeConfidenceLevel(resolved.mepComplete, totalMEPs);
+  const dataQualityWarnings = buildDataQualityWarnings(resolved);
 
   return {
     period: { from: dateFrom, to: dateTo },
@@ -288,6 +349,7 @@ async function buildLandscape(
     },
     computedAttributes: {
       fragmentationIndex: computeFragmentation(groups.length),
+      effectiveNumberOfParties: computeEffectiveNumberOfParties(groups),
       majorityType: computeMajorityType(largestShare, grandShare),
       politicalBalance: computePoliticalBalance(
         powerDynamics.progressiveBloc,
@@ -296,11 +358,14 @@ async function buildLandscape(
       overallEngagement: computeEngagement(0)
     },
     confidenceLevel,
-    dataFreshness: 'Real-time EP API data — MEP records and plenary sessions from EP Open Data',
+    dataFreshness: resolved.cachedGeneratedAt === null
+      ? 'Live EP API v2 current-MEP data'
+      : `Bundled EP API v2 cache generated ${resolved.cachedGeneratedAt}`,
     sourceAttribution: 'European Parliament Open Data Portal - data.europarl.europa.eu',
-    methodology: 'Political landscape analysis using real EP Open Data: full paginated MEP '
-      + 'roster (typically ~720 MEPs in EP10), group composition mapping with native-language '
-      + 'acronym normalisation (e.g. PPE → EPP, Verts-ALE → Greens/EFA, ID → PfE), bloc '
+    methodology: 'Political landscape analysis using European Parliament Open Data. Cached mode '
+      + 'assigns every current MEP from dated hasMembership records classified EU_POLITICAL_GROUP, '
+      + 'with normalized list data used only as a completeness fallback. Live mode uses the full '
+      + 'paginated current-MEP roster. Group labels use native-language acronym normalisation, bloc '
       + 'classification, coalition threshold calculation, fragmentation indexing, and plenary '
       + 'session counts (fetched page count, lower bound). Attendance data is not available '
       + 'from the EP API and is reported as zero. Data source: European Parliament Open Data Portal.',
@@ -354,7 +419,7 @@ export async function handleGeneratePoliticalLandscape(
 
   try {
     const landscape = await withTimeout(
-      buildLandscape(dateFrom, dateTo),
+      buildLandscape(dateFrom, dateTo, params.live),
       OPERATION_TIMEOUT_MS,
       'generate_political_landscape operation timed out'
     );
@@ -391,6 +456,11 @@ export const generatePoliticalLandscapeToolMetadata = {
       dateTo: {
         type: 'string',
         description: 'End date (YYYY-MM-DD)'
+      },
+      live: {
+        type: 'boolean',
+        description: 'Bypass bundled current-MEP cache and fetch live EP API v2 data',
+        default: false,
       }
     },
     required: []
