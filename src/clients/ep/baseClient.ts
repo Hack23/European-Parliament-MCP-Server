@@ -184,6 +184,8 @@ export interface EPClientConfig {
   maxRetries?: number;
   /** Maximum allowed response body size in bytes. @default 10485760 (10 MiB) */
   maxResponseBytes?: number;
+  /** Use bundled weekly snapshots before the live API. Intended for the runtime singleton. */
+  useWeeklyCache?: boolean;
 }
 
 /**

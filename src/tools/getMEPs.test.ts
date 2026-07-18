@@ -19,6 +19,7 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
 
 vi.mock('../utils/weeklyDataCache.js', () => ({
   loadWeeklyMEPCache: vi.fn(),
+  loadWeeklyCorporateBodiesCache: vi.fn(),
 }));
 
 vi.mock('../utils/auditLogger.js', () => ({
@@ -51,6 +52,7 @@ describe('get_meps Tool', () => {
       hasMore: false
     });
     vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
+    vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValue(null);
   });
 
   describe('Input Validation', () => {
@@ -288,6 +290,51 @@ describe('get_meps Tool', () => {
     it('should bypass cache when live=true', async () => {
       await handleGetMEPs({ live: true, limit: 10 });
       expect(epClientModule.epClient.getMEPs).toHaveBeenCalled();
+    });
+
+    it('should resolve committee abbreviations through cached MEP details', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 2,
+          generatedAt: '2026-07-18T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+          dataset: 'meps',
+          scope: 'current',
+        },
+        meps: [{
+          id: 'person/1', name: 'Cached ENVI MEP', country: 'SE', politicalGroup: 'EPP',
+          committees: [], active: true, termStart: '2024-07-16',
+        }],
+        mepDetails: {
+          'person/1': {
+            id: 'person/1', name: 'Cached ENVI MEP', country: 'SE', politicalGroup: 'EPP',
+            committees: ['org/7913'], active: true, termStart: '2024-07-16',
+          },
+        },
+      });
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 2,
+          generatedAt: '2026-07-18T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+          dataset: 'corporate-bodies',
+          scope: 'current',
+        },
+        corporateBodies: [{
+          id: '7913', name: 'Environment Committee', abbreviation: 'ENVI', members: [],
+          responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING'],
+        }],
+      });
+
+      const result = await handleGetMEPs({ committee: 'ENVI' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as { data: Array<{ id: string; committees: string[] }> };
+
+      expect(parsed.data).toEqual([
+        expect.objectContaining({ id: 'person/1', committees: ['org/7913'] }),
+      ]);
+      expect(epClientModule.epClient.getMEPs).not.toHaveBeenCalled();
     });
 
     it('should bypass stale cache when it contains no active MEPs', async () => {

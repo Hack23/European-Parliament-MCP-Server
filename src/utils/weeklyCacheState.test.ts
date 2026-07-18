@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   cacheDetail,
+  compactDetailMap,
   hasCachedDetail,
   pruneMissingIds,
   readIncrementalDetailState,
@@ -89,6 +90,28 @@ describe('hasCachedDetail / cacheDetail', () => {
     expect(Object.hasOwn(details, 'constructor')).toBe(false);
     expect(Object.hasOwn(details, 'prototype')).toBe(false);
     expect(details.constructor).not.toEqual({ name: 'X' });
+  });
+});
+
+describe('compactDetailMap', () => {
+  it('keeps one canonical key per active item and drops stale aliases', () => {
+    const compacted = compactDetailMap({
+      items: [{ id: 'person/1' }, { id: 'person/2' }],
+      details: {
+        '1': { id: 'person/1' },
+        'MEP-1': { id: 'person/1' },
+        'person/1': { id: 'person/1' },
+        stale: { id: 'person/999' },
+      },
+      idFor: (item) => item.id,
+      keysFor: (item) => {
+        const numericId = item.id.substring('person/'.length);
+        return [item.id, numericId, `MEP-${numericId}`];
+      },
+    });
+
+    expect({ ...compacted }).toEqual({ 'person/1': { id: 'person/1' } });
+    expect(Object.getPrototypeOf(compacted)).toBeNull();
   });
 });
 

@@ -22,23 +22,54 @@ import { buildApiParams } from './shared/paramBuilder.js';
 import { ToolError } from './shared/errors.js';
 import { z } from 'zod';
 import type { ToolResult } from './shared/types.js';
-import { loadWeeklyMEPCache } from '../utils/weeklyDataCache.js';
+import {
+  loadWeeklyCorporateBodiesCache,
+  loadWeeklyMEPCache,
+  type WeeklyMEPCache,
+} from '../utils/weeklyDataCache.js';
+import { findCachedCommittee } from '../utils/committeeCache.js';
 import { auditLogger } from '../utils/auditLogger.js';
 
 type GetMEPsParams = ReturnType<typeof GetMEPsSchema.parse>;
 
+function cachedMEPDetails(cache: WeeklyMEPCache, id: string): WeeklyMEPCache['mepDetails'][string] | undefined {
+  const normalizedId = id.replace(/^MEP-/, '').replace(/^person\//, '');
+  return cache.mepDetails[id]
+    ?? cache.mepDetails[normalizedId]
+    ?? cache.mepDetails[`MEP-${normalizedId}`]
+    ?? cache.mepDetails[`person/${normalizedId}`];
+}
+
+function matchesCommittee(committees: readonly string[], requested: string): boolean {
+  const normalized = requested.toUpperCase();
+  return committees.some((committee) =>
+    committee.toUpperCase() === normalized
+      || committee.split('/').pop()?.toUpperCase() === normalized,
+  );
+}
+
 async function getCachedMEPResponse(params: GetMEPsParams): Promise<ToolResult | null> {
   if (params.live) return null;
-  const cached = await loadWeeklyMEPCache();
+  const [cached, cachedBodies] = await Promise.all([
+    loadWeeklyMEPCache(),
+    loadWeeklyCorporateBodiesCache(),
+  ]);
   if (cached === null) return null;
   if (params.active && cached.meps.length > 0 && !cached.meps.some((mep) => mep.active)) {
     return null;
   }
 
-  const filtered = cached.meps.filter((mep) => {
+  const resolvedCommittee = params.committee === undefined || cachedBodies === null
+    ? params.committee
+    : findCachedCommittee(params.committee, cachedBodies, cached)?.id ?? params.committee;
+  const enrichedMEPs = cached.meps.map((mep) => ({
+    ...mep,
+    committees: cachedMEPDetails(cached, mep.id)?.committees ?? mep.committees,
+  }));
+  const filtered = enrichedMEPs.filter((mep) => {
     if (params.country !== undefined && mep.country.toUpperCase() !== params.country.toUpperCase()) return false;
     if (params.group !== undefined && mep.politicalGroup !== params.group) return false;
-    if (params.committee !== undefined && !mep.committees.includes(params.committee)) return false;
+    if (resolvedCommittee !== undefined && !matchesCommittee(mep.committees, resolvedCommittee)) return false;
     if (mep.active !== params.active) return false;
     return true;
   });
@@ -136,6 +167,7 @@ export async function handleGetMEPs(
       active: params.active,
       limit: params.limit,
       offset: params.offset,
+      live: params.live,
       ...buildApiParams(params, [
         { from: 'country', to: 'country' },
         { from: 'group', to: 'group' },

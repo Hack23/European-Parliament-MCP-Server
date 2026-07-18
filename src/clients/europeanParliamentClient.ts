@@ -30,6 +30,16 @@
 
 import { LRUCache } from 'lru-cache';
 import { RateLimiter } from '../utils/rateLimiter.js';
+import {
+  loadWeeklyCorporateBodiesCache,
+  loadWeeklyMEPCache,
+  type WeeklyMEPCache,
+} from '../utils/weeklyDataCache.js';
+import {
+  findCachedCommittee,
+  listCachedCurrentCorporateBodies,
+} from '../utils/committeeCache.js';
+import { CommitteeSchema, MEPDetailsSchema, MEPSchema } from '../schemas/europeanParliament.js';
 import type {
   MEP,
   MEPDetails,
@@ -150,6 +160,7 @@ export class EuropeanParliamentClient {
   private readonly legislativeClient: LegislativeClient;
   private readonly questionClient: QuestionClient;
   private readonly vocabularyClient: VocabularyClient;
+  private readonly useWeeklyCache: boolean;
 
   /**
    * Creates a new European Parliament API client.
@@ -161,6 +172,7 @@ export class EuropeanParliamentClient {
    */
   constructor(config: EPClientConfig = {}) {
     const shared = EuropeanParliamentClient.buildShared(config);
+    this.useWeeklyCache = config.useWeeklyCache ?? false;
     this.mepClient = new MEPClient({}, shared);
     this.plenaryClient = new PlenaryClient({}, shared);
     this.votingClient = new VotingClient({}, shared);
@@ -235,6 +247,93 @@ export class EuropeanParliamentClient {
     return this.mepClient.getCacheStats();
   }
 
+  private normalizeMEPIdentifier(id: string): string {
+    if (id.startsWith('MEP-')) return id.substring(4);
+    if (id.startsWith('person/')) return id.substring(7);
+    return id;
+  }
+
+  private findCachedMEPDetails(cache: WeeklyMEPCache, id: string): MEPDetails | undefined {
+    const normalizedId = this.normalizeMEPIdentifier(id);
+    const cached = cache.mepDetails[id]
+      ?? cache.mepDetails[normalizedId]
+      ?? cache.mepDetails[`MEP-${normalizedId}`]
+      ?? cache.mepDetails[`person/${normalizedId}`];
+    return cached === undefined ? undefined : MEPDetailsSchema.parse(cached) as MEPDetails;
+  }
+
+  private buildCachedCurrentMEPs(cache: WeeklyMEPCache): MEP[] {
+    return cache.meps.filter((mep) => mep.active).map((mep) => {
+      const details = this.findCachedMEPDetails(cache, mep.id);
+      const enriched = details === undefined ? mep : { ...mep, committees: details.committees };
+      return MEPSchema.parse(enriched) as MEP;
+    });
+  }
+
+  private paginateCachedMEPs(
+    meps: MEP[],
+    params: { country?: string; group?: string; limit?: number; offset?: number },
+  ): PaginatedResponse<MEP> {
+    const country = params.country?.toUpperCase();
+    const group = params.group?.trim().toLowerCase();
+    const filtered = meps.filter((mep) =>
+      (country === undefined || mep.country.toUpperCase() === country)
+      && (group === undefined || mep.politicalGroup.trim().toLowerCase() === group),
+    );
+    const limit = params.limit ?? 50;
+    const offset = params.offset ?? 0;
+    const data = filtered.slice(offset, offset + limit);
+    return {
+      data,
+      total: filtered.length,
+      limit,
+      offset,
+      hasMore: offset + data.length < filtered.length,
+    };
+  }
+
+  private matchesCommittee(committees: readonly string[], requested: string): boolean {
+    const normalized = requested.toUpperCase();
+    return committees.some((committee) =>
+      committee.toUpperCase() === normalized
+        || committee.split('/').pop()?.toUpperCase() === normalized,
+    );
+  }
+
+  private async filterCachedMEPsByCommittee(
+    meps: MEP[],
+    requested: string | undefined,
+    cache: WeeklyMEPCache,
+  ): Promise<MEP[]> {
+    if (requested === undefined) return meps;
+    const bodies = await loadWeeklyCorporateBodiesCache();
+    const resolved = bodies === null
+      ? requested
+      : findCachedCommittee(requested, bodies, cache)?.id ?? requested;
+    return meps.filter((mep) => this.matchesCommittee(mep.committees, resolved));
+  }
+
+  private async getCachedMEPs(params: {
+    country?: string;
+    group?: string;
+    committee?: string;
+    active?: boolean;
+    limit?: number;
+    offset?: number;
+    abortSignal?: AbortSignal;
+    live?: boolean;
+  }): Promise<PaginatedResponse<MEP> | null> {
+    if (!this.useWeeklyCache || params.live === true || params.active === false) return null;
+    const cache = await loadWeeklyMEPCache();
+    if (cache === null) return null;
+    const current = await this.filterCachedMEPsByCommittee(
+      this.buildCachedCurrentMEPs(cache),
+      params.committee,
+      cache,
+    );
+    return this.paginateCachedMEPs(current, params);
+  }
+
   /**
    * Retrieves Members of the European Parliament with filtering and pagination.
    *
@@ -252,8 +351,9 @@ export class EuropeanParliamentClient {
     limit?: number;
     offset?: number;
     abortSignal?: AbortSignal;
+    live?: boolean;
   }): Promise<PaginatedResponse<MEP>> {
-    return this.mepClient.getMEPs(params);
+    return await this.getCachedMEPs(params) ?? this.mepClient.getMEPs(params);
   }
 
   /**
@@ -268,7 +368,15 @@ export class EuropeanParliamentClient {
    * @performance Cached: <100ms P50, <200ms P95. Uncached: <2s P99
    * @see https://data.europarl.europa.eu/api/v2/meps/{id}
    */
-  async getMEPDetails(id: string, options: { abortSignal?: AbortSignal } = {}): Promise<MEPDetails> {
+  async getMEPDetails(
+    id: string,
+    options: { abortSignal?: AbortSignal; live?: boolean } = {},
+  ): Promise<MEPDetails> {
+    if (this.useWeeklyCache && options.live !== true) {
+      const cache = await loadWeeklyMEPCache();
+      const cached = cache === null ? undefined : this.findCachedMEPDetails(cache, id);
+      if (cached !== undefined) return cached;
+    }
     return this.mepClient.getMEPDetails(id, options);
   }
 
@@ -287,7 +395,12 @@ export class EuropeanParliamentClient {
     limit?: number;
     offset?: number;
     abortSignal?: AbortSignal;
+    live?: boolean;
   } = {}): Promise<PaginatedResponse<MEP>> {
+    if (this.useWeeklyCache && params.live !== true) {
+      const cache = await loadWeeklyMEPCache();
+      if (cache !== null) return this.paginateCachedMEPs(this.buildCachedCurrentMEPs(cache), params);
+    }
     return this.mepClient.getCurrentMEPs(params);
   }
 
@@ -556,7 +669,19 @@ export class EuropeanParliamentClient {
     id?: string;
     abbreviation?: string;
     abortSignal?: AbortSignal;
+    live?: boolean;
   }): Promise<Committee> {
+    if (this.useWeeklyCache && params.live !== true) {
+      const [bodies, meps] = await Promise.all([
+        loadWeeklyCorporateBodiesCache(),
+        loadWeeklyMEPCache(),
+      ]);
+      const lookup = params.abbreviation ?? params.id;
+      const cached = bodies === null || lookup === undefined
+        ? undefined
+        : findCachedCommittee(lookup, bodies, meps);
+      if (cached !== undefined) return CommitteeSchema.parse(cached) as Committee;
+    }
     return this.committeeClient.getCommitteeInfo(params);
   }
 
@@ -568,7 +693,28 @@ export class EuropeanParliamentClient {
     limit?: number;
     offset?: number;
     abortSignal?: AbortSignal;
+    live?: boolean;
   } = {}): Promise<PaginatedResponse<Committee>> {
+    if (this.useWeeklyCache && params.live !== true) {
+      const [bodies, meps] = await Promise.all([
+        loadWeeklyCorporateBodiesCache(),
+        loadWeeklyMEPCache(),
+      ]);
+      if (bodies !== null && bodies.metadata.scope === 'current') {
+        const allBodies = listCachedCurrentCorporateBodies(bodies, meps)
+          .map((body) => CommitteeSchema.parse(body) as Committee);
+        const limit = params.limit ?? 50;
+        const offset = params.offset ?? 0;
+        const data = allBodies.slice(offset, offset + limit);
+        return {
+          data,
+          total: allBodies.length,
+          limit,
+          offset,
+          hasMore: offset + data.length < allBodies.length,
+        };
+      }
+    }
     return this.committeeClient.getCurrentCorporateBodies(params);
   }
 
@@ -969,6 +1115,7 @@ export class EuropeanParliamentClient {
  * @see {@link EuropeanParliamentClient}
  */
 export const epClient = new EuropeanParliamentClient({
+  useWeeklyCache: true,
   baseURL: ((): string => {
     const raw = process.env['EP_API_URL'];
     if (typeof raw === 'string') {

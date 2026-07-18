@@ -135,7 +135,8 @@ describe('get_current_meps Tool', () => {
 
       expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledWith({
         limit: 20,
-        offset: 5
+        offset: 5,
+        live: false,
       });
     });
 
@@ -144,7 +145,18 @@ describe('get_current_meps Tool', () => {
 
       expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledWith({
         limit: 50,
-        offset: 0
+        offset: 0,
+        live: false,
+      });
+    });
+
+    it('should pass live=true to bypass the weekly cache', async () => {
+      await handleGetCurrentMEPs({ live: true });
+
+      expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalledWith({
+        limit: 50,
+        offset: 0,
+        live: true,
       });
     });
   });

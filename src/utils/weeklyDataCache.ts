@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { z } from 'zod';
 import {
@@ -12,6 +13,8 @@ const WeeklyMetadataSchema = z.object({
   generatedAt: z.string(),
   weekKey: z.string(),
   source: z.string(),
+  dataset: z.enum(['meps', 'corporate-bodies', 'controlled-vocabularies']).optional(),
+  scope: z.enum(['current', 'all']).optional(),
 });
 
 const WeeklyMEPCacheSchema = z.object({
@@ -36,19 +39,34 @@ export type WeeklyMEPCache = z.infer<typeof WeeklyMEPCacheSchema>;
 export type WeeklyCorporateBodiesCache = z.infer<typeof WeeklyCorporateBodiesCacheSchema>;
 export type WeeklyVocabulariesCache = z.infer<typeof WeeklyVocabulariesCacheSchema>;
 
-function getWeeklyCachePath(dataset: 'meps' | 'corporate-bodies' | 'controlled-vocabularies'): string {
-  return path.resolve(process.cwd(), 'data', 'weekly', dataset, 'latest.json');
+const validatedFileCache = new Map<string, Promise<unknown>>();
+
+type WeeklyDataset = 'meps' | 'corporate-bodies' | 'controlled-vocabularies';
+
+export function getWeeklyCachePath(dataset: WeeklyDataset): string {
+  const configuredRoot = process.env['EP_WEEKLY_CACHE_DIR'];
+  const cacheRoot = configuredRoot === undefined || configuredRoot.trim() === ''
+    ? fileURLToPath(new URL('../../data/weekly/', import.meta.url))
+    : path.resolve(configuredRoot);
+  return path.join(cacheRoot, dataset, 'latest.json');
 }
 
 async function loadAndValidate<T>(filePath: string, schema: z.ZodType<T>): Promise<T | null> {
-  try {
-    const raw = await readFile(filePath, 'utf-8');
-    const parsed: unknown = JSON.parse(raw);
-    const validated = schema.safeParse(parsed);
-    return validated.success ? validated.data : null;
-  } catch {
-    return null;
-  }
+  const existing = validatedFileCache.get(filePath);
+  if (existing !== undefined) return await existing as T | null;
+
+  const loading = (async (): Promise<T | null> => {
+    try {
+      const raw = await readFile(filePath, 'utf-8');
+      const parsed: unknown = JSON.parse(raw);
+      const validated = schema.safeParse(parsed);
+      return validated.success ? validated.data : null;
+    } catch {
+      return null;
+    }
+  })();
+  validatedFileCache.set(filePath, loading);
+  return loading;
 }
 
 export async function loadWeeklyMEPCache(): Promise<WeeklyMEPCache | null> {

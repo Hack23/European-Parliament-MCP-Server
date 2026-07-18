@@ -155,7 +155,7 @@ pie title E2E Test Case Distribution
 | MCP Operation | Covered By | Verified Assertions |
 |---------------|-----------|---------------------|
 | `initialize` (handshake) | All files (via `mcpClient.connect()`) | Server starts, capabilities negotiated |
-| `tools/list` | `fullWorkflow` | 62 tools returned with names and descriptions |
+| `tools/list` | `fullWorkflow` | 63 tools returned with names and descriptions |
 | `tools/call` | All files | Tool execution, response structure, error handling |
 | `resources/list` | `fullWorkflow`, `promptsAndResources` | 9 resource templates returned |
 | `resources/read` | `promptsAndResources` | Resource content returned for valid URIs |
@@ -170,10 +170,11 @@ pie title E2E Test Case Distribution
 
 | Requirement | Value | Notes |
 |-------------|-------|-------|
-| **Node.js** | 25+ (Current) | Required for ES module support and MCP SDK compatibility |
+| **Node.js** | 26+ (Current) | Required for ES module support and MCP SDK compatibility |
 | **Build artifacts** | `dist/index.js` must exist | Run `npm run build` before E2E tests |
-| **EP API reachability** | European Parliament Open Data Portal must be accessible | Tests make live HTTP requests to `https://data.europarl.europa.eu/` |
-| **Network access** | Outbound HTTPS on port 443 | For EP API calls |
+| **Weekly snapshots** | Three valid `data/weekly/*/latest.json` files | MEP, committee, and vocabulary paths are deterministic and cache-backed |
+| **EP API reachability** | European Parliament Open Data Portal should be accessible | Non-cached tools make live HTTP requests to `https://data.europarl.europa.eu/` |
+| **Network access** | Outbound HTTPS on port 443 | Required for non-cached EP API calls |
 | **Timeout tolerance** | EP API responses may take 10–60 seconds | Default tool call timeout: 100 seconds |
 
 ### Environment Variables
@@ -183,6 +184,7 @@ pie title E2E Test Case Distribution
 | `EP_REQUEST_TIMEOUT_MS` | No | `60000` | EP API request timeout (set in CI) |
 | `NODE_ENV` | No | `test` | Runtime environment |
 | `EP_API_URL` | No | `https://data.europarl.europa.eu/api/v2` | EP Open Data API base URL |
+| `EP_WEEKLY_CACHE_DIR` | No | Bundled `data/weekly` | Override root for weekly runtime snapshots |
 
 ### CI Environment
 
@@ -243,7 +245,7 @@ npm run docs:e2e-reports
 |------|-----------|-------------|
 | **All E2E tests pass** | 71/71 green | CI blocks merge on failure |
 | **Server starts successfully** | `mcpClient.connect()` succeeds | First assertion in every test file |
-| **Tool listing complete** | 62 tools returned | Verified in `fullWorkflow` |
+| **Tool listing complete** | 63 tools returned | Verified in `fullWorkflow` |
 | **Resource listing complete** | 9 resources returned | Verified in `fullWorkflow` / `promptsAndResources` |
 | **Prompt listing complete** | 7 prompts returned | Verified in `promptsAndResources` |
 | **No unhandled exceptions** | Server process exits cleanly | Harness monitors child process |
@@ -254,7 +256,7 @@ npm run docs:e2e-reports
 E2E tests are integrated into the `integration-tests.yml` GitHub Actions workflow:
 - **Trigger:** Push to main, pull requests, daily schedule (2 AM UTC), manual dispatch
 - **Runner:** `ubuntu-latest` with 45-minute timeout
-- **Node.js:** Version 25.x
+- **Node.js:** Version 26.x
 - **Dependencies:** Build step must complete before E2E execution
 - **Failure action:** Workflow fails; PR merge blocked
 
@@ -286,10 +288,10 @@ E2E test coverage is uploaded to Codecov with the `e2e` flag, enabling separate 
 |---------|-------------|------------|
 | `ECONNREFUSED` during connect | Server binary not built | Run `npm run build` |
 | `Timeout` on tool calls | EP API slow or unreachable | Check EP API status; increase `EP_REQUEST_TIMEOUT_MS` |
-| Tool count mismatch (≠62) | Tool added/removed without test update | Update `fullWorkflow` assertion |
+| Tool count mismatch (≠63) | Tool added/removed without test update | Update `fullWorkflow` assertion |
 | Zod validation error in response | EP API schema change | Update Zod schema in corresponding tool handler |
 | `SIGTERM` / process crash | Server bug or OOM | Check Node.js memory; review recent code changes |
-| Rate limit errors | Previous test run didn't clean up | Wait 1 minute for token bucket refill |
+| Rate limit errors | Live EP API quota exhausted by non-cached tools | Confirm weekly snapshots are valid; retry after the upstream quota resets |
 
 ### Triage Decision Tree
 

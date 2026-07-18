@@ -1,9 +1,11 @@
 {
   "metadata": {
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "generatedAt": "2026-07-13T04:19:28.646Z",
     "weekKey": "2026-W29",
-    "source": "EP Open Data Portal API v2"
+    "source": "EP Open Data Portal API v2",
+    "dataset": "controlled-vocabularies",
+    "scope": "all"
   },
   "vocabularies": [
     {

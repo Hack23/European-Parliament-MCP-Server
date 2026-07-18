@@ -48,7 +48,7 @@ describe('Full Workflow E2E Tests', () => {
   }, 10000);
 
   describe('Complete Tool Coverage', () => {
-    it('should verify all 46 MCP tools are registered', async () => {
+    it('should verify all 63 MCP tools are registered', async () => {
       const tools = await client.listTools();
       const toolNames = tools.map(t => t.name);
 
@@ -179,17 +179,23 @@ describe('Full Workflow E2E Tests', () => {
       expect(Array.isArray(data)).toBe(true);
     }, E2E_TEST_TIMEOUT_MS);
 
-    it('should execute get_committee_info tool', async () => {
-      const response = await retryOrSkip(
-        () => client.callTool('get_committee_info', {
-          abbreviation: 'ENVI'
-        }),
-        'get_committee_info'
-      );
-      if (response === undefined) return; // Skipped due to rate limit/timeout
+    it('should return cached committee roster and leadership', async () => {
+      const response = await client.callTool('get_committee_info', {
+        abbreviation: 'ENVI'
+      });
       validateMCPResponse(response);
-      const data = parseMCPResponse(response.content); // Non-paginated response
-      expect(typeof data).toBe('object');
+      const committee = parseMCPResponse<{
+        members?: unknown;
+        memberships?: unknown;
+        chair?: unknown;
+        viceChairs?: unknown;
+      }>(response.content);
+      expect(Array.isArray(committee.members)).toBe(true);
+      expect(committee.members.length).toBeGreaterThan(0);
+      expect(Array.isArray(committee.memberships)).toBe(true);
+      expect(committee.memberships.length).toBeGreaterThan(0);
+      expect(typeof committee.chair).toBe('string');
+      expect(Array.isArray(committee.viceChairs)).toBe(true);
     }, E2E_TEST_TIMEOUT_MS);
 
     it('should execute get_parliamentary_questions tool', async () => {

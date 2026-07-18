@@ -377,17 +377,40 @@ describe('generate_report Tool', () => {
       }
     });
 
-    it('should throw ToolError for LEGISLATION_PROGRESS when all EP API calls fail', async () => {
+    it('should use generated annual statistics for LEGISLATION_PROGRESS when all live calls fail', async () => {
       vi.mocked(epClient.getProcedures).mockRejectedValue(new Error('Network Error'));
       vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('Network Error'));
 
-      await expect(
-        handleGenerateReport({
-          reportType: 'LEGISLATION_PROGRESS',
-          dateFrom: '2025-01-01',
-          dateTo: '2025-12-31'
-        })
-      ).rejects.toThrow('EP API data unavailable for LEGISLATION_PROGRESS report');
+      const result = await handleGenerateReport({
+        reportType: 'LEGISLATION_PROGRESS',
+        dateFrom: '2025-01-01',
+        dateTo: '2025-12-31'
+      });
+      const parsed = JSON.parse(result.content[0].text) as {
+        statistics: Record<string, number | string>;
+        dataQualityWarnings: string[];
+      };
+
+      expect(parsed.statistics).toMatchObject({
+        totalProcedures: 923,
+        completed: 347,
+        ongoing: 576,
+        dataSource: 'GENERATED_STATS',
+      });
+      expect(parsed.dataQualityWarnings).toContainEqual(
+        expect.stringContaining('precomputed annual statistics'),
+      );
+    });
+
+    it('should throw ToolError for LEGISLATION_PROGRESS when no live or generated data exists', async () => {
+      vi.mocked(epClient.getProcedures).mockRejectedValue(new Error('Network Error'));
+      vi.mocked(epClient.getAdoptedTexts).mockRejectedValue(new Error('Network Error'));
+
+      await expect(handleGenerateReport({
+        reportType: 'LEGISLATION_PROGRESS',
+        dateFrom: '2035-01-01',
+        dateTo: '2035-12-31'
+      })).rejects.toThrow('EP API data unavailable for LEGISLATION_PROGRESS report');
     });
 
     it('should throw ToolError for COMMITTEE_PERFORMANCE when all EP API calls fail (no subjectId)', async () => {

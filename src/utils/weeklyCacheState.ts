@@ -101,6 +101,27 @@ export function cacheDetail(
   }
 }
 
+/**
+ * Re-keys existing detail records by each current item's canonical identifier.
+ * This removes stale entities and duplicate alias keys while retaining data
+ * fetched by an earlier incremental run.
+ */
+export function compactDetailMap<Item>(options: {
+  items: readonly Item[];
+  details: Readonly<Record<string, unknown>>;
+  idFor: (item: Item) => string;
+  keysFor: (item: Item) => readonly string[];
+}): Record<string, unknown> {
+  const compacted = createSafeDetailsMap();
+  for (const item of options.items) {
+    const id = options.idFor(item);
+    if (!isSafeCacheKey(id)) continue;
+    const existingKey = options.keysFor(item).find((key) => options.details[key] !== undefined);
+    if (existingKey !== undefined) compacted[id] = options.details[existingKey];
+  }
+  return compacted;
+}
+
 /** Options controlling a single incremental detail-refresh batch. */
 export interface DetailBatchOptions<Item> {
   /** Full current roster of items. */

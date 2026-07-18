@@ -18,6 +18,7 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
 
 vi.mock('../utils/weeklyDataCache.js', () => ({
   loadWeeklyCorporateBodiesCache: vi.fn(),
+  loadWeeklyMEPCache: vi.fn(),
 }));
 
 vi.mock('../utils/auditLogger.js', () => ({
@@ -41,6 +42,7 @@ describe('get_committee_info Tool', () => {
       responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING']
     });
     vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValue(null);
+    vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
   });
 
   describe('Input Validation', () => {
@@ -223,6 +225,74 @@ describe('get_committee_info Tool', () => {
       );
     });
 
+    it('should derive current committee roster and leadership from the weekly MEP cache', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-07-13T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+        },
+        corporateBodies: [{
+          id: '6563',
+          name: 'Committee on the Environment',
+          abbreviation: 'ENVI',
+          members: [],
+          responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING'],
+        }],
+      });
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 1,
+          generatedAt: '2026-07-17T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+        },
+        meps: [
+          { id: 'person/1', name: 'Chair', country: 'SE', politicalGroup: 'EPP', committees: [], active: true, termStart: '' },
+          { id: 'person/2', name: 'Vice Chair', country: 'DE', politicalGroup: 'S&D', committees: [], active: true, termStart: '' },
+          { id: 'person/3', name: 'Member', country: 'FR', politicalGroup: 'Renew', committees: [], active: true, termStart: '' },
+          { id: 'person/4', name: 'Substitute', country: 'FI', politicalGroup: 'Renew', committees: [], active: true, termStart: '' },
+        ],
+        mepDetails: {
+          'person/1': {
+            id: 'person/1', name: 'Chair', country: 'SE', politicalGroup: 'EPP', committees: [], active: true, termStart: '',
+            hasMembership: [{ organization: 'org/6563', role: 'def/ep-roles/CHAIR', membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING', contactPoint: [] }],
+          },
+          'person/2': {
+            id: 'person/2', name: 'Vice Chair', country: 'DE', politicalGroup: 'S&D', committees: [], active: true, termStart: '',
+            hasMembership: [{ organization: 'org/6563', role: 'def/ep-roles/CHAIR_VICE', membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING', contactPoint: [] }],
+          },
+          'person/3': {
+            id: 'person/3', name: 'Member', country: 'FR', politicalGroup: 'Renew', committees: [], active: true, termStart: '',
+            hasMembership: [{ organization: 'org/6563', role: 'def/ep-roles/MEMBER', membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING', contactPoint: [] }],
+          },
+          'person/4': {
+            id: 'person/4', name: 'Substitute', country: 'FI', politicalGroup: 'Renew', committees: [], active: true, termStart: '',
+            hasMembership: [{ organization: 'org/6563', role: 'def/ep-roles/MEMBER_SUBSTITUTE', membershipClassification: 'def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING', contactPoint: [] }],
+          },
+        },
+      });
+
+      const result = await handleGetCommitteeInfo({ abbreviation: 'ENVI' });
+      const parsed = JSON.parse(result.content[0]?.text ?? '{}') as {
+        members: string[];
+        memberships: Array<{ member: string; role?: string }>;
+        chair?: string;
+        viceChairs?: string[];
+      };
+
+      expect(parsed.members).toEqual(['person/1', 'person/2', 'person/3']);
+      expect(parsed.chair).toBe('person/1');
+      expect(parsed.viceChairs).toEqual(['person/2']);
+      expect(parsed.memberships).toHaveLength(4);
+      expect(parsed.memberships).toContainEqual(expect.objectContaining({
+        member: 'person/4',
+        role: 'def/ep-roles/MEMBER_SUBSTITUTE',
+      }));
+      expect(epClientModule.epClient.getCommitteeInfo).not.toHaveBeenCalled();
+    });
+
     it('should bypass cache when live=true', async () => {
       await handleGetCommitteeInfo({ abbreviation: 'ENVI', live: true });
       expect(epClientModule.epClient.getCommitteeInfo).toHaveBeenCalled();
@@ -248,7 +318,33 @@ describe('get_committee_info Tool', () => {
       expect(Array.isArray(parsed.data)).toBe(true);
     });
 
-    it('should bypass weekly cache when showCurrent is true', async () => {
+    it('should use a current-scoped weekly cache for showCurrent', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
+        metadata: {
+          schemaVersion: 2,
+          generatedAt: '2026-07-18T00:00:00.000Z',
+          weekKey: '2026-W29',
+          source: 'test',
+          dataset: 'corporate-bodies',
+          scope: 'current',
+        },
+        corporateBodies: [{
+          id: '7913',
+          name: 'Environment Committee',
+          abbreviation: 'ENVI',
+          members: [],
+          responsibilities: ['COMMITTEE_PARLIAMENTARY_STANDING'],
+        }],
+      });
+
+      const result = await handleGetCommitteeInfo({ showCurrent: true });
+      const parsed = JSON.parse(result.content[0].text) as { data: Array<{ id: string }> };
+
+      expect(parsed.data).toEqual([expect.objectContaining({ id: '7913' })]);
+      expect(epClientModule.epClient.getCurrentCorporateBodies).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to the API for a legacy cache without current scope', async () => {
       vi.mocked(weeklyCacheModule.loadWeeklyCorporateBodiesCache).mockResolvedValueOnce({
         metadata: {
           schemaVersion: 1,

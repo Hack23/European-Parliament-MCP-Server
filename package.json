@@ -150,6 +150,7 @@
   },
   "files": [
     "dist",
+    "data/weekly/*/latest.json",
     "README.md",
     "LICENSE.md",
     "SECURITY.md",

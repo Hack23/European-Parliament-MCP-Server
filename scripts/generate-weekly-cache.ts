@@ -7,10 +7,16 @@ import { CommitteeSchema, MEPDetailsSchema, MEPSchema } from '../src/schemas/eur
 import { fetchAllCurrentMEPs } from '../src/utils/allMepFetcher.js';
 import {
   readIncrementalDetailState,
+  compactDetailMap,
   pruneMissingIds,
   refreshDetailBatch,
   type DetailBatchResult,
 } from '../src/utils/weeklyCacheState.js';
+import {
+  findMissingCurrentCommitteeIds,
+  getIsoWeekInfo,
+} from '../src/utils/weeklyCacheGeneration.js';
+import { getWeeklyCachePath, loadWeeklyMEPCache } from '../src/utils/weeklyDataCache.js';
 
 type Dataset = 'meps' | 'corporate-bodies' | 'controlled-vocabularies';
 
@@ -19,6 +25,8 @@ interface WeeklyMetadata {
   generatedAt: string;
   weekKey: string;
   source: string;
+  dataset: Dataset;
+  scope: 'current' | 'all';
 }
 
 interface ScriptOptions {
@@ -47,48 +55,57 @@ function parseScriptArgs(): ScriptOptions {
   };
 }
 
-function getIsoWeekInfo(date: Date): { year: number; week: number; weekKey: string } {
-  const utc = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-  const day = utc.getUTCDay() || 7;
-  utc.setUTCDate(utc.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1));
-  const week = Math.ceil((((utc.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+function buildMetadata(dataset: Dataset): WeeklyMetadata {
   return {
-    year: utc.getUTCFullYear(),
-    week,
-    weekKey: `${String(utc.getUTCFullYear())}-W${String(week).padStart(2, '0')}`,
-  };
-}
-
-function buildMetadata(): WeeklyMetadata {
-  return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generatedAt: new Date().toISOString(),
     weekKey: getIsoWeekInfo(new Date()).weekKey,
     source: 'EP Open Data Portal API v2',
+    dataset,
+    scope: dataset === 'controlled-vocabularies' ? 'all' : 'current',
   };
 }
 
 async function writeDataset(dataset: Dataset, payload: unknown): Promise<void> {
   const now = new Date();
   const iso = getIsoWeekInfo(now);
-  const baseDir = path.resolve(process.cwd(), 'data', 'weekly', dataset);
+  const latestPath = getWeeklyCachePath(dataset);
+  const baseDir = path.dirname(latestPath);
   const weeklyDir = path.join(baseDir, String(iso.year), `week-${String(iso.week).padStart(2, '0')}`);
   await mkdir(weeklyDir, { recursive: true });
   const json = `${JSON.stringify(payload, null, 2)}\n`;
   await writeFile(path.join(weeklyDir, 'index.json'), json, 'utf-8');
-  await writeFile(path.join(baseDir, 'latest.json'), json, 'utf-8');
+  await writeFile(latestPath, json, 'utf-8');
 }
 
 /** Reads the previously written `latest.json` for a dataset for incremental refresh. */
 function readExistingLatest(dataset: Dataset): unknown {
-  const latestPath = path.resolve(process.cwd(), 'data', 'weekly', dataset, 'latest.json');
+  const latestPath = getWeeklyCachePath(dataset);
   if (!existsSync(latestPath)) return null;
   try {
     return JSON.parse(readFileSync(latestPath, 'utf-8'));
   } catch {
     return null;
   }
+}
+
+function readExistingList<T>(
+  payload: unknown,
+  key: string,
+  parseItem: (item: unknown) => T,
+): T[] {
+  if (typeof payload !== 'object' || payload === null) return [];
+  const raw = (payload as Record<string, unknown>)[key];
+  if (!Array.isArray(raw)) return [];
+  const parsed: T[] = [];
+  for (const item of raw) {
+    try {
+      parsed.push(parseItem(item));
+    } catch {
+      return [];
+    }
+  }
+  return parsed;
 }
 
 function normalizeMepIdentifier(id: string): string {
@@ -121,17 +138,35 @@ function toProgress(batchSize: number, result: DetailBatchResult): Record<string
   };
 }
 
-async function fetchAllCorporateBodies(client: EuropeanParliamentClient): Promise<unknown[]> {
+async function fetchAllCurrentCorporateBodies(client: EuropeanParliamentClient): Promise<unknown[]> {
   const result: unknown[] = [];
   let offset = 0;
   const limit = 100;
   for (;;) {
-    const page = await client.getCorporateBodies({ limit, offset });
+    const page = await client.getCurrentCorporateBodies({ limit, offset });
     result.push(...page.data);
     if (!page.hasMore) break;
     offset += limit;
   }
   return result;
+}
+
+async function fetchMissingCurrentCommittees(
+  client: EuropeanParliamentClient,
+  existingBodyIds: ReadonlySet<string>,
+): Promise<ReturnType<typeof CommitteeSchema.parse>[]> {
+  const mepCache = await loadWeeklyMEPCache();
+  if (mepCache === null) return [];
+
+  const supplements: ReturnType<typeof CommitteeSchema.parse>[] = [];
+  for (const id of findMissingCurrentCommitteeIds(mepCache, existingBodyIds)) {
+    try {
+      supplements.push(CommitteeSchema.parse(await client.getCorporateBodyById(id)));
+    } catch {
+      console.warn(`[weekly-cache] Current committee body ${id} could not be resolved directly.`);
+    }
+  }
+  return supplements;
 }
 
 async function fetchAllVocabularies(client: EuropeanParliamentClient): Promise<Record<string, unknown>[]> {
@@ -148,12 +183,18 @@ async function fetchAllVocabularies(client: EuropeanParliamentClient): Promise<R
 }
 
 async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: number): Promise<void> {
-  const { details: mepDetails, missingIds } = readIncrementalDetailState(
+  const { details: previousDetails, missingIds } = readIncrementalDetailState(
     readExistingLatest('meps'),
     'mepDetails',
   );
   const mepsRaw = await fetchAllCurrentMEPs(client, batchSize);
   const meps = mepsRaw.map((mep) => MEPSchema.parse(mep));
+  const mepDetails = compactDetailMap({
+    items: meps,
+    details: previousDetails,
+    idFor: (mep) => mep.id,
+    keysFor: (mep) => mepKeyVariants(mep.id),
+  });
 
   pruneMissingIds(missingIds, new Set(meps.map((mep) => mep.id)));
 
@@ -163,19 +204,15 @@ async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: numb
     details: mepDetails,
     missingIds,
     idFor: (mep) => mep.id,
-    keysFor: (mep) => mepKeyVariants(mep.id),
+    keysFor: (mep) => [mep.id],
     fetchDetail: async (mep) => MEPDetailsSchema.parse(await client.getMEPDetails(mep.id)),
-    extraKeysFromDetail: (detail) => {
-      const identifier = (detail as { identifier?: unknown }).identifier;
-      return typeof identifier === 'string' ? mepKeyVariants(identifier) : [];
-    },
     isNotFound: isNotFoundError,
     onSkip: (id) => { console.warn(`[weekly-cache] MEP details not found for ${id}; skipping future retries this week.`); },
     onRetry: (id) => { console.warn(`[weekly-cache] Failed to fetch MEP details for ${id}; will retry in a future run.`); },
   });
 
   await writeDataset('meps', {
-    metadata: buildMetadata(),
+    metadata: buildMetadata('meps'),
     meps,
     mepDetails,
     missingDetailIds: Array.from(missingIds).sort(),
@@ -184,22 +221,51 @@ async function buildMEPDataset(client: EuropeanParliamentClient, batchSize: numb
 }
 
 async function buildCorporateBodiesDataset(client: EuropeanParliamentClient, batchSize: number): Promise<void> {
-  const { details: corporateBodyDetails, missingIds } = readIncrementalDetailState(
-    readExistingLatest('corporate-bodies'),
+  const previousPayload = readExistingLatest('corporate-bodies');
+  const { details: previousDetails, missingIds } = readIncrementalDetailState(
+    previousPayload,
     'corporateBodyDetails',
   );
-  const bodiesRaw = await fetchAllCorporateBodies(client);
-  const corporateBodies = bodiesRaw.map((body) => CommitteeSchema.parse(body));
+  let listedBodies: ReturnType<typeof CommitteeSchema.parse>[];
+  try {
+    const bodiesRaw = await fetchAllCurrentCorporateBodies(client);
+    listedBodies = bodiesRaw.map((body) => CommitteeSchema.parse(body));
+  } catch (error: unknown) {
+    listedBodies = readExistingList(previousPayload, 'corporateBodies', (body) => CommitteeSchema.parse(body));
+    if (listedBodies.length === 0) throw error;
+    console.warn('[weekly-cache] Current corporate-body listing unavailable; reusing the last validated snapshot.');
+  }
+  const supplementalCommittees = await fetchMissingCurrentCommittees(
+    client,
+    new Set(listedBodies.map((body) => body.id)),
+  );
+  const corporateBodies = [...listedBodies, ...supplementalCommittees]
+    .sort((left, right) => left.id.localeCompare(right.id));
+  const committees = corporateBodies.filter((body) =>
+    body.responsibilities?.some((classification) =>
+      classification.startsWith('COMMITTEE_PARLIAMENTARY_'),
+    ) === true,
+  );
+  const detailSource = {
+    ...previousDetails,
+    ...Object.fromEntries(supplementalCommittees.map((body) => [body.id, body])),
+  };
+  const corporateBodyDetails = compactDetailMap({
+    items: committees,
+    details: detailSource,
+    idFor: (body) => body.id,
+    keysFor: (body) => [body.id, body.abbreviation],
+  });
 
-  pruneMissingIds(missingIds, new Set(corporateBodies.map((body) => body.id)));
+  pruneMissingIds(missingIds, new Set(committees.map((body) => body.id)));
 
   const result = await refreshDetailBatch({
-    items: corporateBodies,
+    items: committees,
     batchSize,
     details: corporateBodyDetails,
     missingIds,
     idFor: (body) => body.id,
-    keysFor: (body) => (body.abbreviation.trim() === '' ? [body.id] : [body.id, body.abbreviation]),
+    keysFor: (body) => [body.id],
     fetchDetail: async (body) => CommitteeSchema.parse(await client.getCorporateBodyById(body.id)),
     isNotFound: isNotFoundError,
     onSkip: (id) => { console.warn(`[weekly-cache] Corporate body not found for ${id}; skipping future retries this week.`); },
@@ -207,7 +273,7 @@ async function buildCorporateBodiesDataset(client: EuropeanParliamentClient, bat
   });
 
   await writeDataset('corporate-bodies', {
-    metadata: buildMetadata(),
+    metadata: buildMetadata('corporate-bodies'),
     corporateBodies,
     corporateBodyDetails,
     missingDetailIds: Array.from(missingIds).sort(),
@@ -242,7 +308,7 @@ async function buildControlledVocabulariesDataset(client: EuropeanParliamentClie
   });
 
   await writeDataset('controlled-vocabularies', {
-    metadata: buildMetadata(),
+    metadata: buildMetadata('controlled-vocabularies'),
     vocabularies,
     vocabularyDetails,
     missingDetailIds: Array.from(missingIds).sort(),
