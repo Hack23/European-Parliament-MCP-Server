@@ -258,9 +258,11 @@ async function buildCorporateBodiesDataset(
   const committees = corporateBodies.filter(isCommittee);
   const corporateBodyDetails: NonNullable<WeeklyCorporateBodiesCache['corporateBodyDetails']> = Object.create(null) as NonNullable<WeeklyCorporateBodiesCache['corporateBodyDetails']>;
   for (const [index, body] of committees.entries()) {
-    corporateBodyDetails[body.id] = CommitteeSchema.parse(
-      await client.getCorporateBodyById(body.id, { includeMemberships: false }),
-    );
+    const detail = await fetchCorporateBodyWithRetry(client, body.id);
+    if (detail === null) {
+      throw new Error(`Committee detail unavailable for listed body ${body.id}`);
+    }
+    corporateBodyDetails[body.id] = detail;
     if ((index + 1) % 20 === 0 || index + 1 === committees.length) {
       console.log(`[cache] Committee details ${String(index + 1)}/${String(committees.length)}`);
     }
