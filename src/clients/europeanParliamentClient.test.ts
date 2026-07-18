@@ -1065,7 +1065,7 @@ describe('EuropeanParliamentClient', () => {
     });
 
     it('should propagate rate-limit errors instead of treating them as missing bodies', async () => {
-      mockFetch.mockResolvedValueOnce({
+      mockFetch.mockResolvedValue({
         ok: false,
         statusText: 'Too Many Requests',
         status: 429,
@@ -1073,7 +1073,7 @@ describe('EuropeanParliamentClient', () => {
 
       await expect(
         client.getCommitteeInfo({ id: '7007' }),
-      ).rejects.toThrow('EP API request error');
+      ).rejects.toThrow('EP API request failed: 429 Too Many Requests');
       expect(mockFetch).toHaveBeenCalledTimes(3);
     });
 

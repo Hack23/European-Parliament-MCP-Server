@@ -107,9 +107,20 @@ function isNotFoundError(error: unknown): boolean {
     && (error as { statusCode?: unknown }).statusCode === 404;
 }
 
-async function waitForRateLimitRetry(attempt: number): Promise<void> {
+function extractRetryAfterMs(error: unknown): number | undefined {
+  if (typeof error !== 'object' || error === null || !('details' in error)) return undefined;
+  const details = (error as { details?: unknown }).details;
+  if (typeof details !== 'object' || details === null || !('retryAfterMs' in details)) return undefined;
+  const retryAfterMs = (details as { retryAfterMs?: unknown }).retryAfterMs;
+  return typeof retryAfterMs === 'number' && Number.isFinite(retryAfterMs) && retryAfterMs > 0
+    ? retryAfterMs
+    : undefined;
+}
+
+async function waitForRateLimitRetry(attempt: number, error: unknown): Promise<void> {
+  const retryAfterMs = extractRetryAfterMs(error) ?? (attempt + 1) * 5_000;
   await new Promise<void>((resolve) => {
-    setTimeout(resolve, (attempt + 1) * 5_000);
+    setTimeout(resolve, retryAfterMs);
   });
 }
 
@@ -122,7 +133,7 @@ async function fetchMEPDetailsWithRetry(
       return await client.getMEPDetails(mepId, { live: true });
     } catch (error: unknown) {
       if (!isRateLimitError(error) || attempt === MEP_DETAIL_RETRIES) throw error;
-      await waitForRateLimitRetry(attempt);
+      await waitForRateLimitRetry(attempt, error);
     }
   }
   throw new Error('Unreachable MEP detail retry state');
@@ -140,7 +151,7 @@ async function fetchCorporateBodyWithRetry(
     } catch (error: unknown) {
       if (isNotFoundError(error)) return null;
       if (!isRateLimitError(error) || attempt === CORPORATE_BODY_RETRIES) throw error;
-      await waitForRateLimitRetry(attempt);
+      await waitForRateLimitRetry(attempt, error);
     }
   }
   throw new Error('Unreachable corporate-body retry state');
