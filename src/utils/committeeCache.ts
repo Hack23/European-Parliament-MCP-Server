@@ -79,9 +79,11 @@ function addMembershipToRoster(
 function buildCachedCommitteeRoster(
   committee: Committee,
   cache: WeeklyMEPCache,
+  organizationAliases: readonly string[] = [],
 ): CachedCommitteeRoster {
   const organizationIds = new Set(
-    [committee.id, committee.abbreviation].map((value) => referenceCode(value)),
+    [committee.id, committee.abbreviation, ...organizationAliases]
+      .map((value) => referenceCode(value)),
   );
   const currentMEPIds = new Set(cache.meps.filter((mep) => mep.active).map((mep) => mep.id));
   const roster: CachedCommitteeRoster = {
@@ -104,8 +106,9 @@ function buildCachedCommitteeRoster(
 export function enrichCommitteeFromMEPCache(
   committee: Committee,
   cache: WeeklyMEPCache,
+  organizationAliases: readonly string[] = [],
 ): Committee {
-  const roster = buildCachedCommitteeRoster(committee, cache);
+  const roster = buildCachedCommitteeRoster(committee, cache, organizationAliases);
   const sortedMembers = [...roster.members].sort();
   const sortedMemberships = [...roster.memberships.values()].sort((left, right) =>
     `${left.member}|${left.id ?? left.identifier ?? ''}`
@@ -139,13 +142,15 @@ export function findCachedCommittee(
   if (selectedBody !== undefined) {
     const detail = cachedBodies.corporateBodyDetails?.[selectedBody.id];
     const committee = CommitteeSchema.parse(detail ?? selectedBody);
-    return cachedMEPs === null ? committee : enrichCommitteeFromMEPCache(committee, cachedMEPs);
+    return cachedMEPs === null
+      ? committee
+      : enrichCommitteeFromMEPCache(committee, cachedMEPs, [selectedBody.id]);
   }
 
   const aliasDetail = cachedBodies.corporateBodyDetails?.[lookup];
   if (aliasDetail === undefined) return undefined;
   const committee = CommitteeSchema.parse(aliasDetail);
-  return cachedMEPs === null ? committee : enrichCommitteeFromMEPCache(committee, cachedMEPs);
+  return cachedMEPs === null ? committee : enrichCommitteeFromMEPCache(committee, cachedMEPs, [lookup]);
 }
 
 export function listCachedCurrentCorporateBodies(
@@ -158,7 +163,7 @@ export function listCachedCurrentCorporateBodies(
       return cachedMEPs === null
         || committee.responsibilities?.some(isCommitteeClassification) !== true
         ? committee
-        : enrichCommitteeFromMEPCache(committee, cachedMEPs);
+        : enrichCommitteeFromMEPCache(committee, cachedMEPs, [body.id]);
     })
     .sort((left, right) => left.id.localeCompare(right.id));
 }
