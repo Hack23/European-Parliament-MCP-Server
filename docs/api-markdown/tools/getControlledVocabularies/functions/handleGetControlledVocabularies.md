@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetControlledVocabularies**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getControlledVocabularies.ts:57](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getControlledVocabularies.ts#L57)
+Defined in: [tools/getControlledVocabularies.ts:86](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getControlledVocabularies.ts#L86)
 
 Handles the get_controlled_vocabularies MCP tool request.
 

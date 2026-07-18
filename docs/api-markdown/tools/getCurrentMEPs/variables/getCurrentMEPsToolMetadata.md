@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getCurrentMEPsToolMetadata**: `object`
 
-Defined in: [tools/getCurrentMEPs.ts:84](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L84)
+Defined in: [tools/getCurrentMEPs.ts:85](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getCurrentMEPs.ts#L85)
 
 Tool metadata for get_current_meps
 
@@ -41,6 +41,22 @@ Tool metadata for get_current_meps
 #### inputSchema.properties.limit.type
 
 > **type**: `string` = `'number'`
+
+#### inputSchema.properties.live
+
+> **live**: `object`
+
+#### inputSchema.properties.live.default
+
+> **default**: `boolean` = `false`
+
+#### inputSchema.properties.live.description
+
+> **description**: `string` = `'When true, bypasses weekly cache and fetches directly from the live EP API.'`
+
+#### inputSchema.properties.live.type
+
+> **type**: `string` = `'boolean'`
 
 #### inputSchema.properties.offset
 

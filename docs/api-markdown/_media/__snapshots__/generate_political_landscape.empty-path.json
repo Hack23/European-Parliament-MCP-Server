@@ -4,6 +4,7 @@
     "recentSessionCount": 0
   },
   "computedAttributes": {
+    "effectiveNumberOfParties": 4.45,
     "fragmentationIndex": "MODERATE",
     "majorityType": "MULTI_COALITION_REQUIRED",
     "overallEngagement": "LOW",
@@ -46,7 +47,7 @@
       "seatShare": 14.29
     }
   ],
-  "methodology": "Political landscape analysis using real EP Open Data: full paginated MEP roster (typically ~720 MEPs in EP10), group composition mapping with native-language acronym normalisation (e.g. PPE → EPP, Verts-ALE → Greens/EFA, ID → PfE), bloc classification, coalition threshold calculation, fragmentation indexing, and plenary session counts (fetched page count, lower bound). Attendance data is not available from the EP API and is reported as zero. Data source: European Parliament Open Data Portal.",
+  "methodology": "Political landscape analysis using European Parliament Open Data. Cached mode assigns every current MEP from dated hasMembership records classified EU_POLITICAL_GROUP, with normalized list data used only as a completeness fallback. Live mode uses the full paginated current-MEP roster. Group labels use native-language acronym normalisation, bloc classification, coalition threshold calculation, fragmentation indexing, and plenary session counts (fetched page count, lower bound). Attendance data is not available from the EP API and is reported as zero. Data source: European Parliament Open Data Portal.",
   "parliament": {
     "countriesRepresented": 7,
     "politicalGroups": 5,
@@ -60,7 +61,7 @@
     "conservativeBloc": 1,
     "grandCoalitionSize": 4,
     "largestGroup": "EPP",
-    "majorityThreshold": 5,
+    "majorityThreshold": 4,
     "progressiveBloc": 3
   },
   "sourceAttribution": "European Parliament Open Data Portal - data.europarl.europa.eu"

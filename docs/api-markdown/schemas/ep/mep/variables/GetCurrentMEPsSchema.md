@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
 
 ***
 
@@ -6,8 +6,8 @@
 
 # Variable: GetCurrentMEPsSchema
 
-> `const` **GetCurrentMEPsSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; \}, `$strip`\>
+> `const` **GetCurrentMEPsSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `live`: `ZodDefault`\<`ZodOptional`\<`ZodBoolean`\>\>; `offset`: `ZodDefault`\<`ZodNumber`\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/mep.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/mep.ts#L146)
+Defined in: [schemas/ep/mep.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/mep.ts#L154)
 
 Get current MEPs input schema

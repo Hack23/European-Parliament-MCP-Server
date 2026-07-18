@@ -69,6 +69,18 @@ vi.mock('../../../src/clients/ep/doceoClient.js', () => ({
   },
 }));
 
+// Force all tools to exercise the live-fetch path against the mocked EP
+// client above, regardless of the real bundled cache present on disk —
+// golden snapshots must stay deterministic and independent of the
+// contents of data/cache/*.json.
+vi.mock('../../../src/utils/weeklyDataCache.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../src/utils/weeklyDataCache.js')>();
+  return {
+    ...actual,
+    loadWeeklyMEPCache: vi.fn().mockResolvedValue(null),
+  };
+});
+
 import * as epClientModule from '../../../src/clients/europeanParliamentClient.js';
 import * as doceoClientModule from '../../../src/clients/ep/doceoClient.js';
 import { dispatchToolCall, getToolMetadataArray } from '../../../src/server/toolRegistry.js';

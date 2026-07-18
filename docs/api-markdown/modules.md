@@ -1,8 +1,8 @@
-[**European Parliament MCP Server API v1.3.43**](README.md)
+[**European Parliament MCP Server API v1.4.0**](README.md)
 
 ***
 
-# European Parliament MCP Server API v1.3.43
+# European Parliament MCP Server API v1.4.0
 
 ## Documents
 
@@ -156,8 +156,11 @@
 - [types/ep/plenary](types/ep/plenary/README.md)
 - [types/ep/question](types/ep/question/README.md)
 - [types/errors](types/errors/README.md)
+- [utils/allMepFetcher](utils/allMepFetcher/README.md)
 - [utils/auditLogger](utils/auditLogger/README.md)
 - [utils/auditSink](utils/auditSink/README.md)
+- [utils/cacheGeneration](utils/cacheGeneration/README.md)
+- [utils/committeeCache](utils/committeeCache/README.md)
 - [utils/credibilityCheck](utils/credibilityCheck/README.md)
 - [utils/doceoMepAggregator](utils/doceoMepAggregator/README.md)
 - [utils/effectivenessAggregator](utils/effectivenessAggregator/README.md)
@@ -166,7 +169,10 @@
 - [utils/mepFetcher](utils/mepFetcher/README.md)
 - [utils/networkVotingSimilarity](utils/networkVotingSimilarity/README.md)
 - [utils/performance](utils/performance/README.md)
+- [utils/politicalComposition](utils/politicalComposition/README.md)
 - [utils/politicalGroupNormalization](utils/politicalGroupNormalization/README.md)
 - [utils/rateLimiter](utils/rateLimiter/README.md)
 - [utils/timeout](utils/timeout/README.md)
 - [utils/votingBaseline](utils/votingBaseline/README.md)
+- [utils/weeklyCacheState](utils/weeklyCacheState/README.md)
+- [utils/weeklyDataCache](utils/weeklyDataCache/README.md)

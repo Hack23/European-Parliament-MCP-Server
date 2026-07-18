@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -7493,7 +7493,7 @@ Parliamentary Term from 0 to the current.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group?**: (`"ECR"` \| `"NI"` \| `"ID"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 
@@ -10393,7 +10393,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group?**: (`"ECR"` \| `"NI"` \| `"ID"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 
@@ -10901,7 +10901,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group?**: (`"ECR"` \| `"NI"` \| `"ID"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 
@@ -11163,7 +11163,7 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.parameters.query.political-group?
 
-> `optional` **political-group?**: (`"ECR"` \| `"NI"` \| `"ID"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
+> `optional` **political-group?**: (`"ECR"` \| `"ID"` \| `"NI"` \| `"PPE"` \| `"S-D"` \| `"VERTS-ALE"` \| `"RENEW"` \| `"THE-LEFT"`)[]
 
 ###### Description
 

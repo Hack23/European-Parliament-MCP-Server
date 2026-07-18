@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **generatePoliticalLandscapeToolMetadata**: `object`
 
-Defined in: [tools/generatePoliticalLandscape.ts:381](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L381)
+Defined in: [tools/generatePoliticalLandscape.ts:446](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L446)
 
 Tool metadata for MCP listing
 
@@ -49,6 +49,22 @@ Tool metadata for MCP listing
 #### inputSchema.properties.dateTo.type
 
 > **type**: `string` = `'string'`
+
+#### inputSchema.properties.live
+
+> **live**: `object`
+
+#### inputSchema.properties.live.default
+
+> **default**: `boolean` = `false`
+
+#### inputSchema.properties.live.description
+
+> **description**: `string` = `'Bypass bundled current-MEP cache and fetch live EP API v2 data'`
+
+#### inputSchema.properties.live.type
+
+> **type**: `string` = `'boolean'`
 
 #### inputSchema.required
 

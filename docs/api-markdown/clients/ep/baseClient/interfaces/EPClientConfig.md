@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
 
 ***
 
@@ -133,3 +133,13 @@ Request timeout in milliseconds.
 ```ts
 DEFAULT_TIMEOUTS.EP_API_REQUEST_MS
 ```
+
+***
+
+### useWeeklyCache?
+
+> `optional` **useWeeklyCache?**: `boolean`
+
+Defined in: [clients/ep/baseClient.ts:188](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L188)
+
+Use bundled weekly snapshots before the live API. Intended for the runtime singleton.
