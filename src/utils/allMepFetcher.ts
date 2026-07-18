@@ -81,7 +81,7 @@ export async function fetchAllCurrentMEPs(
   for (;;) {
     const page = await client.getCurrentMEPs({ limit: pageLimit, offset });
     result.push(...page.data);
-    if (!page.hasMore) return result;
+    if (!page.hasMore && page.data.length < pageLimit) return result;
     offset += pageLimit;
   }
 }
