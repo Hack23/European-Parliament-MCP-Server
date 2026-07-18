@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": 3,
-    "generatedAt": "2026-07-18T12:44:22.118Z",
+    "generatedAt": "2026-07-18T21:37:47.307Z",
     "source": "European Parliament Open Data Portal API v2",
     "dataset": "corporate-bodies",
     "scope": "current",
@@ -4286,7 +4286,7 @@
   ],
   "corporateBodyDetails": {
     "6562": {
-      "id": "1232",
+      "id": "6562",
       "name": "Committee on Foreign Affairs",
       "abbreviation": "AFET",
       "members": [],
@@ -4295,7 +4295,7 @@
       ]
     },
     "6563": {
-      "id": "1233",
+      "id": "6563",
       "name": "Committee on Development",
       "abbreviation": "DEVE",
       "members": [],
@@ -4304,7 +4304,7 @@
       ]
     },
     "6564": {
-      "id": "1234",
+      "id": "6564",
       "name": "Committee on International Trade",
       "abbreviation": "INTA",
       "members": [],
@@ -4313,7 +4313,7 @@
       ]
     },
     "6567": {
-      "id": "1235",
+      "id": "6567",
       "name": "Committee on Budgets",
       "abbreviation": "BUDG",
       "members": [],
@@ -4322,7 +4322,7 @@
       ]
     },
     "6568": {
-      "id": "1236",
+      "id": "6568",
       "name": "Committee on Budgetary Control",
       "abbreviation": "CONT",
       "members": [],
@@ -4331,7 +4331,7 @@
       ]
     },
     "6570": {
-      "id": "1237",
+      "id": "6570",
       "name": "Committee on Economic and Monetary Affairs",
       "abbreviation": "ECON",
       "members": [],
@@ -4340,7 +4340,7 @@
       ]
     },
     "6572": {
-      "id": "123",
+      "id": "6572",
       "name": "Committee on Employment and Social Affairs",
       "abbreviation": "EMPL",
       "members": [],
@@ -4349,8 +4349,8 @@
       ]
     },
     "6576": {
-      "id": "1077",
-      "name": "Committee on Industry, External Trade, Research and Energy",
+      "id": "6576",
+      "name": "Committee on Industry, Research and Energy",
       "abbreviation": "ITRE",
       "members": [],
       "responsibilities": [
@@ -4358,7 +4358,7 @@
       ]
     },
     "6579": {
-      "id": "2425",
+      "id": "6579",
       "name": "Committee on the Internal Market and Consumer Protection",
       "abbreviation": "IMCO",
       "members": [],
@@ -4367,8 +4367,8 @@
       ]
     },
     "6580": {
-      "id": "11",
-      "name": "Committee on Transports and Tourism",
+      "id": "6580",
+      "name": "Committee on Transport and Tourism",
       "abbreviation": "TRAN",
       "members": [],
       "responsibilities": [
@@ -4376,8 +4376,8 @@
       ]
     },
     "6581": {
-      "id": "100",
-      "name": "Committee on Regional Policy",
+      "id": "6581",
+      "name": "Committee on Regional Development",
       "abbreviation": "REGI",
       "members": [],
       "responsibilities": [
@@ -4385,7 +4385,7 @@
       ]
     },
     "6582": {
-      "id": "117",
+      "id": "6582",
       "name": "Committee on Agriculture and Rural Development",
       "abbreviation": "AGRI",
       "members": [],
@@ -4394,7 +4394,7 @@
       ]
     },
     "6583": {
-      "id": "1081",
+      "id": "6583",
       "name": "Committee on Fisheries",
       "abbreviation": "PECH",
       "members": [],
@@ -4403,8 +4403,8 @@
       ]
     },
     "6584": {
-      "id": "1083",
-      "name": "Committee on Culture, Youth, Education, the Media and Sport",
+      "id": "6584",
+      "name": "Committee on Culture and Education",
       "abbreviation": "CULT",
       "members": [],
       "responsibilities": [
@@ -4412,8 +4412,8 @@
       ]
     },
     "6585": {
-      "id": "122",
-      "name": "Committee on Legal Affairs and Citizens' Rights",
+      "id": "6585",
+      "name": "Committee on Legal Affairs",
       "abbreviation": "JURI",
       "members": [],
       "responsibilities": [
@@ -4421,8 +4421,8 @@
       ]
     },
     "6586": {
-      "id": "1074",
-      "name": "Committee on Citizens' Freedoms and Rights, Justice and Home Affairs",
+      "id": "6586",
+      "name": "Committee on Civil Liberties, Justice and Home Affairs",
       "abbreviation": "LIBE",
       "members": [],
       "responsibilities": [
@@ -4430,7 +4430,7 @@
       ]
     },
     "6587": {
-      "id": "1085",
+      "id": "6587",
       "name": "Committee on Constitutional Affairs",
       "abbreviation": "AFCO",
       "members": [],
@@ -4439,8 +4439,8 @@
       ]
     },
     "6588": {
-      "id": "110",
-      "name": "Committee on Women's Rights",
+      "id": "6588",
+      "name": "Committee on Women’s Rights and Gender Equality",
       "abbreviation": "FEMM",
       "members": [],
       "responsibilities": [
@@ -4448,7 +4448,7 @@
       ]
     },
     "6591": {
-      "id": "111",
+      "id": "6591",
       "name": "Committee on Petitions",
       "abbreviation": "PETI",
       "members": [],
