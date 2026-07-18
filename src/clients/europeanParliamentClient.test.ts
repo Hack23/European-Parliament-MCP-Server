@@ -1182,7 +1182,7 @@ describe('EuropeanParliamentClient', () => {
         statusText: 'Internal Server Error'
       });
 
-      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI' });
+      const result = await client.getCommitteeInfo({ abbreviation: 'ENVI', live: true });
 
       expect(result.members).toEqual([]);
       expect(result.chair).toBeUndefined();

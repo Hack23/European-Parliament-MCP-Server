@@ -34,7 +34,6 @@ import {
   extractDateValue,
   extractActivityDate,
   extractMultilingualText,
-  extractMemberIds,
   extractAuthorId,
   extractDocumentRefs,
   extractLocation,
@@ -481,7 +480,22 @@ export function transformCorporateBody(apiData: Record<string, unknown>): Commit
   const abbreviation = resolveCommitteeAbbreviation(apiData, id);
   const effectiveId = id !== '' ? id : abbreviation;
 
-  const members = extractMemberIds(apiData['hasMembership'] ?? apiData['org:hasMember']);
+  const rawMembers = apiData['hasMembership'] ?? apiData['org:hasMember'];
+  const members = Array.isArray(rawMembers)
+    ? rawMembers.flatMap((member): string[] => {
+      if (typeof member === 'string') return [member];
+      if (
+        typeof member === 'object'
+        && member !== null
+      ) {
+        const memberRecord = member as Record<string, unknown>;
+        return typeof memberRecord['person'] === 'string'
+          ? [memberRecord['person']]
+          : [];
+      }
+      return [];
+    })
+    : [];
   const classification = extractField(apiData, ['classification', 'org:classification']);
   const responsibilities = classification !== '' ? [classification.replace(/.*\//, '')] : [];
 

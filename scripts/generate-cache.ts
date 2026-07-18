@@ -56,6 +56,7 @@ const PAGE_SIZE = 100;
 const MIN_CURRENT_MEPS = 600;
 const MIN_CURRENT_BODIES = 100;
 const MIN_VOCABULARIES = 1;
+const MEP_DETAIL_RETRIES = 4;
 
 function metadata(
   dataset: Dataset,
@@ -90,6 +91,30 @@ function assertUniqueIds(items: readonly { id: string }[], label: string): void 
     if (ids.has(item.id)) throw new Error(`${label} contains duplicate id ${item.id}`);
     ids.add(item.id);
   }
+}
+
+function isRateLimitError(error: unknown): boolean {
+  return typeof error === 'object'
+    && error !== null
+    && 'statusCode' in error
+    && (error as { statusCode?: unknown }).statusCode === 429;
+}
+
+async function fetchMEPDetailsWithRetry(
+  client: EuropeanParliamentClient,
+  mepId: string,
+): Promise<ReturnType<typeof MEPDetailsSchema.parse>> {
+  for (let attempt = 0; attempt <= MEP_DETAIL_RETRIES; attempt += 1) {
+    try {
+      return await client.getMEPDetails(mepId, { live: true });
+    } catch (error: unknown) {
+      if (!isRateLimitError(error) || attempt === MEP_DETAIL_RETRIES) throw error;
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, (attempt + 1) * 5_000);
+      });
+    }
+  }
+  throw new Error('Unreachable MEP detail retry state');
 }
 
 async function fetchAllCurrentCorporateBodies(
@@ -127,7 +152,7 @@ async function buildMEPDataset(
 
   const mepDetails: WeeklyMEPCache['mepDetails'] = Object.create(null) as WeeklyMEPCache['mepDetails'];
   for (const [index, mep] of meps.entries()) {
-    const detail = MEPDetailsSchema.parse(await client.getMEPDetails(mep.id, { live: true }));
+    const detail = MEPDetailsSchema.parse(await fetchMEPDetailsWithRetry(client, mep.id));
     if (canonicalId(detail.id) !== canonicalId(mep.id)) {
       throw new Error(`MEP detail mismatch: requested ${mep.id}, received ${detail.id}`);
     }
@@ -180,7 +205,9 @@ async function buildCorporateBodiesDataset(
   }
   const byId = new Map(listedBodies.map((body) => [shortReference(body.id), body]));
   for (const id of findMissingCurrentCommitteeIds(mepCache, new Set(byId.keys()), generatedAt.slice(0, 10))) {
-    const detail = CommitteeSchema.parse(await client.getCorporateBodyById(id));
+    const detail = CommitteeSchema.parse(await client.getCorporateBodyById(id, {
+      includeMemberships: false,
+    }));
     byId.set(shortReference(detail.id), detail);
   }
   const corporateBodies = [...byId.values()].sort((left, right) => left.id.localeCompare(right.id));
@@ -190,7 +217,7 @@ async function buildCorporateBodiesDataset(
   const corporateBodyDetails: NonNullable<WeeklyCorporateBodiesCache['corporateBodyDetails']> = Object.create(null) as NonNullable<WeeklyCorporateBodiesCache['corporateBodyDetails']>;
   for (const [index, body] of committees.entries()) {
     corporateBodyDetails[body.id] = CommitteeSchema.parse(
-      await client.getCorporateBodyById(body.id),
+      await client.getCorporateBodyById(body.id, { includeMemberships: false }),
     );
     if ((index + 1) % 20 === 0 || index + 1 === committees.length) {
       console.log(`[cache] Committee details ${String(index + 1)}/${String(committees.length)}`);
