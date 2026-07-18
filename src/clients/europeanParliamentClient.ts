@@ -684,7 +684,9 @@ export class EuropeanParliamentClient {
     }
     return this.committeeClient.getCommitteeInfo({
       ...params,
-      includeMemberships: params.live !== true,
+      // Roster enrichment is supplied by the weekly cache. Avoid an
+      // unbounded MEP-wide fan-out when the cache is unavailable.
+      includeMemberships: false,
     });
   }
 
