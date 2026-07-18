@@ -91,30 +91,30 @@ function assertUniqueIds(items: readonly { id: string }[], label: string): void 
     if (ids.has(item.id)) throw new Error(`${label} contains duplicate id ${item.id}`);
     ids.add(item.id);
   }
+}
 
-  function isRateLimitError(error: unknown): boolean {
-    return typeof error === 'object'
-      && error !== null
-      && 'statusCode' in error
-      && (error as { statusCode?: unknown }).statusCode === 429;
-  }
+function isRateLimitError(error: unknown): boolean {
+  return typeof error === 'object'
+    && error !== null
+    && 'statusCode' in error
+    && (error as { statusCode?: unknown }).statusCode === 429;
+}
 
-  async function fetchMEPDetailsWithRetry(
-    client: EuropeanParliamentClient,
-    mepId: string,
-  ): Promise<ReturnType<EuropeanParliamentClient['getMEPDetails']> extends Promise<infer T> ? T : never> {
-    for (let attempt = 0; attempt <= MEP_DETAIL_RETRIES; attempt += 1) {
-      try {
-        return await client.getMEPDetails(mepId, { live: true });
-      } catch (error: unknown) {
-        if (!isRateLimitError(error) || attempt === MEP_DETAIL_RETRIES) throw error;
-        await new Promise<void>((resolve) => {
-          setTimeout(resolve, (attempt + 1) * 5_000);
-        });
-      }
+async function fetchMEPDetailsWithRetry(
+  client: EuropeanParliamentClient,
+  mepId: string,
+): Promise<ReturnType<typeof MEPDetailsSchema.parse>> {
+  for (let attempt = 0; attempt <= MEP_DETAIL_RETRIES; attempt += 1) {
+    try {
+      return await client.getMEPDetails(mepId, { live: true });
+    } catch (error: unknown) {
+      if (!isRateLimitError(error) || attempt === MEP_DETAIL_RETRIES) throw error;
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, (attempt + 1) * 5_000);
+      });
     }
-    throw new Error('Unreachable MEP detail retry state');
   }
+  throw new Error('Unreachable MEP detail retry state');
 }
 
 async function fetchAllCurrentCorporateBodies(
