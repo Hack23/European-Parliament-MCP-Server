@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetMEPs**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getMEPs.ts:73](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L73)
+Defined in: [tools/getMEPs.ts:142](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPs.ts#L142)
 
 Handles the get_meps MCP tool request.
 

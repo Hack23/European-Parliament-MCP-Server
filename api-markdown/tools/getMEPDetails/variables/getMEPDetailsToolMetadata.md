@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > `const` **getMEPDetailsToolMetadata**: `object`
 
-Defined in: [tools/getMEPDetails.ts:101](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDetails.ts#L101)
+Defined in: [tools/getMEPDetails.ts:129](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDetails.ts#L129)
 
 Tool metadata for MCP registration
 
@@ -45,6 +45,22 @@ Tool metadata for MCP registration
 #### inputSchema.properties.id.type
 
 > **type**: `string` = `'string'`
+
+#### inputSchema.properties.live
+
+> **live**: `object`
+
+#### inputSchema.properties.live.default
+
+> **default**: `boolean` = `false`
+
+#### inputSchema.properties.live.description
+
+> **description**: `string` = `'When true, bypasses weekly cache and fetches directly from the live EP API.'`
+
+#### inputSchema.properties.live.type
+
+> **type**: `string` = `'boolean'`
 
 #### inputSchema.required
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
 
 ***
 
@@ -8,6 +8,6 @@
 
 > `const` **GetOutgoingMEPsSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; \}, `$strip`\>
 
-Defined in: [schemas/ep/mep.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/mep.ts#L180)
+Defined in: [schemas/ep/mep.ts:192](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/mep.ts#L192)
 
 Get outgoing MEPs input schema

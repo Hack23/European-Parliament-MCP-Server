@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **generateCommitteePerformanceReport**(`params`): `Promise`\<[`Report`](../../types/interfaces/Report.md)\>
 
-Defined in: [tools/generateReport/reportGenerators.ts:327](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L327)
+Defined in: [tools/generateReport/reportGenerators.ts:363](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L363)
 
 Generate committee performance report using real EP API data
 Cyclomatic complexity: 2

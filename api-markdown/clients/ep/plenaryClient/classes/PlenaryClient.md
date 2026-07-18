@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [clients/ep/plenaryClient.ts:39](https://github.com/Hack23/European-
 
 > `protected` `readonly` **baseURL**: `string`
 
-Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
+Defined in: [clients/ep/baseClient.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L221)
 
 European Parliament API base URL.
 
@@ -60,7 +60,7 @@ European Parliament API base URL.
 
 > `protected` `readonly` **cache**: `LRUCache`\<`string`, `Record`\<`string`, `unknown`\>\>
 
-Defined in: [clients/ep/baseClient.ts:217](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L217)
+Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
 
 LRU cache for API responses.
 
@@ -74,7 +74,7 @@ LRU cache for API responses.
 
 > `protected` `readonly` **enableRetry**: `boolean`
 
-Defined in: [clients/ep/baseClient.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L225)
+Defined in: [clients/ep/baseClient.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L227)
 
 Enable automatic retry on transient failures.
 
@@ -88,7 +88,7 @@ Enable automatic retry on transient failures.
 
 > `protected` `readonly` **maxResponseBytes**: `number`
 
-Defined in: [clients/ep/baseClient.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L229)
+Defined in: [clients/ep/baseClient.ts:231](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L231)
 
 Maximum allowed response body size in bytes.
 
@@ -102,7 +102,7 @@ Maximum allowed response body size in bytes.
 
 > `protected` `readonly` **maxRetries**: `number`
 
-Defined in: [clients/ep/baseClient.ts:227](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L227)
+Defined in: [clients/ep/baseClient.ts:229](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L229)
 
 Maximum number of retry attempts.
 
@@ -116,7 +116,7 @@ Maximum number of retry attempts.
 
 > `protected` `readonly` **rateLimiter**: [`RateLimiter`](../../../../utils/rateLimiter/classes/RateLimiter.md)
 
-Defined in: [clients/ep/baseClient.ts:221](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L221)
+Defined in: [clients/ep/baseClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L223)
 
 Token bucket rate limiter.
 
@@ -130,7 +130,7 @@ Token bucket rate limiter.
 
 > `protected` `readonly` **timeoutMs**: `number`
 
-Defined in: [clients/ep/baseClient.ts:223](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L223)
+Defined in: [clients/ep/baseClient.ts:225](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L225)
 
 Request timeout in milliseconds.
 
@@ -188,7 +188,7 @@ forwarded when present (useful for sub-year ranges).
 
 > **clearCache**(): `void`
 
-Defined in: [clients/ep/baseClient.ts:768](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L768)
+Defined in: [clients/ep/baseClient.ts:770](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L770)
 
 Clears all entries from the LRU cache.
 
@@ -206,7 +206,7 @@ Clears all entries from the LRU cache.
 
 > `protected` **evictFromCache**(`endpoint`, `params?`): `void`
 
-Defined in: [clients/ep/baseClient.ts:783](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L783)
+Defined in: [clients/ep/baseClient.ts:785](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L785)
 
 Evicts a single cache entry matching the given endpoint and params.
 Sub-clients use this when they detect that a successfully-fetched payload
@@ -244,7 +244,7 @@ Optional query parameters (same value passed to [get](../../baseClient/classes/B
 
 > `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): `Promise`\<`T`\>
 
-Defined in: [clients/ep/baseClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L685)
+Defined in: [clients/ep/baseClient.ts:687](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L687)
 
 Executes a cached, rate-limited GET request to the EP API.
 
@@ -313,7 +313,7 @@ On HTTP errors, network failures, parse failures, or
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/ep/baseClient.ts:792](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L792)
+Defined in: [clients/ep/baseClient.ts:794](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L794)
 
 Returns cache statistics for monitoring and debugging.
 

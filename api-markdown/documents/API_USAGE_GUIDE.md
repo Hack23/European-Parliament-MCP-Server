@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../README.md)
+[**European Parliament MCP Server API v1.4.0**](../README.md)
 
 ***
 
@@ -220,6 +220,20 @@ graph LR
 
 Currently, the server does **not require authentication** for tool access. Future versions may introduce OAuth 2.0 or API key authentication.
 
+### Bundled Data Cache
+
+MEP, corporate-body, and controlled-vocabulary tools use a validated bundled cache by default. The npm package includes:
+
+```text
+data/cache/
+├── meps.json
+├── corporate-bodies.json
+├── controlled-vocabularies.json
+└── manifest.json
+```
+
+Each dataset file is verified against a SHA-256 hash recorded in `manifest.json` before use; a mismatched or missing entry causes the tool to fall back to a live EP API v2 fetch. Set `EP_CACHE_DIR` (or the legacy `EP_WEEKLY_CACHE_DIR`) to override the cache root. Pass `live: true` to supported tools to explicitly bypass the bundled cache.
+
 ---
 
 ## 🔍 Quick Reference
@@ -351,7 +365,7 @@ EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](../_media/e
 
 **Description**: Retrieve Members of the European Parliament with optional filters for country, political group, committee membership, and active status.
 
-> ⚠️ **EP API Note:** The `get_meps` tool uses the EP API `/meps` endpoint which supports server-side filtering but does **not** return `country` or `politicalGroup` in responses. Results will show `country: "Unknown"` and `politicalGroup: "Unknown"`. For country and political group data, use `get_current_meps` instead. All OSINT intelligence tools automatically use `get_current_meps` for accurate MEP metadata.
+> **Cache behavior:** By default, `get_meps` reads the bundled current-MEP snapshot and enriches committee IDs from cached MEP details. This provides the accurate country and political-group metadata published by `/meps/show-current`. If the snapshot is unavailable, the tool falls back to `/meps`; that live endpoint may report `country` or `politicalGroup` as `"Unknown"`. Pass `live: true` to force the live endpoint.
 
 #### Parameters
 
@@ -363,6 +377,7 @@ EP API v2 feed endpoints fall into two groups per the [OpenAPI spec](../_media/e
 | active | boolean | No | true | Filter by active status |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+| live | boolean | No | false | Bypass the weekly snapshot and query EP API v2 directly |
 
 #### Response Format
 
@@ -449,6 +464,7 @@ roles.
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
 | id | string | Yes | - | Numeric ID, `person/{id}`, or `MEP-{id}` (for example, `124936`) |
+| live | boolean | No | false | Bypass the weekly snapshot and query EP API v2 directly |
 
 #### Response Format
 
@@ -907,6 +923,8 @@ const result = await client.callTool('search_documents', {
 
 **Description**: Retrieve detailed information about a European Parliament committee including composition, members, chair, and areas of responsibility. Can also list all current active corporate bodies.
 
+Corporate-body records contain metadata, not authoritative rosters. The tool derives current committee assignments from cached MEP `hasMembership[]` relations whose classification starts with `COMMITTEE_PARLIAMENTARY_`. `members` contains full members and leadership; `memberships` preserves all current assignments, including substitutes, with EP URI identifiers and role data. If the snapshots are unavailable, committee metadata is still returned from EP API v2, but roster fields may be empty.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -914,6 +932,7 @@ const result = await client.callTool('search_documents', {
 | id | string | No* | - | Committee identifier |
 | abbreviation | string | No* | - | Committee abbreviation (e.g., "ENVI", "AGRI") |
 | showCurrent | boolean | No | false | If true, returns all current active corporate bodies |
+| live | boolean | No | false | Bypass weekly snapshots and query EP API v2 directly |
 
 *Either `showCurrent: true`, `id`, or `abbreviation` must be provided.
 
@@ -924,17 +943,21 @@ const result = await client.callTool('search_documents', {
   "content": [{
     "type": "text",
     "text": "{
-      \"id\": \"COMM-ENVI\",
+      \"id\": \"7913\",
       \"name\": \"Committee on Environment, Public Health and Food Safety\",
       \"abbreviation\": \"ENVI\",
-      \"chair\": \"MEP-124820\",
-      \"viceChairs\": [\"MEP-124821\", \"MEP-124822\"],
-      \"members\": [\"MEP-124810\", \"MEP-124811\"],
-      \"responsibilities\": [
-        \"Environmental policy\",
-        \"Public health\",
-        \"Food safety\"
-      ]
+      \"chair\": \"person/257727\",
+      \"viceChairs\": [\"person/125023\", \"person/197607\", \"person/22418\", \"person/256864\"],
+      \"members\": [\"person/112747\", \"person/257727\"],
+      \"memberships\": [
+        {
+          \"member\": \"person/257727\",
+          \"organization\": \"org/7913\",
+          \"role\": \"def/ep-roles/CHAIR\",
+          \"membershipClassification\": \"def/ep-entities/COMMITTEE_PARLIAMENTARY_STANDING\"
+        }
+      ],
+      \"responsibilities\": [\"COMMITTEE_PARLIAMENTARY_STANDING\"]
     }"
   }]
 }
@@ -1266,7 +1289,7 @@ const result = await client.callTool('generate_report', {
 // Committee Performance Report
 const committeReport = await client.callTool('generate_report', {
   reportType: 'COMMITTEE_PERFORMANCE',
-  subjectId: 'COMM-ENVI',
+  subjectId: 'ENVI',
   dateFrom: '2024-01-01',
   dateTo: '2024-12-31'
 });
@@ -1997,7 +2020,7 @@ These tools provide direct access to all European Parliament Open Data API v2 en
 
 **Description**: Get currently active Members of European Parliament (today's date). Returns only MEPs with active mandates. Unlike `get_meps`, this tool uses the EP API `/meps/show-current` endpoint which returns accurate `country` and `politicalGroup` data in responses.
 
-> ✅ **Recommended** for use when you need MEP country or political group information. All OSINT intelligence tools use this endpoint internally.
+> **Cache behavior:** The current-MEP weekly snapshot is used by default and shared with OSINT tools through the runtime client. Pass `live: true` to force `/meps/show-current`; a missing or invalid snapshot also falls back to that endpoint.
 
 #### Parameters
 
@@ -2005,6 +2028,7 @@ These tools provide direct access to all European Parliament Open Data API v2 en
 |-----------|------|----------|---------|-------------|
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+| live | boolean | No | false | Bypass the weekly snapshot and query EP API v2 directly |
 
 #### Example Usage
 
@@ -2533,6 +2557,8 @@ const result = await client.callTool('get_plenary_session_document_items', {
 
 **Description**: Get European Parliament controlled vocabularies (standardized classification terms). Supports single vocabulary lookup by vocId.
 
+The weekly controlled-vocabulary snapshot is used by default. Pass `live: true` to force EP API v2; a missing vocabulary in the snapshot falls back to the live single-vocabulary endpoint.
+
 #### Parameters
 
 | Parameter | Type | Required | Default | Description |
@@ -2540,6 +2566,7 @@ const result = await client.callTool('get_plenary_session_document_items', {
 | vocId | string | No | - | Specific vocabulary ID for single lookup (e.g., `ep-document-types`) |
 | limit | number | No | 50 | Maximum results (1-100) |
 | offset | number | No | 0 | Pagination offset |
+| live | boolean | No | false | Bypass the weekly snapshot and query EP API v2 directly |
 
 > **Note:** The `vocId` parameter should use the short identifier form (e.g., `ep-document-types`), not the full URI form (`def/ep-document-types`). The list endpoint returns one entry: `def/ep-document-types`. Use the short form for single-vocabulary lookup.
 
@@ -3517,7 +3544,7 @@ const members = await client.callTool('get_meps', {
 // Step 3: Generate committee report
 const report = await client.callTool('generate_report', {
   reportType: 'COMMITTEE_PERFORMANCE',
-  subjectId: 'COMM-ENVI',
+  subjectId: 'ENVI',
   dateFrom: '2024-01-01',
   dateTo: '2024-12-31'
 });
@@ -3897,7 +3924,7 @@ The European Parliament MCP Server is the **most feature-rich political MCP serv
 
 | Country | Server | Key Capabilities |
 |---------|--------|-----------------|
-| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **62 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape, longitudinal statistics |
+| 🇪🇺 **EU** | [**European Parliament MCP**](https://github.com/Hack23/European-Parliament-MCP-Server) | **63 tools** — MEP profiling, coalition analysis, anomaly detection, political landscape, longitudinal statistics |
 | 🇺🇸 **USA** | [Congress.gov API MCP](https://github.com/bsmi021/mcp-congress_gov_server) | Bills, members, votes, committees |
 | 🇬🇧 **UK** | [Parliament MCP](https://github.com/i-dot-ai/parliament-mcp) | Hansard, members, debates, divisions |
 | 🇸🇪 **Sweden** | [Riksdag & Regering MCP](https://github.com/isakskogstad/Riksdag-Regering-MCP) | Parliament & government data |

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Class: EuropeanParliamentClient
 
-Defined in: [clients/europeanParliamentClient.ts:144](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L144)
+Defined in: [clients/europeanParliamentClient.ts:154](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L154)
 
 European Parliament API Client.
 
@@ -65,7 +65,7 @@ console.log(`Found ${meps.total} Swedish MEPs`);
 
 > **new EuropeanParliamentClient**(`config?`): `EuropeanParliamentClient`
 
-Defined in: [clients/europeanParliamentClient.ts:162](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L162)
+Defined in: [clients/europeanParliamentClient.ts:173](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L173)
 
 Creates a new European Parliament API client.
 
@@ -90,7 +90,7 @@ Optional client configuration
 
 > `private` `readonly` **committeeClient**: [`CommitteeClient`](../../ep/committeeClient/classes/CommitteeClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:148](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L148)
+Defined in: [clients/europeanParliamentClient.ts:158](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L158)
 
 ***
 
@@ -98,7 +98,7 @@ Defined in: [clients/europeanParliamentClient.ts:148](https://github.com/Hack23/
 
 > `private` `readonly` **documentClient**: [`DocumentClient`](../../ep/documentClient/classes/DocumentClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L149)
+Defined in: [clients/europeanParliamentClient.ts:159](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L159)
 
 ***
 
@@ -106,7 +106,7 @@ Defined in: [clients/europeanParliamentClient.ts:149](https://github.com/Hack23/
 
 > `private` `readonly` **legislativeClient**: [`LegislativeClient`](../../ep/legislativeClient/classes/LegislativeClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:150](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L150)
+Defined in: [clients/europeanParliamentClient.ts:160](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L160)
 
 ***
 
@@ -114,7 +114,7 @@ Defined in: [clients/europeanParliamentClient.ts:150](https://github.com/Hack23/
 
 > `private` `readonly` **mepClient**: [`MEPClient`](../../ep/mepClient/classes/MEPClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:145](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L145)
+Defined in: [clients/europeanParliamentClient.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L155)
 
 ***
 
@@ -122,7 +122,7 @@ Defined in: [clients/europeanParliamentClient.ts:145](https://github.com/Hack23/
 
 > `private` `readonly` **plenaryClient**: [`PlenaryClient`](../../ep/plenaryClient/classes/PlenaryClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:146](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L146)
+Defined in: [clients/europeanParliamentClient.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L156)
 
 ***
 
@@ -130,7 +130,15 @@ Defined in: [clients/europeanParliamentClient.ts:146](https://github.com/Hack23/
 
 > `private` `readonly` **questionClient**: [`QuestionClient`](../../ep/questionClient/classes/QuestionClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L151)
+Defined in: [clients/europeanParliamentClient.ts:161](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L161)
+
+***
+
+### useWeeklyCache
+
+> `private` `readonly` **useWeeklyCache**: `boolean`
+
+Defined in: [clients/europeanParliamentClient.ts:163](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L163)
 
 ***
 
@@ -138,7 +146,7 @@ Defined in: [clients/europeanParliamentClient.ts:151](https://github.com/Hack23/
 
 > `private` `readonly` **vocabularyClient**: [`VocabularyClient`](../../ep/vocabularyClient/classes/VocabularyClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:152](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L152)
+Defined in: [clients/europeanParliamentClient.ts:162](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L162)
 
 ***
 
@@ -146,15 +154,79 @@ Defined in: [clients/europeanParliamentClient.ts:152](https://github.com/Hack23/
 
 > `private` `readonly` **votingClient**: [`VotingClient`](../../ep/votingClient/classes/VotingClient.md)
 
-Defined in: [clients/europeanParliamentClient.ts:147](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L147)
+Defined in: [clients/europeanParliamentClient.ts:157](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L157)
 
 ## Methods
+
+### buildCachedCurrentMEPs()
+
+> `private` **buildCachedCurrentMEPs**(`cache`): [`MEP`](../../../types/ep/mep/interfaces/MEP.md)[]
+
+Defined in: [clients/europeanParliamentClient.ts:265](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L265)
+
+#### Parameters
+
+##### cache
+
+###### mepDetails
+
+`Record`\<`string`, \{ `active`: `boolean`; `committees`: `string`[]; `country`: `string`; `id`: `string`; `name`: `string`; `politicalGroup`: `string`; `termStart`: `string`; `address?`: `string`; `bday?`: `string`; `biography?`: `string`; `citizenship?`: `string`; `email?`: `string`; `facebook?`: `string`; `familyName?`: `string`; `givenName?`: `string`; `hasEmail?`: `string`; `hasGender?`: `string`; `hasHonorificPrefix?`: `string`; `hasMembership?`: `object`[]; `identifier?`: `string`; `img?`: `string`; `label?`: `string`; `notation_codictPersonId?`: `string`; `phone?`: `string`; `placeOfBirth?`: `string`; `roles?`: `string`[]; `sortLabel?`: `string`; `termEnd?`: `string`; `twitter?`: `string`; `type?`: `string`; `upperFamilyName?`: `string`; `upperGivenName?`: `string`; `votingStatistics?`: \{ `abstentions`: `number`; `attendanceRate`: `number`; `totalVotes`: `number`; `votesAgainst`: `number`; `votesFor`: `number`; \}; `website?`: `string`; \}\> = `...`
+
+###### meps
+
+`object`[] = `...`
+
+###### metadata
+
+\{ `generatedAt`: `string`; `schemaVersion`: `number`; `source`: `string`; `complete?`: `boolean`; `dataset?`: `"meps"` \| `"corporate-bodies"` \| `"controlled-vocabularies"`; `detailCount?`: `number`; `recordCount?`: `number`; `scope?`: `"current"` \| `"all"`; `weekKey?`: `string`; \} = `CacheMetadataSchema`
+
+###### metadata.generatedAt
+
+`string` = `...`
+
+###### metadata.schemaVersion
+
+`number` = `...`
+
+###### metadata.source
+
+`string` = `...`
+
+###### metadata.complete?
+
+`boolean` = `...`
+
+###### metadata.dataset?
+
+`"meps"` \| `"corporate-bodies"` \| `"controlled-vocabularies"` = `...`
+
+###### metadata.detailCount?
+
+`number` = `...`
+
+###### metadata.recordCount?
+
+`number` = `...`
+
+###### metadata.scope?
+
+`"current"` \| `"all"` = `...`
+
+###### metadata.weekKey?
+
+`string` = `...`
+
+#### Returns
+
+[`MEP`](../../../types/ep/mep/interfaces/MEP.md)[]
+
+***
 
 ### clearCache()
 
 > **clearCache**(): `void`
 
-Defined in: [clients/europeanParliamentClient.ts:220](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L220)
+Defined in: [clients/europeanParliamentClient.ts:232](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L232)
 
 Clears all entries from the LRU cache.
 
@@ -171,11 +243,151 @@ const freshData = await client.getMEPs({ country: 'SE' });
 
 ***
 
+### filterCachedMEPsByCommittee()
+
+> `private` **filterCachedMEPsByCommittee**(`meps`, `requested`, `cache`): `Promise`\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)[]\>
+
+Defined in: [clients/europeanParliamentClient.ts:303](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L303)
+
+#### Parameters
+
+##### meps
+
+[`MEP`](../../../types/ep/mep/interfaces/MEP.md)[]
+
+##### requested
+
+`string` \| `undefined`
+
+##### cache
+
+###### mepDetails
+
+`Record`\<`string`, \{ `active`: `boolean`; `committees`: `string`[]; `country`: `string`; `id`: `string`; `name`: `string`; `politicalGroup`: `string`; `termStart`: `string`; `address?`: `string`; `bday?`: `string`; `biography?`: `string`; `citizenship?`: `string`; `email?`: `string`; `facebook?`: `string`; `familyName?`: `string`; `givenName?`: `string`; `hasEmail?`: `string`; `hasGender?`: `string`; `hasHonorificPrefix?`: `string`; `hasMembership?`: `object`[]; `identifier?`: `string`; `img?`: `string`; `label?`: `string`; `notation_codictPersonId?`: `string`; `phone?`: `string`; `placeOfBirth?`: `string`; `roles?`: `string`[]; `sortLabel?`: `string`; `termEnd?`: `string`; `twitter?`: `string`; `type?`: `string`; `upperFamilyName?`: `string`; `upperGivenName?`: `string`; `votingStatistics?`: \{ `abstentions`: `number`; `attendanceRate`: `number`; `totalVotes`: `number`; `votesAgainst`: `number`; `votesFor`: `number`; \}; `website?`: `string`; \}\> = `...`
+
+###### meps
+
+`object`[] = `...`
+
+###### metadata
+
+\{ `generatedAt`: `string`; `schemaVersion`: `number`; `source`: `string`; `complete?`: `boolean`; `dataset?`: `"meps"` \| `"corporate-bodies"` \| `"controlled-vocabularies"`; `detailCount?`: `number`; `recordCount?`: `number`; `scope?`: `"current"` \| `"all"`; `weekKey?`: `string`; \} = `CacheMetadataSchema`
+
+###### metadata.generatedAt
+
+`string` = `...`
+
+###### metadata.schemaVersion
+
+`number` = `...`
+
+###### metadata.source
+
+`string` = `...`
+
+###### metadata.complete?
+
+`boolean` = `...`
+
+###### metadata.dataset?
+
+`"meps"` \| `"corporate-bodies"` \| `"controlled-vocabularies"` = `...`
+
+###### metadata.detailCount?
+
+`number` = `...`
+
+###### metadata.recordCount?
+
+`number` = `...`
+
+###### metadata.scope?
+
+`"current"` \| `"all"` = `...`
+
+###### metadata.weekKey?
+
+`string` = `...`
+
+#### Returns
+
+`Promise`\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)[]\>
+
+***
+
+### findCachedMEPDetails()
+
+> `private` **findCachedMEPDetails**(`cache`, `id`): [`MEPDetails`](../../../types/ep/mep/interfaces/MEPDetails.md) \| `undefined`
+
+Defined in: [clients/europeanParliamentClient.ts:256](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L256)
+
+#### Parameters
+
+##### cache
+
+###### mepDetails
+
+`Record`\<`string`, \{ `active`: `boolean`; `committees`: `string`[]; `country`: `string`; `id`: `string`; `name`: `string`; `politicalGroup`: `string`; `termStart`: `string`; `address?`: `string`; `bday?`: `string`; `biography?`: `string`; `citizenship?`: `string`; `email?`: `string`; `facebook?`: `string`; `familyName?`: `string`; `givenName?`: `string`; `hasEmail?`: `string`; `hasGender?`: `string`; `hasHonorificPrefix?`: `string`; `hasMembership?`: `object`[]; `identifier?`: `string`; `img?`: `string`; `label?`: `string`; `notation_codictPersonId?`: `string`; `phone?`: `string`; `placeOfBirth?`: `string`; `roles?`: `string`[]; `sortLabel?`: `string`; `termEnd?`: `string`; `twitter?`: `string`; `type?`: `string`; `upperFamilyName?`: `string`; `upperGivenName?`: `string`; `votingStatistics?`: \{ `abstentions`: `number`; `attendanceRate`: `number`; `totalVotes`: `number`; `votesAgainst`: `number`; `votesFor`: `number`; \}; `website?`: `string`; \}\> = `...`
+
+###### meps
+
+`object`[] = `...`
+
+###### metadata
+
+\{ `generatedAt`: `string`; `schemaVersion`: `number`; `source`: `string`; `complete?`: `boolean`; `dataset?`: `"meps"` \| `"corporate-bodies"` \| `"controlled-vocabularies"`; `detailCount?`: `number`; `recordCount?`: `number`; `scope?`: `"current"` \| `"all"`; `weekKey?`: `string`; \} = `CacheMetadataSchema`
+
+###### metadata.generatedAt
+
+`string` = `...`
+
+###### metadata.schemaVersion
+
+`number` = `...`
+
+###### metadata.source
+
+`string` = `...`
+
+###### metadata.complete?
+
+`boolean` = `...`
+
+###### metadata.dataset?
+
+`"meps"` \| `"corporate-bodies"` \| `"controlled-vocabularies"` = `...`
+
+###### metadata.detailCount?
+
+`number` = `...`
+
+###### metadata.recordCount?
+
+`number` = `...`
+
+###### metadata.scope?
+
+`"current"` \| `"all"` = `...`
+
+###### metadata.weekKey?
+
+`string` = `...`
+
+##### id
+
+`string`
+
+#### Returns
+
+[`MEPDetails`](../../../types/ep/mep/interfaces/MEPDetails.md) \| `undefined`
+
+***
+
 ### getAdoptedTextById()
 
 > **getAdoptedTextById**(`docId`, `options?`): `Promise`\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:814](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L814)
+Defined in: [clients/europeanParliamentClient.ts:980](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L980)
 
 Returns a single adopted text by document ID.
 **EP API Endpoint:** `GET /adopted-texts/{doc-id}`
@@ -202,7 +414,7 @@ Returns a single adopted text by document ID.
 
 > **getAdoptedTexts**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`AdoptedText`](../../../types/ep/activities/interfaces/AdoptedText.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:801](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L801)
+Defined in: [clients/europeanParliamentClient.ts:967](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L967)
 
 Returns adopted texts.
 **EP API Endpoint:** `GET /adopted-texts`
@@ -237,7 +449,7 @@ Returns adopted texts.
 
 > **getAdoptedTextsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:835](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L835)
+Defined in: [clients/europeanParliamentClient.ts:1001](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1001)
 
 Retrieves recently updated adopted texts via the feed endpoint.
 **EP API Endpoint:** `GET /adopted-texts/feed`
@@ -268,11 +480,59 @@ Retrieves recently updated adopted texts via the feed endpoint.
 
 ***
 
+### getCachedMEPs()
+
+> `private` **getCachedMEPs**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\> \| `null`\>
+
+Defined in: [clients/europeanParliamentClient.ts:316](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L316)
+
+#### Parameters
+
+##### params
+
+###### abortSignal?
+
+`AbortSignal`
+
+###### active?
+
+`boolean`
+
+###### committee?
+
+`string`
+
+###### country?
+
+`string`
+
+###### group?
+
+`string`
+
+###### limit?
+
+`number`
+
+###### live?
+
+`boolean`
+
+###### offset?
+
+`number`
+
+#### Returns
+
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\> \| `null`\>
+
+***
+
 ### getCacheStats()
 
 > **getCacheStats**(): `object`
 
-Defined in: [clients/europeanParliamentClient.ts:234](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L234)
+Defined in: [clients/europeanParliamentClient.ts:246](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L246)
 
 Returns cache statistics for monitoring and debugging.
 
@@ -312,7 +572,7 @@ sub-client returns aggregate statistics across the entire facade.
 
 > **getCommitteeDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:701](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L701)
+Defined in: [clients/europeanParliamentClient.ts:867](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L867)
 
 Returns a single committee document by ID.
 **EP API Endpoint:** `GET /committee-documents/{doc-id}`
@@ -339,7 +599,7 @@ Returns a single committee document by ID.
 
 > **getCommitteeDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:626](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L626)
+Defined in: [clients/europeanParliamentClient.ts:792](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L792)
 
 Returns committee documents.
 **EP API Endpoint:** `GET /committee-documents`
@@ -373,7 +633,7 @@ Only pagination (limit/offset) is supported.
 
 > **getCommitteeDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:736](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L736)
+Defined in: [clients/europeanParliamentClient.ts:902](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L902)
 
 Retrieves recently updated committee documents via the feed endpoint.
 **EP API Endpoint:** `GET /committee-documents/feed`
@@ -397,7 +657,7 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 > **getCommitteeInfo**(`params`): `Promise`\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:555](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L555)
+Defined in: [clients/europeanParliamentClient.ts:668](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L668)
 
 Retrieves committee (corporate body) information by ID or abbreviation.
 
@@ -418,6 +678,10 @@ id or abbreviation
 ###### id?
 
 `string`
+
+###### live?
+
+`boolean`
 
 #### Returns
 
@@ -443,7 +707,7 @@ https://data.europarl.europa.eu/api/v2/corporate-bodies
 
 > **getControlledVocabularies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:902](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L902)
+Defined in: [clients/europeanParliamentClient.ts:1068](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1068)
 
 Returns EP controlled vocabularies.
 **EP API Endpoint:** `GET /controlled-vocabularies`
@@ -474,7 +738,7 @@ Returns EP controlled vocabularies.
 
 > **getControlledVocabulariesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:926](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L926)
+Defined in: [clients/europeanParliamentClient.ts:1092](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1092)
 
 Retrieves recently updated controlled vocabularies via the feed endpoint.
 **EP API Endpoint:** `GET /controlled-vocabularies/feed`
@@ -498,7 +762,7 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 > **getControlledVocabularyById**(`vocId`, `options?`): `Promise`\<`Record`\<`string`, `unknown`\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:914](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L914)
+Defined in: [clients/europeanParliamentClient.ts:1080](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1080)
 
 Returns a single EP Controlled Vocabulary by ID.
 **EP API Endpoint:** `GET /controlled-vocabularies/{voc-id}`
@@ -521,38 +785,14 @@ Returns a single EP Controlled Vocabulary by ID.
 
 ***
 
-### getCorporateBodiesFeed()
+### getCorporateBodies()
 
-> **getCorporateBodiesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
+> **getCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:580](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L580)
+Defined in: [clients/europeanParliamentClient.ts:725](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L725)
 
-Retrieves recently updated corporate bodies via the feed endpoint.
-**EP API Endpoint:** `GET /corporate-bodies/feed`
-Fixed-window feed — no parameters per OpenAPI spec.
-
-#### Parameters
-
-##### options?
-
-###### abortSignal?
-
-`AbortSignal`
-
-#### Returns
-
-`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
-
-***
-
-### getCurrentCorporateBodies()
-
-> **getCurrentCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
-
-Defined in: [clients/europeanParliamentClient.ts:567](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L567)
-
-Returns the list of all current EP Corporate Bodies for today's date.
-**EP API Endpoint:** `GET /corporate-bodies/show-current`
+Returns the list of all EP Corporate Bodies.
+**EP API Endpoint:** `GET /corporate-bodies`
 
 #### Parameters
 
@@ -576,11 +816,97 @@ Returns the list of all current EP Corporate Bodies for today's date.
 
 ***
 
+### getCorporateBodiesFeed()
+
+> **getCorporateBodiesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
+
+Defined in: [clients/europeanParliamentClient.ts:746](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L746)
+
+Retrieves recently updated corporate bodies via the feed endpoint.
+**EP API Endpoint:** `GET /corporate-bodies/feed`
+Fixed-window feed — no parameters per OpenAPI spec.
+
+#### Parameters
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
+
+#### Returns
+
+`Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
+
+***
+
+### getCorporateBodyById()
+
+> **getCorporateBodyById**(`bodyId`, `options?`): `Promise`\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
+
+Defined in: [clients/europeanParliamentClient.ts:737](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L737)
+
+Returns a single EP Corporate Body by body ID.
+**EP API Endpoint:** `GET /corporate-bodies/{body-id}`
+
+#### Parameters
+
+##### bodyId
+
+`string`
+
+##### options?
+
+###### abortSignal?
+
+`AbortSignal`
+
+#### Returns
+
+`Promise`\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>
+
+***
+
+### getCurrentCorporateBodies()
+
+> **getCurrentCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
+
+Defined in: [clients/europeanParliamentClient.ts:692](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L692)
+
+Returns the list of all current EP Corporate Bodies for today's date.
+**EP API Endpoint:** `GET /corporate-bodies/show-current`
+
+#### Parameters
+
+##### params?
+
+###### abortSignal?
+
+`AbortSignal`
+
+###### limit?
+
+`number`
+
+###### live?
+
+`boolean`
+
+###### offset?
+
+`number`
+
+#### Returns
+
+`Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../types/ep/committee/interfaces/Committee.md)\>\>
+
+***
+
 ### getCurrentMEPs()
 
 > **getCurrentMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L284)
+Defined in: [clients/europeanParliamentClient.ts:392](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L392)
 
 Returns all currently active MEPs for today's date.
 
@@ -610,6 +936,10 @@ Optional `country` and `group` filters are applied client-side after fetch.
 
 `number`
 
+###### live?
+
+`boolean`
+
 ###### offset?
 
 `number`
@@ -624,7 +954,7 @@ Optional `country` and `group` filters are applied client-side after fetch.
 
 > **getDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:677](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L677)
+Defined in: [clients/europeanParliamentClient.ts:843](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L843)
 
 Returns a single document by ID.
 **EP API Endpoint:** `GET /documents/{doc-id}`
@@ -651,7 +981,7 @@ Returns a single document by ID.
 
 > **getDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:718](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L718)
+Defined in: [clients/europeanParliamentClient.ts:884](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L884)
 
 Retrieves recently updated documents via the feed endpoint.
 **EP API Endpoint:** `GET /documents/feed`
@@ -675,7 +1005,7 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 > **getEventById**(`eventId`, `options?`): `Promise`\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:480](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L480)
+Defined in: [clients/europeanParliamentClient.ts:593](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L593)
 
 Returns a single EP event by ID.
 **EP API Endpoint:** `GET /events/{event-id}`
@@ -702,7 +1032,7 @@ Returns a single EP event by ID.
 
 > **getEvents**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:468](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L468)
+Defined in: [clients/europeanParliamentClient.ts:581](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L581)
 
 Returns EP events (hearings, conferences, etc.).
 **EP API Endpoint:** `GET /events`
@@ -736,7 +1066,7 @@ Only pagination (limit/offset) is supported.
 
 > **getEventsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:488](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L488)
+Defined in: [clients/europeanParliamentClient.ts:601](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L601)
 
 Retrieves recently updated events via the feed endpoint.
 **EP API Endpoint:** `GET /events/feed`
@@ -771,7 +1101,7 @@ Retrieves recently updated events via the feed endpoint.
 
 > **getExternalDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:709](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L709)
+Defined in: [clients/europeanParliamentClient.ts:875](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L875)
 
 Returns a single external document by ID.
 **EP API Endpoint:** `GET /external-documents/{doc-id}`
@@ -798,7 +1128,7 @@ Returns a single external document by ID.
 
 > **getExternalDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:665](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L665)
+Defined in: [clients/europeanParliamentClient.ts:831](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L831)
 
 Returns all External Documents.
 **EP API Endpoint:** `GET /external-documents`
@@ -832,7 +1162,7 @@ Only pagination (limit/offset) is supported.
 
 > **getExternalDocumentsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:753](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L753)
+Defined in: [clients/europeanParliamentClient.ts:919](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L919)
 
 Retrieves recently updated external documents via the feed endpoint.
 **EP API Endpoint:** `GET /external-documents/feed`
@@ -867,7 +1197,7 @@ Retrieves recently updated external documents via the feed endpoint.
 
 > **getHomonymMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:322](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L322)
+Defined in: [clients/europeanParliamentClient.ts:435](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L435)
 
 Returns homonym MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-homonyms`
@@ -898,7 +1228,7 @@ Returns homonym MEPs for the current parliamentary term.
 
 > **getIncomingMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L298)
+Defined in: [clients/europeanParliamentClient.ts:411](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L411)
 
 Returns all incoming MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-incoming`
@@ -929,7 +1259,7 @@ Returns all incoming MEPs for the current parliamentary term.
 
 > **getMeetingActivities**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:402](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L402)
+Defined in: [clients/europeanParliamentClient.ts:515](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L515)
 
 Returns activities linked to a specific meeting (plenary sitting).
 **EP API Endpoint:** `GET /meetings/{sitting-id}/activities`
@@ -964,7 +1294,7 @@ Returns activities linked to a specific meeting (plenary sitting).
 
 > **getMeetingById**(`eventId`, `options?`): `Promise`\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:457](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L457)
+Defined in: [clients/europeanParliamentClient.ts:570](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L570)
 
 Returns a single EP meeting by ID.
 **EP API Endpoint:** `GET /meetings/{event-id}`
@@ -991,7 +1321,7 @@ Returns a single EP meeting by ID.
 
 > **getMeetingDecisions**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:413](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L413)
+Defined in: [clients/europeanParliamentClient.ts:526](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L526)
 
 Returns decisions made in a specific meeting (plenary sitting).
 **EP API Endpoint:** `GET /meetings/{sitting-id}/decisions`
@@ -1026,7 +1356,7 @@ Returns decisions made in a specific meeting (plenary sitting).
 
 > **getMeetingForeseenActivities**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MeetingActivity`](../../../types/ep/activities/interfaces/MeetingActivity.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:424](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L424)
+Defined in: [clients/europeanParliamentClient.ts:537](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L537)
 
 Returns foreseen activities linked to a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/foreseen-activities`
@@ -1061,7 +1391,7 @@ Returns foreseen activities linked to a specific meeting.
 
 > **getMeetingPlenarySessionDocumentItems**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:446](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L446)
+Defined in: [clients/europeanParliamentClient.ts:559](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L559)
 
 Returns plenary session document items for a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-document-items`
@@ -1096,7 +1426,7 @@ Returns plenary session document items for a specific meeting.
 
 > **getMeetingPlenarySessionDocuments**(`sittingId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:435](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L435)
+Defined in: [clients/europeanParliamentClient.ts:548](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L548)
 
 Returns plenary session documents for a specific meeting.
 **EP API Endpoint:** `GET /meetings/{sitting-id}/plenary-session-documents`
@@ -1131,7 +1461,7 @@ Returns plenary session documents for a specific meeting.
 
 > **getMEPDeclarationById**(`docId`, `options?`): `Promise`\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:349](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L349)
+Defined in: [clients/europeanParliamentClient.ts:462](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L462)
 
 Returns a single MEP declaration by document ID.
 **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
@@ -1162,7 +1492,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarations**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:335](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L335)
+Defined in: [clients/europeanParliamentClient.ts:448](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L448)
 
 Returns MEP declarations of financial interests.
 **EP API Endpoint:** `GET /meps-declarations`
@@ -1201,7 +1531,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarationsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:369](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L369)
+Defined in: [clients/europeanParliamentClient.ts:482](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L482)
 
 Retrieves recently updated MEP declarations via the feed endpoint.
 **EP API Endpoint:** `GET /meps-declarations/feed`
@@ -1236,7 +1566,7 @@ Retrieves recently updated MEP declarations via the feed endpoint.
 
 > **getMEPDetails**(`id`, `options?`): `Promise`\<[`MEPDetails`](../../../types/ep/mep/interfaces/MEPDetails.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:271](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L271)
+Defined in: [clients/europeanParliamentClient.ts:371](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L371)
 
 Retrieves detailed information about a specific MEP.
 
@@ -1256,6 +1586,10 @@ MEP identifier in any supported format
 ###### abortSignal?
 
 `AbortSignal`
+
+###### live?
+
+`boolean`
 
 #### Returns
 
@@ -1281,7 +1615,7 @@ https://data.europarl.europa.eu/api/v2/meps/{id}
 
 > **getMEPs**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:247](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L247)
+Defined in: [clients/europeanParliamentClient.ts:346](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L346)
 
 Retrieves Members of the European Parliament with filtering and pagination.
 
@@ -1315,6 +1649,10 @@ country, group, committee, active, limit, offset
 
 `number`
 
+###### live?
+
+`boolean`
+
 ###### offset?
 
 `number`
@@ -1343,7 +1681,7 @@ https://data.europarl.europa.eu/api/v2/meps
 
 > **getMEPsFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:357](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L357)
+Defined in: [clients/europeanParliamentClient.ts:470](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L470)
 
 Retrieves recently updated MEPs via the feed endpoint.
 **EP API Endpoint:** `GET /meps/feed`
@@ -1374,7 +1712,7 @@ Retrieves recently updated MEPs via the feed endpoint.
 
 > **getOutgoingMEPs**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:310](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L310)
+Defined in: [clients/europeanParliamentClient.ts:423](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L423)
 
 Returns all outgoing MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-outgoing`
@@ -1405,7 +1743,7 @@ Returns all outgoing MEPs for the current parliamentary term.
 
 > **getParliamentaryQuestionById**(`docId`, `options?`): `Promise`\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:882](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L882)
+Defined in: [clients/europeanParliamentClient.ts:1048](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1048)
 
 Returns a single parliamentary question by document ID.
 **EP API Endpoint:** `GET /parliamentary-questions/{doc-id}`
@@ -1432,7 +1770,7 @@ Returns a single parliamentary question by document ID.
 
 > **getParliamentaryQuestions**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`ParliamentaryQuestion`](../../../types/ep/question/interfaces/ParliamentaryQuestion.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:864](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L864)
+Defined in: [clients/europeanParliamentClient.ts:1030](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1030)
 
 Retrieves parliamentary questions with filtering by type, author, and status.
 
@@ -1502,7 +1840,7 @@ https://data.europarl.europa.eu/api/v2/parliamentary-questions
 
 > **getParliamentaryQuestionsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:894](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L894)
+Defined in: [clients/europeanParliamentClient.ts:1060](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1060)
 
 Retrieves recently updated parliamentary questions via the feed endpoint.
 **EP API Endpoint:** `GET /parliamentary-questions/feed`
@@ -1526,7 +1864,7 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 > **getPlenaryDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:685](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L685)
+Defined in: [clients/europeanParliamentClient.ts:851](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L851)
 
 Returns a single plenary document by ID.
 **EP API Endpoint:** `GET /plenary-documents/{doc-id}`
@@ -1553,7 +1891,7 @@ Returns a single plenary document by ID.
 
 > **getPlenaryDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:610](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L610)
+Defined in: [clients/europeanParliamentClient.ts:776](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L776)
 
 Returns plenary documents.
 **EP API Endpoint:** `GET /plenary-documents`
@@ -1588,7 +1926,7 @@ Returns plenary documents.
 
 > **getPlenaryDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:727](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L727)
+Defined in: [clients/europeanParliamentClient.ts:893](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L893)
 
 Retrieves recently updated plenary documents via the feed endpoint.
 **EP API Endpoint:** `GET /plenary-documents/feed`
@@ -1612,7 +1950,7 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 > **getPlenarySessionDocumentById**(`docId`, `options?`): `Promise`\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:693](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L693)
+Defined in: [clients/europeanParliamentClient.ts:859](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L859)
 
 Returns a single plenary session document by ID.
 **EP API Endpoint:** `GET /plenary-session-documents/{doc-id}`
@@ -1639,7 +1977,7 @@ Returns a single plenary session document by ID.
 
 > **getPlenarySessionDocumentItems**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:650](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L650)
+Defined in: [clients/europeanParliamentClient.ts:816](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L816)
 
 Returns all Plenary Session Document Items.
 **EP API Endpoint:** `GET /plenary-session-documents-items`
@@ -1670,7 +2008,7 @@ Returns all Plenary Session Document Items.
 
 > **getPlenarySessionDocuments**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:638](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L638)
+Defined in: [clients/europeanParliamentClient.ts:804](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L804)
 
 Returns plenary session documents.
 **EP API Endpoint:** `GET /plenary-session-documents`
@@ -1701,7 +2039,7 @@ Returns plenary session documents.
 
 > **getPlenarySessionDocumentsFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:745](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L745)
+Defined in: [clients/europeanParliamentClient.ts:911](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L911)
 
 Retrieves recently updated plenary session documents via the feed endpoint.
 **EP API Endpoint:** `GET /plenary-session-documents/feed`
@@ -1725,7 +2063,7 @@ Fixed-window feed — no parameters per OpenAPI spec.
 
 > **getPlenarySessions**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`PlenarySession`](../../../types/ep/plenary/interfaces/PlenarySession.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:386](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L386)
+Defined in: [clients/europeanParliamentClient.ts:499](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L499)
 
 Retrieves plenary sessions with date and location filtering.
 
@@ -1783,7 +2121,7 @@ https://data.europarl.europa.eu/api/v2/meetings
 
 > **getProcedureById**(`processId`, `options?`): `Promise`\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:782](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L782)
+Defined in: [clients/europeanParliamentClient.ts:948](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L948)
 
 Returns a single procedure by ID.
 **EP API Endpoint:** `GET /procedures/{process-id}`
@@ -1814,7 +2152,7 @@ When the procedure is not found (404)
 
 > **getProcedureEventById**(`processId`, `eventId`, `options?`): `Promise`\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:851](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L851)
+Defined in: [clients/europeanParliamentClient.ts:1017](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L1017)
 
 Returns a single event within a procedure by event ID.
 **EP API Endpoint:** `GET /procedures/{process-id}/events/{event-id}`
@@ -1849,7 +2187,7 @@ Event identifier within the procedure
 
 > **getProcedureEvents**(`processId`, `params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:790](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L790)
+Defined in: [clients/europeanParliamentClient.ts:956](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L956)
 
 Returns events linked to a procedure.
 **EP API Endpoint:** `GET /procedures/{process-id}/events`
@@ -1884,7 +2222,7 @@ Returns events linked to a procedure.
 
 > **getProcedures**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Procedure`](../../../types/ep/activities/interfaces/Procedure.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:769](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L769)
+Defined in: [clients/europeanParliamentClient.ts:935](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L935)
 
 Returns legislative procedures.
 **EP API Endpoint:** `GET /procedures`
@@ -1918,7 +2256,7 @@ Only pagination (limit/offset) is supported.
 
 > **getProceduresFeed**(`params?`): `Promise`\<[`JSONLDResponse`](../../ep/baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:822](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L822)
+Defined in: [clients/europeanParliamentClient.ts:988](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L988)
 
 Retrieves recently updated procedures via the feed endpoint.
 **EP API Endpoint:** `GET /procedures/feed`
@@ -1953,7 +2291,7 @@ Retrieves recently updated procedures via the feed endpoint.
 
 > **getSpeechById**(`speechId`, `options?`): `Promise`\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>
 
-Defined in: [clients/europeanParliamentClient.ts:542](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L542)
+Defined in: [clients/europeanParliamentClient.ts:655](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L655)
 
 Returns a single speech by ID.
 **EP API Endpoint:** `GET /speeches/{speech-id}`
@@ -1980,7 +2318,7 @@ Returns a single speech by ID.
 
 > **getSpeeches**(`params?`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../types/ep/activities/interfaces/Speech.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:528](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L528)
+Defined in: [clients/europeanParliamentClient.ts:641](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L641)
 
 Returns plenary speeches.
 **EP API Endpoint:** `GET /speeches`
@@ -2022,7 +2360,7 @@ Use `dateFrom`/`dateTo` (mapped to `sitting-date`/`sitting-date-end`).
 
 > **getVotingRecords**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:509](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L509)
+Defined in: [clients/europeanParliamentClient.ts:622](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L622)
 
 Retrieves voting records with filtering by session, topic, and date.
 
@@ -2083,11 +2421,87 @@ https://data.europarl.europa.eu/api/v2/meetings/{sitting-id}/vote-results
 
 ***
 
+### matchesCommittee()
+
+> `private` **matchesCommittee**(`committees`, `requested`): `boolean`
+
+Defined in: [clients/europeanParliamentClient.ts:295](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L295)
+
+#### Parameters
+
+##### committees
+
+readonly `string`[]
+
+##### requested
+
+`string`
+
+#### Returns
+
+`boolean`
+
+***
+
+### normalizeMEPIdentifier()
+
+> `private` **normalizeMEPIdentifier**(`id`): `string`
+
+Defined in: [clients/europeanParliamentClient.ts:250](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L250)
+
+#### Parameters
+
+##### id
+
+`string`
+
+#### Returns
+
+`string`
+
+***
+
+### paginateCachedMEPs()
+
+> `private` **paginateCachedMEPs**(`meps`, `params`): [`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>
+
+Defined in: [clients/europeanParliamentClient.ts:273](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L273)
+
+#### Parameters
+
+##### meps
+
+[`MEP`](../../../types/ep/mep/interfaces/MEP.md)[]
+
+##### params
+
+###### country?
+
+`string`
+
+###### group?
+
+`string`
+
+###### limit?
+
+`number`
+
+###### offset?
+
+`number`
+
+#### Returns
+
+[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../types/ep/mep/interfaces/MEP.md)\>
+
+***
+
 ### searchDocuments()
 
 > **searchDocuments**(`params`): `Promise`\<[`PaginatedResponse`](../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`LegislativeDocument`](../../../types/ep/document/interfaces/LegislativeDocument.md)\>\>
 
-Defined in: [clients/europeanParliamentClient.ts:593](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L593)
+Defined in: [clients/europeanParliamentClient.ts:759](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L759)
 
 Searches legislative documents by keyword, type, date, and committee.
 
@@ -2153,7 +2567,7 @@ https://data.europarl.europa.eu/api/v2/documents
 
 > `private` `static` **buildShared**(`config`): [`EPSharedResources`](../../ep/baseClient/interfaces/EPSharedResources.md)
 
-Defined in: [clients/europeanParliamentClient.ts:182](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L182)
+Defined in: [clients/europeanParliamentClient.ts:194](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/europeanParliamentClient.ts#L194)
 
 Builds the shared resources object that is passed to all sub-clients.
 Extracted to keep the constructor complexity within ESLint limits.

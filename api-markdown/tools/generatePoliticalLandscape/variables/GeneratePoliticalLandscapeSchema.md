@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../README.md)
 
 ***
 
@@ -6,8 +6,8 @@
 
 # Variable: GeneratePoliticalLandscapeSchema
 
-> `const` **GeneratePoliticalLandscapeSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
+> `const` **GeneratePoliticalLandscapeSchema**: `ZodObject`\<\{ `dateFrom`: `ZodOptional`\<`ZodString`\>; `dateTo`: `ZodOptional`\<`ZodString`\>; `live`: `ZodDefault`\<`ZodOptional`\<`ZodBoolean`\>\>; \}, `$strip`\>
 
-Defined in: [tools/generatePoliticalLandscape.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L40)
+Defined in: [tools/generatePoliticalLandscape.ts:42](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generatePoliticalLandscape.ts#L42)
 
 Schema for generate_political_landscape tool input

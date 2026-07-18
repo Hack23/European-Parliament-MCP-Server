@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.3.43**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Variable: GetControlledVocabulariesSchema
 
-> `const` **GetControlledVocabulariesSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `vocId`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
+> `const` **GetControlledVocabulariesSchema**: `ZodObject`\<\{ `limit`: `ZodDefault`\<`ZodNumber`\>; `live`: `ZodDefault`\<`ZodOptional`\<`ZodBoolean`\>\>; `offset`: `ZodDefault`\<`ZodNumber`\>; `vocId`: `ZodOptional`\<`ZodString`\>; \}, `$strip`\>
 
 Defined in: [schemas/ep/activities.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/schemas/ep/activities.ts#L197)
 
