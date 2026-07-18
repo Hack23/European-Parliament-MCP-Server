@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.0**](../../../README.md)
+[**European Parliament MCP Server API v1.4.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **listCachedCurrentCorporateBodies**(`cachedBodies`, `cachedMEPs`): `object`[]
 
-Defined in: [utils/committeeCache.ts:151](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/committeeCache.ts#L151)
+Defined in: [utils/committeeCache.ts:156](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/committeeCache.ts#L156)
 
 ## Parameters
 

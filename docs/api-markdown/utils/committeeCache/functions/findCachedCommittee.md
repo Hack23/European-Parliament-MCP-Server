@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.0**](../../../README.md)
+[**European Parliament MCP Server API v1.4.1**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **findCachedCommittee**(`lookup`, `cachedBodies`, `cachedMEPs`): \{ `abbreviation`: `string`; `id`: `string`; `members`: `string`[]; `name`: `string`; `chair?`: `string`; `meetingSchedule?`: `string`[]; `memberships?`: `object`[]; `responsibilities?`: `string`[]; `viceChairs?`: `string`[]; \} \| `undefined`
 
-Defined in: [utils/committeeCache.ts:125](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/committeeCache.ts#L125)
+Defined in: [utils/committeeCache.ts:128](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/committeeCache.ts#L128)
 
 ## Parameters
 

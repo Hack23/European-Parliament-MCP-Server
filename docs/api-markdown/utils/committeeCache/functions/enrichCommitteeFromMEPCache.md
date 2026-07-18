@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.0**](../../../README.md)
+[**European Parliament MCP Server API v1.4.1**](../../../README.md)
 
 ***
 
@@ -6,9 +6,9 @@
 
 # Function: enrichCommitteeFromMEPCache()
 
-> **enrichCommitteeFromMEPCache**(`committee`, `cache`): `object`
+> **enrichCommitteeFromMEPCache**(`committee`, `cache`, `organizationAliases?`): `object`
 
-Defined in: [utils/committeeCache.ts:104](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/committeeCache.ts#L104)
+Defined in: [utils/committeeCache.ts:106](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/committeeCache.ts#L106)
 
 ## Parameters
 
@@ -99,6 +99,10 @@ Defined in: [utils/committeeCache.ts:104](https://github.com/Hack23/European-Par
 #### metadata.weekKey?
 
 `string` = `...`
+
+### organizationAliases?
+
+readonly `string`[] = `[]`
 
 ## Returns
 

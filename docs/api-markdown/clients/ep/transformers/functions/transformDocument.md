@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.1**](../../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **transformDocument**(`apiData`): [`LegislativeDocument`](../../../../types/ep/document/interfaces/LegislativeDocument.md)
 
-Defined in: [clients/ep/transformers.ts:500](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L500)
+Defined in: [clients/ep/transformers.ts:514](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/transformers.ts#L514)
 
 Transforms EP API document data to internal [LegislativeDocument](../../../../types/ep/document/interfaces/LegislativeDocument.md) format.
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.0**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.1**](../../../../README.md)
 
 ***
 
@@ -144,7 +144,7 @@ Request timeout in milliseconds.
 
 > `private` **applyCommitteeMemberships**(`committee`, `membershipSummary`): [`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
 
-Defined in: [clients/ep/committeeClient.ts:437](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L437)
+Defined in: [clients/ep/committeeClient.ts:439](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L439)
 
 #### Parameters
 
@@ -166,7 +166,7 @@ Defined in: [clients/ep/committeeClient.ts:437](https://github.com/Hack23/Europe
 
 > `private` **applyMembershipRole**(`summary`, `roleCode`): `void`
 
-Defined in: [clients/ep/committeeClient.ts:374](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L374)
+Defined in: [clients/ep/committeeClient.ts:376](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L376)
 
 #### Parameters
 
@@ -228,7 +228,7 @@ Defined in: [clients/ep/committeeClient.ts:117](https://github.com/Hack23/Europe
 
 > `private` **collectMembershipsFromBatch**(`meps`, `organizationCandidates`, `abortSignal?`): `Promise`\<\{ `memberIds`: `Set`\<`string`\>; `memberships`: [`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)[]; `viceChairIds`: `Set`\<`string`\>; `chairId?`: `string`; \}\>
 
-Defined in: [clients/ep/committeeClient.ts:210](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L210)
+Defined in: [clients/ep/committeeClient.ts:212](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L212)
 
 #### Parameters
 
@@ -252,7 +252,7 @@ Defined in: [clients/ep/committeeClient.ts:210](https://github.com/Hack23/Europe
 
 ### enrichCommitteeMembership()
 
-> `private` **enrichCommitteeMembership**(`committee`, `apiData`, `abortSignal?`): [`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
+> `private` **enrichCommitteeMembership**(`committee`, `apiData`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L139)
 
@@ -272,7 +272,7 @@ Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/Europe
 
 #### Returns
 
-[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)
+`Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 ***
 
@@ -318,7 +318,7 @@ Optional query parameters (same value passed to [get](../../baseClient/classes/B
 
 > `private` **extractMembershipSummary**(`details`, `organizationCandidates`): `MembershipRoleSummary`
 
-Defined in: [clients/ep/committeeClient.ts:341](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L341)
+Defined in: [clients/ep/committeeClient.ts:343](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L343)
 
 #### Parameters
 
@@ -356,9 +356,9 @@ Defined in: [clients/ep/committeeClient.ts:63](https://github.com/Hack23/Europea
 
 ### fetchCommitteeDirectly()
 
-> `private` **fetchCommitteeDirectly**(`bodyId`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
+> `private` **fetchCommitteeDirectly**(`bodyId`, `abortSignal?`, `includeMemberships?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
-Defined in: [clients/ep/committeeClient.ts:485](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L485)
+Defined in: [clients/ep/committeeClient.ts:491](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L491)
 
 Attempts a direct corporate-body lookup by ID.
 
@@ -371,6 +371,10 @@ Attempts a direct corporate-body lookup by ID.
 ##### abortSignal?
 
 `AbortSignal`
+
+##### includeMemberships?
+
+`boolean` = `true`
 
 #### Returns
 
@@ -511,7 +515,7 @@ Defined in: [clients/ep/committeeClient.ts:105](https://github.com/Hack23/Europe
 
 > **getCommitteeInfo**(`params`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:535](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L535)
+Defined in: [clients/ep/committeeClient.ts:555](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L555)
 
 Retrieves committee (corporate body) information by ID or abbreviation.
 
@@ -535,6 +539,10 @@ id or abbreviation of the committee, with optional `abortSignal`
 
 `string`
 
+###### includeMemberships?
+
+`boolean`
+
 #### Returns
 
 `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
@@ -551,7 +559,7 @@ Audit logged per GDPR Article 30
 
 > **getCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/ep/committeeClient.ts:562](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L562)
+Defined in: [clients/ep/committeeClient.ts:584](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L584)
 
 Returns the list of all EP Corporate Bodies.
 **EP API Endpoint:** `GET /corporate-bodies`
@@ -582,7 +590,7 @@ Returns the list of all EP Corporate Bodies.
 
 > **getCorporateBodiesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/committeeClient.ts:605](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L605)
+Defined in: [clients/ep/committeeClient.ts:631](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L631)
 
 Retrieves recently updated corporate bodies via the feed endpoint.
 **EP API Endpoint:** `GET /corporate-bodies/feed`
@@ -608,7 +616,7 @@ Extended timeout applied (120 s minimum).
 
 > **getCorporateBodyById**(`bodyId`, `options?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:587](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L587)
+Defined in: [clients/ep/committeeClient.ts:609](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L609)
 
 Returns a single EP Corporate Body by ID.
 **EP API Endpoint:** `GET /corporate-bodies/{body-id}`
@@ -625,6 +633,10 @@ Returns a single EP Corporate Body by ID.
 
 `AbortSignal`
 
+###### includeMemberships?
+
+`boolean`
+
 #### Returns
 
 `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
@@ -635,7 +647,7 @@ Returns a single EP Corporate Body by ID.
 
 > **getCurrentCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
-Defined in: [clients/ep/committeeClient.ts:615](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L615)
+Defined in: [clients/ep/committeeClient.ts:641](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L641)
 
 Returns the list of all current EP Corporate Bodies for today's date.
 **EP API Endpoint:** `GET /corporate-bodies/show-current`
@@ -666,7 +678,7 @@ Returns the list of all current EP Corporate Bodies for today's date.
 
 > `private` **getMembershipKey**(`membership`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:386](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L386)
+Defined in: [clients/ep/committeeClient.ts:388](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L388)
 
 #### Parameters
 
@@ -684,7 +696,7 @@ Defined in: [clients/ep/committeeClient.ts:386](https://github.com/Hack23/Europe
 
 > `private` **getMembershipRoleCode**(`membership`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:432](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L432)
+Defined in: [clients/ep/committeeClient.ts:434](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L434)
 
 #### Parameters
 
@@ -702,7 +714,7 @@ Defined in: [clients/ep/committeeClient.ts:432](https://github.com/Hack23/Europe
 
 > `private` **getMEPMembershipSummary**(`mep`, `organizationCandidates`, `abortSignal?`, `inferMemberFromRoster?`): `Promise`\<`MEPMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:259](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L259)
+Defined in: [clients/ep/committeeClient.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L261)
 
 #### Parameters
 
@@ -732,7 +744,7 @@ Defined in: [clients/ep/committeeClient.ts:259](https://github.com/Hack23/Europe
 
 > `private` **hasMembershipDetails**(`details`): `boolean`
 
-Defined in: [clients/ep/committeeClient.ts:332](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L332)
+Defined in: [clients/ep/committeeClient.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L334)
 
 #### Parameters
 
@@ -750,7 +762,7 @@ Defined in: [clients/ep/committeeClient.ts:332](https://github.com/Hack23/Europe
 
 > `private` **hasMembershipSummary**(`summary`): `boolean`
 
-Defined in: [clients/ep/committeeClient.ts:337](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L337)
+Defined in: [clients/ep/committeeClient.ts:339](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L339)
 
 #### Parameters
 
@@ -768,7 +780,7 @@ Defined in: [clients/ep/committeeClient.ts:337](https://github.com/Hack23/Europe
 
 > `private` **isCurrentMembership**(`membership`): `boolean`
 
-Defined in: [clients/ep/committeeClient.ts:395](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L395)
+Defined in: [clients/ep/committeeClient.ts:397](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L397)
 
 #### Parameters
 
@@ -804,7 +816,7 @@ Defined in: [clients/ep/committeeClient.ts:101](https://github.com/Hack23/Europe
 
 > `private` **loadCommitteeMemberships**(`organizationCandidates`, `abortSignal?`): `Promise`\<`CommitteeMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:153](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L153)
+Defined in: [clients/ep/committeeClient.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L155)
 
 #### Parameters
 
@@ -826,7 +838,7 @@ Defined in: [clients/ep/committeeClient.ts:153](https://github.com/Hack23/Europe
 
 > `private` **loadMEPMembershipSummaryFromDetails**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MembershipRoleSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:311](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L311)
+Defined in: [clients/ep/committeeClient.ts:313](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L313)
 
 #### Parameters
 
@@ -852,7 +864,7 @@ Defined in: [clients/ep/committeeClient.ts:311](https://github.com/Hack23/Europe
 
 > `private` **matchesCommitteeOrganization**(`membership`, `organizationCandidates`): `boolean`
 
-Defined in: [clients/ep/committeeClient.ts:407](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L407)
+Defined in: [clients/ep/committeeClient.ts:409](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L409)
 
 #### Parameters
 
@@ -874,7 +886,7 @@ Defined in: [clients/ep/committeeClient.ts:407](https://github.com/Hack23/Europe
 
 > `private` **normalizeMembershipClassificationCode**(`value`): `string`
 
-Defined in: [clients/ep/committeeClient.ts:426](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L426)
+Defined in: [clients/ep/committeeClient.ts:428](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L428)
 
 #### Parameters
 
@@ -926,9 +938,9 @@ Defined in: [clients/ep/committeeClient.ts:92](https://github.com/Hack23/Europea
 
 ### resolveCommittee()
 
-> `private` **resolveCommittee**(`searchTerm`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+> `private` **resolveCommittee**(`searchTerm`, `abortSignal?`, `includeMemberships?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
-Defined in: [clients/ep/committeeClient.ts:469](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L469)
+Defined in: [clients/ep/committeeClient.ts:471](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L471)
 
 Resolves a committee by trying direct lookup then list search.
 
@@ -941,6 +953,10 @@ Resolves a committee by trying direct lookup then list search.
 ##### abortSignal?
 
 `AbortSignal`
+
+##### includeMemberships?
+
+`boolean` = `true`
 
 #### Returns
 
@@ -958,7 +974,7 @@ If committee not found
 
 > `private` **resolveDetailMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MEPMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:298](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L298)
+Defined in: [clients/ep/committeeClient.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L300)
 
 #### Parameters
 
@@ -984,7 +1000,7 @@ Defined in: [clients/ep/committeeClient.ts:298](https://github.com/Hack23/Europe
 
 > `private` **resolveRosterMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MEPMembershipSummary`\>
 
-Defined in: [clients/ep/committeeClient.ts:282](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L282)
+Defined in: [clients/ep/committeeClient.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L284)
 
 #### Parameters
 
@@ -1008,9 +1024,9 @@ Defined in: [clients/ep/committeeClient.ts:282](https://github.com/Hack23/Europe
 
 ### searchCommitteeInList()
 
-> `private` **searchCommitteeInList**(`searchTerm`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
+> `private` **searchCommitteeInList**(`searchTerm`, `abortSignal?`, `includeMemberships?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
-Defined in: [clients/ep/committeeClient.ts:510](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L510)
+Defined in: [clients/ep/committeeClient.ts:524](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L524)
 
 Searches the corporate-bodies list for a matching committee.
 
@@ -1023,6 +1039,10 @@ Searches the corporate-bodies list for a matching committee.
 ##### abortSignal?
 
 `AbortSignal`
+
+##### includeMemberships?
+
+`boolean` = `true`
 
 #### Returns
 
