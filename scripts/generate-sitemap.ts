@@ -25,22 +25,6 @@ interface SitemapConfig {
   lastUpdate: string;
 }
 
-/** Metadata for a documentation page card */
-interface PageMetadata {
-  /** Emoji icon displayed on the card */
-  icon: string;
-  /** Card heading */
-  title: string;
-  /** Short description shown on the card */
-  description: string;
-  /** Link target for the card */
-  href: string;
-  /** Optional badge label */
-  badge?: string;
-  /** Badge colour variant */
-  badgeType?: 'default' | 'success' | 'info';
-}
-
 // ---------------------------------------------------------------------------
 // Quality-metric constants (typed, single source of truth)
 // ---------------------------------------------------------------------------
@@ -106,46 +90,6 @@ const config: SitemapConfig = {
   version,
   lastUpdate,
 };
-
-// ---------------------------------------------------------------------------
-// Page catalogue (illustrates PageMetadata usage)
-// ---------------------------------------------------------------------------
-
-/** Documentation pages rendered in the API Documentation section */
-const _apiPages: PageMetadata[] = [
-  {
-    icon: '📖',
-    title: 'API Reference (HTML)',
-    href: 'api/index.html',
-    description: 'Complete TypeScript API documentation with search, navigation, and type hierarchy',
-    badge: 'TypeDoc HTML',
-    badgeType: 'info',
-  },
-  {
-    icon: '📝',
-    title: 'API Reference (Markdown)',
-    href: 'api-markdown/modules.md',
-    description: 'SEO-friendly Markdown API documentation for all 39 tools, types, and schemas',
-    badge: 'TypeDoc Markdown',
-    badgeType: 'info',
-  },
-  {
-    icon: '📦',
-    title: 'SBOM',
-    href: 'SBOM.md',
-    description: 'Software Bill of Materials in SPDX format',
-    badge: 'SPDX 2.3',
-    badgeType: 'info',
-  },
-  {
-    icon: '🔐',
-    title: 'Attestations',
-    href: 'ATTESTATIONS.md',
-    description: 'Build provenance and supply chain security',
-    badge: 'SLSA L3',
-    badgeType: 'success',
-  },
-];
 
 // ---------------------------------------------------------------------------
 // HTML template (uses config + typed constants)

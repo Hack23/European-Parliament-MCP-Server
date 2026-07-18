@@ -214,18 +214,19 @@ graph LR
 
 Currently, the server does **not require authentication** for tool access. Future versions may introduce OAuth 2.0 or API key authentication.
 
-### Weekly Snapshot Cache
+### Bundled Data Cache
 
-MEP, corporate-body, and controlled-vocabulary tools use validated weekly snapshots by default. The npm package includes only the current runtime files:
+MEP, corporate-body, and controlled-vocabulary tools use a validated bundled cache by default. The npm package includes:
 
 ```text
-data/weekly/
-├── meps/latest.json
-├── corporate-bodies/latest.json
-└── controlled-vocabularies/latest.json
+data/cache/
+├── meps.json
+├── corporate-bodies.json
+├── controlled-vocabularies.json
+└── manifest.json
 ```
 
-Repository refresh workflows also retain predictable history at `data/weekly/<dataset>/<ISO-week-year>/week-<NN>/index.json`. Set `EP_WEEKLY_CACHE_DIR` to override the snapshot root. When a snapshot is missing or invalid, the tool falls back to EP API v2. Pass `live: true` to supported tools to explicitly bypass disk snapshots.
+Each dataset file is verified against a SHA-256 hash recorded in `manifest.json` before use; a mismatched or missing entry causes the tool to fall back to a live EP API v2 fetch. Set `EP_CACHE_DIR` (or the legacy `EP_WEEKLY_CACHE_DIR`) to override the cache root. Pass `live: true` to supported tools to explicitly bypass the bundled cache.
 
 ---
 

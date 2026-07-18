@@ -172,7 +172,7 @@ pie title E2E Test Case Distribution
 |-------------|-------|-------|
 | **Node.js** | 26+ (Current) | Required for ES module support and MCP SDK compatibility |
 | **Build artifacts** | `dist/index.js` must exist | Run `npm run build` before E2E tests |
-| **Weekly snapshots** | Three valid `data/weekly/*/latest.json` files | MEP, committee, and vocabulary paths are deterministic and cache-backed |
+| **Bundled cache** | Valid `data/cache/{meps,corporate-bodies,controlled-vocabularies}.json` + `manifest.json` | MEP, committee, and vocabulary paths are deterministic and SHA-256 manifest-verified |
 | **EP API reachability** | European Parliament Open Data Portal should be accessible | Non-cached tools make live HTTP requests to `https://data.europarl.europa.eu/` |
 | **Network access** | Outbound HTTPS on port 443 | Required for non-cached EP API calls |
 | **Timeout tolerance** | EP API responses may take 10–60 seconds | Default tool call timeout: 100 seconds |
@@ -184,7 +184,7 @@ pie title E2E Test Case Distribution
 | `EP_REQUEST_TIMEOUT_MS` | No | `60000` | EP API request timeout (set in CI) |
 | `NODE_ENV` | No | `test` | Runtime environment |
 | `EP_API_URL` | No | `https://data.europarl.europa.eu/api/v2` | EP Open Data API base URL |
-| `EP_WEEKLY_CACHE_DIR` | No | Bundled `data/weekly` | Override root for weekly runtime snapshots |
+| `EP_CACHE_DIR` | No | Bundled `data/cache` | Override root for the bundled runtime cache (legacy alias: `EP_WEEKLY_CACHE_DIR`) |
 
 ### CI Environment
 

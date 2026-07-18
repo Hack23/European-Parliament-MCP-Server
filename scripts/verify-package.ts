@@ -106,13 +106,14 @@ const REQUIRED_DOCS: readonly string[] = [
 
 /** Runtime cache snapshots required for cache-first MCP tool behavior. */
 const REQUIRED_CACHE_FILES: readonly string[] = [
-  'data/weekly/meps/latest.json',
-  'data/weekly/corporate-bodies/latest.json',
-  'data/weekly/controlled-vocabularies/latest.json',
+  'data/cache/meps.json',
+  'data/cache/corporate-bodies.json',
+  'data/cache/controlled-vocabularies.json',
+  'data/cache/manifest.json',
 ] as const;
 
-/** Publish-manifest entry that includes only runtime snapshots, not weekly history. */
-const REQUIRED_CACHE_PACKAGE_PATTERN = 'data/weekly/*/latest.json' as const;
+/** Publish-manifest entry that includes only the flat bundled cache files. */
+const REQUIRED_CACHE_PACKAGE_PATTERN = 'data/cache/*.json' as const;
 
 // ---------------------------------------------------------------------------
 // Path helpers
@@ -198,7 +199,7 @@ for (const file of REQUIRED_DIST_FILES) {
   } else {
     try {
       const stats = statSync(filePath);
-      success(state, `${file} (${stats.size} bytes)`);
+      success(state, `${file} (${String(stats.size)} bytes)`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       error(state, `Failed to stat ${file}: ${message}`);
@@ -214,7 +215,7 @@ for (const file of REQUIRED_DOCS) {
   } else {
     try {
       const stats = statSync(filePath);
-      success(state, `${file} (${stats.size} bytes)`);
+      success(state, `${file} (${String(stats.size)} bytes)`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       error(state, `Failed to stat ${file}: ${message}`);
@@ -285,12 +286,12 @@ if (!existsSync(pkgPath)) {
       success(state, `Package: ${pkg.name ?? '(unnamed)'}@${pkg.version ?? '(no version)'}`);
 
       // Required fields
-      if (!pkg.name) error(state, 'package.json missing "name" field');
-      if (!pkg.version) error(state, 'package.json missing "version" field');
-      if (!pkg.description) warn(state, 'package.json missing "description" field');
-      if (!pkg.license) error(state, 'package.json missing "license" field');
-      if (!pkg.repository) warn(state, 'package.json missing "repository" field');
-      if (!pkg.main) error(state, 'package.json missing "main" field');
+      if (pkg.name === undefined || pkg.name === '') error(state, 'package.json missing "name" field');
+      if (pkg.version === undefined || pkg.version === '') error(state, 'package.json missing "version" field');
+      if (pkg.description === undefined || pkg.description === '') warn(state, 'package.json missing "description" field');
+      if (pkg.license === undefined || pkg.license === '') error(state, 'package.json missing "license" field');
+      if (pkg.repository === undefined || pkg.repository === null) warn(state, 'package.json missing "repository" field');
+      if (pkg.main === undefined || pkg.main === '') error(state, 'package.json missing "main" field');
       if (pkg.main !== undefined && pkg.main !== LIBRARY_ENTRY_POINT) {
         error(state, `Package main points to ${pkg.main}, expected ${LIBRARY_ENTRY_POINT}`);
       }
@@ -323,14 +324,14 @@ if (!existsSync(pkgPath)) {
         for (const binName of binKeys) {
           const binPath = pkg.bin[binName];
           if (binPath !== BIN_ENTRY_POINT) {
-            error(state, `Binary "${binName}" points to ${binPath}, expected ${BIN_ENTRY_POINT}`);
+            error(state, `Binary "${binName}" points to ${String(binPath)}, expected ${BIN_ENTRY_POINT}`);
           }
         }
       }
 
       // Check files array
       if (pkg.files) {
-        success(state, `Package files: ${pkg.files.length} entries`);
+        success(state, `Package files: ${String(pkg.files.length)} entries`);
         console.log(`   Files to include: ${pkg.files.join(', ')}`);
 
         if (!pkg.files.includes(REQUIRED_CACHE_PACKAGE_PATTERN)) {
@@ -347,7 +348,7 @@ if (!existsSync(pkgPath)) {
             if (matches.length === 0) {
               error(state, `Package file pattern matched no files: ${file}`);
             } else {
-              success(state, `Package file pattern ${file} matched ${matches.length} files`);
+              success(state, `Package file pattern ${file} matched ${String(matches.length)} files`);
             }
             continue;
           }
@@ -361,7 +362,7 @@ if (!existsSync(pkgPath)) {
       // Check dependencies
       if (pkg.dependencies) {
         const depCount = Object.keys(pkg.dependencies).length;
-        success(state, `Dependencies: ${depCount}`);
+        success(state, `Dependencies: ${String(depCount)}`);
         console.log(`   Runtime deps: ${Object.keys(pkg.dependencies).join(', ')}`);
       } else {
         warn(state, 'No dependencies declared');
@@ -369,13 +370,13 @@ if (!existsSync(pkgPath)) {
 
       if (pkg.devDependencies) {
         const devDepCount = Object.keys(pkg.devDependencies).length;
-        success(state, `DevDependencies: ${devDepCount}`);
+        success(state, `DevDependencies: ${String(devDepCount)}`);
       }
 
       // Check engines
       if (pkg.engines) {
         success(state, `Node version requirement: ${pkg.engines.node ?? 'not specified'}`);
-        if (pkg.engines.npm) {
+        if (pkg.engines.npm !== undefined && pkg.engines.npm !== '') {
           success(state, `npm version requirement: ${pkg.engines.npm}`);
         }
       } else {
@@ -482,8 +483,8 @@ if (existsSync(join(ROOT_DIR, 'dist', 'node_modules'))) {
 // ── Summary ─────────────────────────────────────────────────────────────────
 console.log('\n═══════════════════════════════════════════════════');
 console.log('📊 Verification Summary:');
-console.log(`   ${state.errors === 0 ? '✅ No errors' : `❌ ${state.errors} error(s)`}`);
-console.log(`   ⚠️  ${state.warnings === 0 ? 'No warnings' : `${state.warnings} warning(s)`}`);
+console.log(`   ${state.errors === 0 ? '✅ No errors' : `❌ ${String(state.errors)} error(s)`}`);
+console.log(`   ⚠️  ${state.warnings === 0 ? 'No warnings' : `${String(state.warnings)} warning(s)`}`);
 console.log('═══════════════════════════════════════════════════');
 
 if (state.errors > 0) {

@@ -1,0 +1,4793 @@
+{
+  "metadata": {
+    "schemaVersion": 3,
+    "generatedAt": "2026-07-18T12:44:22.118Z",
+    "source": "European Parliament Open Data Portal API v2",
+    "dataset": "corporate-bodies",
+    "scope": "current",
+    "complete": true,
+    "recordCount": 475,
+    "detailCount": 56
+  },
+  "corporateBodies": [
+    {
+      "id": "3730",
+      "name": "STOA",
+      "abbreviation": "STOA",
+      "members": [],
+      "responsibilities": []
+    },
+    {
+      "id": "3901",
+      "name": "Committee 3901",
+      "abbreviation": "3901",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3902",
+      "name": "Committee 3902",
+      "abbreviation": "3902",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3903",
+      "name": "Committee 3903",
+      "abbreviation": "3903",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3904",
+      "name": "Committee 3904",
+      "abbreviation": "3904",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3905",
+      "name": "Committee 3905",
+      "abbreviation": "3905",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3906",
+      "name": "Committee 3906",
+      "abbreviation": "3906",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3907",
+      "name": "Committee 3907",
+      "abbreviation": "3907",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3908",
+      "name": "Committee 3908",
+      "abbreviation": "3908",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3909",
+      "name": "Committee 3909",
+      "abbreviation": "3909",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3910",
+      "name": "Committee 3910",
+      "abbreviation": "3910",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3911",
+      "name": "Committee 3911",
+      "abbreviation": "3911",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3912",
+      "name": "Committee 3912",
+      "abbreviation": "3912",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3913",
+      "name": "Committee 3913",
+      "abbreviation": "3913",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3914",
+      "name": "Committee 3914",
+      "abbreviation": "3914",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3915",
+      "name": "Committee 3915",
+      "abbreviation": "3915",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3916",
+      "name": "Committee 3916",
+      "abbreviation": "3916",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3917",
+      "name": "Committee 3917",
+      "abbreviation": "3917",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3918",
+      "name": "Committee 3918",
+      "abbreviation": "3918",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3919",
+      "name": "Committee 3919",
+      "abbreviation": "3919",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3920",
+      "name": "Committee 3920",
+      "abbreviation": "3920",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3921",
+      "name": "Committee 3921",
+      "abbreviation": "3921",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3922",
+      "name": "Committee 3922",
+      "abbreviation": "3922",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3923",
+      "name": "Committee 3923",
+      "abbreviation": "3923",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3924",
+      "name": "Committee 3924",
+      "abbreviation": "3924",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3925",
+      "name": "Committee 3925",
+      "abbreviation": "3925",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3926",
+      "name": "Committee 3926",
+      "abbreviation": "3926",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3927",
+      "name": "Committee 3927",
+      "abbreviation": "3927",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3928",
+      "name": "Committee 3928",
+      "abbreviation": "3928",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3929",
+      "name": "Committee 3929",
+      "abbreviation": "3929",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3930",
+      "name": "Committee 3930",
+      "abbreviation": "3930",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3931",
+      "name": "Committee 3931",
+      "abbreviation": "3931",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3932",
+      "name": "Committee 3932",
+      "abbreviation": "3932",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3933",
+      "name": "Committee 3933",
+      "abbreviation": "3933",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3934",
+      "name": "Committee 3934",
+      "abbreviation": "3934",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3935",
+      "name": "Committee 3935",
+      "abbreviation": "3935",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3936",
+      "name": "Committee 3936",
+      "abbreviation": "3936",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3937",
+      "name": "Committee 3937",
+      "abbreviation": "3937",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3938",
+      "name": "Committee 3938",
+      "abbreviation": "3938",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3939",
+      "name": "Committee 3939",
+      "abbreviation": "3939",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3940",
+      "name": "Committee 3940",
+      "abbreviation": "3940",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3941",
+      "name": "Committee 3941",
+      "abbreviation": "3941",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3942",
+      "name": "Committee 3942",
+      "abbreviation": "3942",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "3943",
+      "name": "Committee 3943",
+      "abbreviation": "3943",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_CHAMBER"
+      ]
+    },
+    {
+      "id": "6561",
+      "name": "NI",
+      "abbreviation": "NI",
+      "members": [],
+      "responsibilities": [
+        "EU_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6562",
+      "name": "AFET",
+      "abbreviation": "AFET",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6563",
+      "name": "DEVE",
+      "abbreviation": "DEVE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6564",
+      "name": "INTA",
+      "abbreviation": "INTA",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6565",
+      "name": "DMED",
+      "abbreviation": "DMED",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6566",
+      "name": "DLAT",
+      "abbreviation": "DLAT",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6567",
+      "name": "BUDG",
+      "abbreviation": "BUDG",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6568",
+      "name": "CONT",
+      "abbreviation": "CONT",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6569",
+      "name": "DEPA",
+      "abbreviation": "DEPA",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6570",
+      "name": "ECON",
+      "abbreviation": "ECON",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6571",
+      "name": "DNAT",
+      "abbreviation": "DNAT",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6572",
+      "name": "EMPL",
+      "abbreviation": "EMPL",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6573",
+      "name": "DACP",
+      "abbreviation": "DACP",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6575",
+      "name": "DAFR",
+      "abbreviation": "DAFR",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6576",
+      "name": "ITRE",
+      "abbreviation": "ITRE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6577",
+      "name": "DCAB",
+      "abbreviation": "DCAB",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6578",
+      "name": "DPAC",
+      "abbreviation": "DPAC",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY_ASSEMBLY"
+      ]
+    },
+    {
+      "id": "6579",
+      "name": "IMCO",
+      "abbreviation": "IMCO",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6580",
+      "name": "TRAN",
+      "abbreviation": "TRAN",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6581",
+      "name": "REGI",
+      "abbreviation": "REGI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6582",
+      "name": "AGRI",
+      "abbreviation": "AGRI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6583",
+      "name": "PECH",
+      "abbreviation": "PECH",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6584",
+      "name": "CULT",
+      "abbreviation": "CULT",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6585",
+      "name": "JURI",
+      "abbreviation": "JURI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6586",
+      "name": "LIBE",
+      "abbreviation": "LIBE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6587",
+      "name": "AFCO",
+      "abbreviation": "AFCO",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6588",
+      "name": "FEMM",
+      "abbreviation": "FEMM",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6589",
+      "name": "DEEA",
+      "abbreviation": "DEEA",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6590",
+      "name": "DSEE",
+      "abbreviation": "DSEE",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6591",
+      "name": "PETI",
+      "abbreviation": "PETI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "6592",
+      "name": "D-RU",
+      "abbreviation": "D-RU",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6593",
+      "name": "D-UA",
+      "abbreviation": "D-UA",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6594",
+      "name": "D-MD",
+      "abbreviation": "D-MD",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6595",
+      "name": "D-BY",
+      "abbreviation": "D-BY",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6596",
+      "name": "DSCA",
+      "abbreviation": "DSCA",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6597",
+      "name": "D-IL",
+      "abbreviation": "D-IL",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6598",
+      "name": "DPAL",
+      "abbreviation": "DPAL",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6599",
+      "name": "DMAG",
+      "abbreviation": "DMAG",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6600",
+      "name": "DMAS",
+      "abbreviation": "DMAS",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6601",
+      "name": "DARP",
+      "abbreviation": "DARP",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6602",
+      "name": "D-IQ",
+      "abbreviation": "D-IQ",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6603",
+      "name": "D-IR",
+      "abbreviation": "D-IR",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6604",
+      "name": "D-US",
+      "abbreviation": "D-US",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6605",
+      "name": "D-CA",
+      "abbreviation": "D-CA",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6606",
+      "name": "D-BR",
+      "abbreviation": "D-BR",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6607",
+      "name": "DCAM",
+      "abbreviation": "DCAM",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6608",
+      "name": "DAND",
+      "abbreviation": "DAND",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6609",
+      "name": "DMER",
+      "abbreviation": "DMER",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6610",
+      "name": "D-JP",
+      "abbreviation": "D-JP",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6611",
+      "name": "D-CN",
+      "abbreviation": "D-CN",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6612",
+      "name": "D-IN",
+      "abbreviation": "D-IN",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6613",
+      "name": "D-AF",
+      "abbreviation": "D-AF",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6614",
+      "name": "DSAS",
+      "abbreviation": "DSAS",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6615",
+      "name": "DASE",
+      "abbreviation": "DASE",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6616",
+      "name": "DKOR",
+      "abbreviation": "DKOR",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6617",
+      "name": "DANZ",
+      "abbreviation": "DANZ",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6618",
+      "name": "DCAS",
+      "abbreviation": "DCAS",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6619",
+      "name": "D-ZA",
+      "abbreviation": "D-ZA",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6620",
+      "name": "DPAP",
+      "abbreviation": "DPAP",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_PARLIAMENTARY"
+      ]
+    },
+    {
+      "id": "6621",
+      "name": "D-MK",
+      "abbreviation": "D-MK",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6622",
+      "name": "D-TR",
+      "abbreviation": "D-TR",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6623",
+      "name": "D-MX",
+      "abbreviation": "D-MX",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6624",
+      "name": "D-CL",
+      "abbreviation": "D-CL",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6625",
+      "name": "DCAR",
+      "abbreviation": "DCAR",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6626",
+      "name": "D-RS",
+      "abbreviation": "D-RS",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6627",
+      "name": "D-AL",
+      "abbreviation": "D-AL",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6628",
+      "name": "D-ME",
+      "abbreviation": "D-ME",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6629",
+      "name": "D-UK",
+      "abbreviation": "D-UK",
+      "members": [],
+      "responsibilities": [
+        "DELEGATION_JOINT_COMMITTEE"
+      ]
+    },
+    {
+      "id": "6630",
+      "name": "BURO",
+      "abbreviation": "BURO",
+      "members": [],
+      "responsibilities": [
+        "GOVERNING_BODY"
+      ]
+    },
+    {
+      "id": "6631",
+      "name": "BCPR",
+      "abbreviation": "BCPR",
+      "members": [],
+      "responsibilities": [
+        "GOVERNING_BODY"
+      ]
+    },
+    {
+      "id": "6632",
+      "name": "QUE",
+      "abbreviation": "QUE",
+      "members": [],
+      "responsibilities": [
+        "GOVERNING_BODY"
+      ]
+    },
+    {
+      "id": "6633",
+      "name": "PRCO",
+      "abbreviation": "PRCO",
+      "members": [],
+      "responsibilities": [
+        "GOVERNING_BODY"
+      ]
+    },
+    {
+      "id": "6634",
+      "name": "PRDE",
+      "abbreviation": "PRDE",
+      "members": [],
+      "responsibilities": [
+        "GOVERNING_BODY"
+      ]
+    },
+    {
+      "id": "6635",
+      "name": "KPÖ",
+      "abbreviation": "KPÖ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6636",
+      "name": "SSW",
+      "abbreviation": "SSW",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6637",
+      "name": "Æ",
+      "abbreviation": "Æ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6638",
+      "name": "Volt",
+      "abbreviation": "Volt",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6639",
+      "name": "NSC",
+      "abbreviation": "NSC",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6640",
+      "name": "AD",
+      "abbreviation": "AD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6641",
+      "name": "IL",
+      "abbreviation": "IL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6642",
+      "name": "L",
+      "abbreviation": "L",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6643",
+      "name": "SUE",
+      "abbreviation": "SUE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6644",
+      "name": "DP",
+      "abbreviation": "DP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6645",
+      "name": "SOS RO",
+      "abbreviation": "SOS RO",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6646",
+      "name": "CNR",
+      "abbreviation": "CNR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6647",
+      "name": "Možemo!",
+      "abbreviation": "Možemo!",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6648",
+      "name": "Revival",
+      "abbreviation": "Revival",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6649",
+      "name": "JV",
+      "abbreviation": "JV",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6650",
+      "name": "LRP",
+      "abbreviation": "LRP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6651",
+      "name": "Slovensko",
+      "abbreviation": "Slovensko",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6652",
+      "name": "LS",
+      "abbreviation": "LS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6653",
+      "name": "LP",
+      "abbreviation": "LP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6654",
+      "name": "CDU",
+      "abbreviation": "CDU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6655",
+      "name": "AS",
+      "abbreviation": "AS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6656",
+      "name": "DSVL",
+      "abbreviation": "DSVL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6657",
+      "name": "Maďarská Aliancia",
+      "abbreviation": "Maďarská Aliancia",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6658",
+      "name": "Vesna",
+      "abbreviation": "Vesna",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6659",
+      "name": "Resni.ca",
+      "abbreviation": "Resni.ca",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6660",
+      "name": "ZS",
+      "abbreviation": "ZS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6661",
+      "name": "F",
+      "abbreviation": "F",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6662",
+      "name": "O",
+      "abbreviation": "O",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6663",
+      "name": "V",
+      "abbreviation": "V",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6664",
+      "name": "ER",
+      "abbreviation": "ER",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6665",
+      "name": "SDE",
+      "abbreviation": "SDE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6666",
+      "name": "PP",
+      "abbreviation": "PP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6667",
+      "name": "PSOE",
+      "abbreviation": "PSOE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6668",
+      "name": "IU",
+      "abbreviation": "IU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6669",
+      "name": "ERC",
+      "abbreviation": "ERC",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6670",
+      "name": "Perus",
+      "abbreviation": "Perus",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6671",
+      "name": "VIHR",
+      "abbreviation": "VIHR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6672",
+      "name": "SDP",
+      "abbreviation": "SDP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6673",
+      "name": "SFP",
+      "abbreviation": "SFP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6674",
+      "name": "M5S",
+      "abbreviation": "M5S",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6675",
+      "name": "PD",
+      "abbreviation": "PD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6676",
+      "name": "SVP",
+      "abbreviation": "SVP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6677",
+      "name": "LRLS",
+      "abbreviation": "LRLS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6678",
+      "name": "TS-LKD",
+      "abbreviation": "TS-LKD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6679",
+      "name": "LLRA",
+      "abbreviation": "LLRA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6680",
+      "name": "LVZS",
+      "abbreviation": "LVZS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6681",
+      "name": "LSAP",
+      "abbreviation": "LSAP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6682",
+      "name": "DP",
+      "abbreviation": "DP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6683",
+      "name": "CSV",
+      "abbreviation": "CSV",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6684",
+      "name": "Déi Gréng",
+      "abbreviation": "Déi Gréng",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6685",
+      "name": "TB/LNNK",
+      "abbreviation": "TB/LNNK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6686",
+      "name": "Saskaņa SDP",
+      "abbreviation": "Saskaņa SDP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6687",
+      "name": "LKS",
+      "abbreviation": "LKS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6688",
+      "name": "V",
+      "abbreviation": "V",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6689",
+      "name": "PL",
+      "abbreviation": "PL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6690",
+      "name": "PN",
+      "abbreviation": "PN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6691",
+      "name": "VVD",
+      "abbreviation": "VVD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6692",
+      "name": "PvdA",
+      "abbreviation": "PvdA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6693",
+      "name": "D66",
+      "abbreviation": "D66",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6694",
+      "name": "GroenLinks",
+      "abbreviation": "GroenLinks",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6695",
+      "name": "PvdD",
+      "abbreviation": "PvdD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6696",
+      "name": "PVV",
+      "abbreviation": "PVV",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6697",
+      "name": "CDA",
+      "abbreviation": "CDA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6698",
+      "name": "ChristenUnie",
+      "abbreviation": "ChristenUnie",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6699",
+      "name": "SGP",
+      "abbreviation": "SGP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6700",
+      "name": "SPZZ",
+      "abbreviation": "SPZZ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6701",
+      "name": "SLD-UP",
+      "abbreviation": "SLD-UP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6702",
+      "name": "PiS",
+      "abbreviation": "PiS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6703",
+      "name": "PO",
+      "abbreviation": "PO",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6704",
+      "name": "PSL",
+      "abbreviation": "PSL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6705",
+      "name": "PSD",
+      "abbreviation": "PSD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6706",
+      "name": "PS",
+      "abbreviation": "PS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6707",
+      "name": "BE",
+      "abbreviation": "BE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6708",
+      "name": "PSD",
+      "abbreviation": "PSD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6709",
+      "name": "PNL",
+      "abbreviation": "PNL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6710",
+      "name": "PMP",
+      "abbreviation": "PMP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6711",
+      "name": "UDMR",
+      "abbreviation": "UDMR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6712",
+      "name": "S",
+      "abbreviation": "S",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6713",
+      "name": "M",
+      "abbreviation": "M",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6714",
+      "name": "KD",
+      "abbreviation": "KD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6715",
+      "name": "FP",
+      "abbreviation": "FP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6716",
+      "name": "C",
+      "abbreviation": "C",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6717",
+      "name": "MP",
+      "abbreviation": "MP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6718",
+      "name": "V",
+      "abbreviation": "V",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6719",
+      "name": "SDS",
+      "abbreviation": "SDS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6720",
+      "name": "NSi-KD",
+      "abbreviation": "NSi-KD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6721",
+      "name": "SD",
+      "abbreviation": "SD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6722",
+      "name": "KDH",
+      "abbreviation": "KDH",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6723",
+      "name": "SMER-SD",
+      "abbreviation": "SMER-SD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6724",
+      "name": "DK",
+      "abbreviation": "DK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6725",
+      "name": "KESK",
+      "abbreviation": "KESK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6726",
+      "name": "KOK",
+      "abbreviation": "KOK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6727",
+      "name": "Europe Écologie",
+      "abbreviation": "Europe Écologie",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6728",
+      "name": "PS",
+      "abbreviation": "PS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6729",
+      "name": "PNȚ-CD",
+      "abbreviation": "PNȚ-CD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6730",
+      "name": "N.D.",
+      "abbreviation": "N.D.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6731",
+      "name": "SYRIZA",
+      "abbreviation": "SYRIZA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6732",
+      "name": "XA",
+      "abbreviation": "XA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6733",
+      "name": "KKE",
+      "abbreviation": "KKE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6734",
+      "name": "HDZ",
+      "abbreviation": "HDZ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6735",
+      "name": "SDP",
+      "abbreviation": "SDP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6736",
+      "name": "MSZP",
+      "abbreviation": "MSZP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6737",
+      "name": "Fidesz-KDNP",
+      "abbreviation": "Fidesz-KDNP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6738",
+      "name": "Jobbik",
+      "abbreviation": "Jobbik",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6739",
+      "name": "Ind.",
+      "abbreviation": "Ind.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6740",
+      "name": "SF",
+      "abbreviation": "SF",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6741",
+      "name": "FF",
+      "abbreviation": "FF",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6742",
+      "name": "FG",
+      "abbreviation": "FG",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6743",
+      "name": "GP",
+      "abbreviation": "GP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6744",
+      "name": "FI",
+      "abbreviation": "FI",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6745",
+      "name": "ÖVP",
+      "abbreviation": "ÖVP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6746",
+      "name": "SPÖ",
+      "abbreviation": "SPÖ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6747",
+      "name": "FPÖ",
+      "abbreviation": "FPÖ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6748",
+      "name": "Die Grünen",
+      "abbreviation": "Die Grünen",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6749",
+      "name": "NEOS",
+      "abbreviation": "NEOS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6750",
+      "name": "GROEN",
+      "abbreviation": "GROEN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6751",
+      "name": "Vlaams Belang",
+      "abbreviation": "Vlaams Belang",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6752",
+      "name": "Open VLD",
+      "abbreviation": "Open VLD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6753",
+      "name": "SP.A",
+      "abbreviation": "SP.A",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6754",
+      "name": "N-VA",
+      "abbreviation": "N-VA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6755",
+      "name": "CD&V",
+      "abbreviation": "CD&V",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6756",
+      "name": "MR",
+      "abbreviation": "MR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6757",
+      "name": "ECOLO",
+      "abbreviation": "ECOLO",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6758",
+      "name": "PS",
+      "abbreviation": "PS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6759",
+      "name": "cdH",
+      "abbreviation": "cdH",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6760",
+      "name": "CSP",
+      "abbreviation": "CSP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6761",
+      "name": "GERB",
+      "abbreviation": "GERB",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6762",
+      "name": "BSP",
+      "abbreviation": "BSP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6763",
+      "name": "DPS",
+      "abbreviation": "DPS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6764",
+      "name": "DI.SY.",
+      "abbreviation": "DI.SY.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6765",
+      "name": "AKEL-ARISTERA-ND",
+      "abbreviation": "AKEL-ARISTERA-ND",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6766",
+      "name": "DI.KO.",
+      "abbreviation": "DI.KO.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6767",
+      "name": "K.S. EDEK",
+      "abbreviation": "K.S. EDEK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6768",
+      "name": "ODS",
+      "abbreviation": "ODS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6769",
+      "name": "KSČM",
+      "abbreviation": "KSČM",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6770",
+      "name": "KDU-ČSL",
+      "abbreviation": "KDU-ČSL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6771",
+      "name": "CDU",
+      "abbreviation": "CDU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6772",
+      "name": "SPD",
+      "abbreviation": "SPD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6773",
+      "name": "GRÜNE.",
+      "abbreviation": "GRÜNE.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6774",
+      "name": "FDP",
+      "abbreviation": "FDP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6775",
+      "name": "DIE LINKE.",
+      "abbreviation": "DIE LINKE.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6776",
+      "name": "CSU",
+      "abbreviation": "CSU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6777",
+      "name": "A",
+      "abbreviation": "A",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6778",
+      "name": "B",
+      "abbreviation": "B",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6779",
+      "name": "C",
+      "abbreviation": "C",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6780",
+      "name": "FVD",
+      "abbreviation": "FVD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6781",
+      "name": "EL",
+      "abbreviation": "EL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6782",
+      "name": "OĽaNO",
+      "abbreviation": "OĽaNO",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6783",
+      "name": "SDS",
+      "abbreviation": "SDS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6784",
+      "name": "Catalunya en Comú",
+      "abbreviation": "Catalunya en Comú",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6785",
+      "name": "Place publique",
+      "abbreviation": "Place publique",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6786",
+      "name": "AEI",
+      "abbreviation": "AEI",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6787",
+      "name": "50 PLUS",
+      "abbreviation": "50 PLUS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6788",
+      "name": "SPOLU",
+      "abbreviation": "SPOLU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6789",
+      "name": "L'SNS",
+      "abbreviation": "L'SNS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6790",
+      "name": "-",
+      "abbreviation": "-",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6791",
+      "name": "AP!",
+      "abbreviation": "AP!",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6792",
+      "name": "KE",
+      "abbreviation": "KE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6793",
+      "name": "TOP09/STAN",
+      "abbreviation": "TOP09/STAN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6794",
+      "name": "ANO 2011",
+      "abbreviation": "ANO 2011",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6795",
+      "name": "VAS",
+      "abbreviation": "VAS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6796",
+      "name": "IDS-DDI",
+      "abbreviation": "IDS-DDI",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6797",
+      "name": "LSDP",
+      "abbreviation": "LSDP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6798",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6799",
+      "name": "Familien-Partei DE",
+      "abbreviation": "Familien-Partei DE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6800",
+      "name": "Piratenpartei DE",
+      "abbreviation": "Piratenpartei DE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6801",
+      "name": "ÖDP",
+      "abbreviation": "ÖDP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6802",
+      "name": "AfD",
+      "abbreviation": "AfD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6803",
+      "name": "Die PARTEI",
+      "abbreviation": "Die PARTEI",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6804",
+      "name": "DSB",
+      "abbreviation": "DSB",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6805",
+      "name": "VMRO",
+      "abbreviation": "VMRO",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6806",
+      "name": "SLD",
+      "abbreviation": "SLD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6807",
+      "name": "Freie Wähler",
+      "abbreviation": "Freie Wähler",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6808",
+      "name": "Die Tierschutzpartei",
+      "abbreviation": "Die Tierschutzpartei",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6809",
+      "name": "SaS",
+      "abbreviation": "SaS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6810",
+      "name": "SD",
+      "abbreviation": "SD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6811",
+      "name": "PODEMOS",
+      "abbreviation": "PODEMOS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6812",
+      "name": "EH BILDU",
+      "abbreviation": "EH BILDU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6813",
+      "name": "CS",
+      "abbreviation": "CS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6814",
+      "name": "PASOK - Olive Tree",
+      "abbreviation": "PASOK - Olive Tree",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6815",
+      "name": "SLS",
+      "abbreviation": "SLS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6816",
+      "name": "PSC-PSOE",
+      "abbreviation": "PSC-PSOE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6817",
+      "name": "PCP",
+      "abbreviation": "PCP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6818",
+      "name": "KDNP",
+      "abbreviation": "KDNP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6819",
+      "name": "Ind.",
+      "abbreviation": "Ind.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6820",
+      "name": "PNV",
+      "abbreviation": "PNV",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6821",
+      "name": "MoDem",
+      "abbreviation": "MoDem",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6822",
+      "name": "Bezpartyjna",
+      "abbreviation": "Bezpartyjna",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6823",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6824",
+      "name": "HKS",
+      "abbreviation": "HKS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6825",
+      "name": "Ind.",
+      "abbreviation": "Ind.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6826",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6827",
+      "name": "Les Républicains",
+      "abbreviation": "Les Républicains",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6828",
+      "name": "Independiente",
+      "abbreviation": "Independiente",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6829",
+      "name": "Darbo partija",
+      "abbreviation": "Darbo partija",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6830",
+      "name": "PPU",
+      "abbreviation": "PPU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6831",
+      "name": "FdL",
+      "abbreviation": "FdL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6832",
+      "name": "DCE",
+      "abbreviation": "DCE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6833",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6834",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6835",
+      "name": "STAN",
+      "abbreviation": "STAN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6836",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6837",
+      "name": "Ind.",
+      "abbreviation": "Ind.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6838",
+      "name": "LKR",
+      "abbreviation": "LKR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6839",
+      "name": "EM",
+      "abbreviation": "EM",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6840",
+      "name": "Parti Radical",
+      "abbreviation": "Parti Radical",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6841",
+      "name": "Indépendant",
+      "abbreviation": "Indépendant",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6842",
+      "name": "Agir",
+      "abbreviation": "Agir",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6843",
+      "name": "Ind.",
+      "abbreviation": "Ind.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6844",
+      "name": "BNG",
+      "abbreviation": "BNG",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6845",
+      "name": "PRAVO I PRAVDA",
+      "abbreviation": "PRAVO I PRAVDA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6846",
+      "name": "MRSL",
+      "abbreviation": "MRSL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6847",
+      "name": "TISZA",
+      "abbreviation": "TISZA",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6848",
+      "name": "RN",
+      "abbreviation": "RN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6849",
+      "name": "PP",
+      "abbreviation": "PP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6850",
+      "name": "BSW",
+      "abbreviation": "BSW",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6851",
+      "name": "BBB",
+      "abbreviation": "BBB",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6852",
+      "name": "I",
+      "abbreviation": "I",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6853",
+      "name": "-",
+      "abbreviation": "-",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6854",
+      "name": "MHM",
+      "abbreviation": "MHM",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6855",
+      "name": "LaREM/MoDEM",
+      "abbreviation": "LaREM/MoDEM",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6856",
+      "name": "Konfederacja",
+      "abbreviation": "Konfederacja",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6857",
+      "name": "PLUS",
+      "abbreviation": "PLUS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6858",
+      "name": "PROR",
+      "abbreviation": "PROR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6859",
+      "name": "V",
+      "abbreviation": "V",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6860",
+      "name": "PVDA-PTB",
+      "abbreviation": "PVDA-PTB",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6861",
+      "name": "Wiosna",
+      "abbreviation": "Wiosna",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6862",
+      "name": "PIR",
+      "abbreviation": "PIR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6863",
+      "name": "Enhedslisten",
+      "abbreviation": "Enhedslisten",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6864",
+      "name": "SPD",
+      "abbreviation": "SPD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6865",
+      "name": "USR-PLUS",
+      "abbreviation": "USR-PLUS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6866",
+      "name": "PAN",
+      "abbreviation": "PAN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6867",
+      "name": " LMŠ",
+      "abbreviation": " LMŠ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6868",
+      "name": "MOM",
+      "abbreviation": "MOM",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6869",
+      "name": "IFC",
+      "abbreviation": "IFC",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6870",
+      "name": "L",
+      "abbreviation": "L",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6871",
+      "name": "VOX",
+      "abbreviation": "VOX",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6872",
+      "name": "USR",
+      "abbreviation": "USR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6873",
+      "name": "RPS",
+      "abbreviation": "RPS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6874",
+      "name": "PS",
+      "abbreviation": "PS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6875",
+      "name": "Les centristes",
+      "abbreviation": "Les centristes",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6876",
+      "name": "KINAL",
+      "abbreviation": "KINAL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6877",
+      "name": "EKRE",
+      "abbreviation": "EKRE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6878",
+      "name": "LFI",
+      "abbreviation": "LFI",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6879",
+      "name": "CDS-PP",
+      "abbreviation": "CDS-PP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6880",
+      "name": "ND",
+      "abbreviation": "ND",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6881",
+      "name": "ŽZ",
+      "abbreviation": "ŽZ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6882",
+      "name": "GRS",
+      "abbreviation": "GRS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6883",
+      "name": "Gods",
+      "abbreviation": "Gods",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6884",
+      "name": "SE",
+      "abbreviation": "SE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6885",
+      "name": "Italia Viva",
+      "abbreviation": "Italia Viva",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6886",
+      "name": "JUNTS-UE",
+      "abbreviation": "JUNTS-UE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6887",
+      "name": "GO",
+      "abbreviation": "GO",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6888",
+      "name": "Azione",
+      "abbreviation": "Azione",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6889",
+      "name": "ANTICAPITALISTAS",
+      "abbreviation": "ANTICAPITALISTAS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6890",
+      "name": "PRP",
+      "abbreviation": "PRP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6891",
+      "name": "Ind.",
+      "abbreviation": "Ind.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6892",
+      "name": "MDD",
+      "abbreviation": "MDD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6893",
+      "name": "PL2050",
+      "abbreviation": "PL2050",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6894",
+      "name": "SIT",
+      "abbreviation": "SIT",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6895",
+      "name": "HREP",
+      "abbreviation": "HREP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6896",
+      "name": "E.Verde",
+      "abbreviation": "E.Verde",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6897",
+      "name": "JA21",
+      "abbreviation": "JA21",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6898",
+      "name": "Hrast",
+      "abbreviation": "Hrast",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6899",
+      "name": "NL",
+      "abbreviation": "NL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6900",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6901",
+      "name": "Patriot",
+      "abbreviation": "Patriot",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6902",
+      "name": "R",
+      "abbreviation": "R",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6903",
+      "name": "LesEng",
+      "abbreviation": "LesEng",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6904",
+      "name": "HS",
+      "abbreviation": "HS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6905",
+      "name": "REPER",
+      "abbreviation": "REPER",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6906",
+      "name": "PUSL",
+      "abbreviation": "PUSL",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6907",
+      "name": "Zentrum",
+      "abbreviation": "Zentrum",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6908",
+      "name": "insieme",
+      "abbreviation": "insieme",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6909",
+      "name": "GS",
+      "abbreviation": "GS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6910",
+      "name": "A-IV-RE",
+      "abbreviation": "A-IV-RE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6911",
+      "name": "BD",
+      "abbreviation": "BD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6912",
+      "name": "Vooruit",
+      "abbreviation": "Vooruit",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6913",
+      "name": "AZ",
+      "abbreviation": "AZ",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6914",
+      "name": "PNCR",
+      "abbreviation": "PNCR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6915",
+      "name": "AUR",
+      "abbreviation": "AUR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6916",
+      "name": "New Left",
+      "abbreviation": "New Left",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6917",
+      "name": "FOLKLISTAN",
+      "abbreviation": "FOLKLISTAN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6918",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6919",
+      "name": "Hor",
+      "abbreviation": "Hor",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6920",
+      "name": "LEE",
+      "abbreviation": "LEE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6921",
+      "name": "MK",
+      "abbreviation": "MK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6922",
+      "name": "DVD",
+      "abbreviation": "DVD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6923",
+      "name": "IV - Centro",
+      "abbreviation": "IV - Centro",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6924",
+      "name": "ELAM",
+      "abbreviation": "ELAM",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6925",
+      "name": "MKKP",
+      "abbreviation": "MKKP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6926",
+      "name": "Ahora Repúblicas",
+      "abbreviation": "Ahora Repúblicas",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6927",
+      "name": "Chega",
+      "abbreviation": "Chega",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6928",
+      "name": "Zdravý rozum",
+      "abbreviation": "Zdravý rozum",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6929",
+      "name": "ADU",
+      "abbreviation": "ADU",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6930",
+      "name": "LPV",
+      "abbreviation": "LPV",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6931",
+      "name": "ITN",
+      "abbreviation": "ITN",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6932",
+      "name": "PP-DB",
+      "abbreviation": "PP-DB",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6933",
+      "name": "Progresīvie",
+      "abbreviation": "Progresīvie",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6934",
+      "name": "JUNTS UE",
+      "abbreviation": "JUNTS UE",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6935",
+      "name": "Ren",
+      "abbreviation": "Ren",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6936",
+      "name": "JK",
+      "abbreviation": "JK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6937",
+      "name": "SD",
+      "abbreviation": "SD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6938",
+      "name": "EK",
+      "abbreviation": "EK",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6939",
+      "name": "DC",
+      "abbreviation": "DC",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6940",
+      "name": "SP",
+      "abbreviation": "SP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6941",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6942",
+      "name": "KOSMOS",
+      "abbreviation": "KOSMOS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6943",
+      "name": "FOKUS",
+      "abbreviation": "FOKUS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6944",
+      "name": "AVS",
+      "abbreviation": "AVS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6945",
+      "name": "VOLT",
+      "abbreviation": "VOLT",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6946",
+      "name": "IC",
+      "abbreviation": "IC",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6947",
+      "name": "KLJUC",
+      "abbreviation": "KLJUC",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6948",
+      "name": "M",
+      "abbreviation": "M",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6949",
+      "name": "SMR",
+      "abbreviation": "SMR",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6950",
+      "name": "Independent",
+      "abbreviation": "Independent",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6951",
+      "name": "ANS",
+      "abbreviation": "ANS",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6952",
+      "name": "KD",
+      "abbreviation": "KD",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6953",
+      "name": "Les Écologistes",
+      "abbreviation": "Les Écologistes",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6954",
+      "name": "Most",
+      "abbreviation": "Most",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6955",
+      "name": "Levica",
+      "abbreviation": "Levica",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6956",
+      "name": "CJ01",
+      "abbreviation": "CJ01",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6957",
+      "name": "CJ02",
+      "abbreviation": "CJ02",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6958",
+      "name": "CJ03",
+      "abbreviation": "CJ03",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6959",
+      "name": "CJ04",
+      "abbreviation": "CJ04",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6960",
+      "name": "CJ05",
+      "abbreviation": "CJ05",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6961",
+      "name": "CJ06",
+      "abbreviation": "CJ06",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6962",
+      "name": "CJ07",
+      "abbreviation": "CJ07",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6963",
+      "name": "CJ08",
+      "abbreviation": "CJ08",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6964",
+      "name": "CJ09",
+      "abbreviation": "CJ09",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6966",
+      "name": "CJ11",
+      "abbreviation": "CJ11",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6967",
+      "name": "CJ12",
+      "abbreviation": "CJ12",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6968",
+      "name": "CJ13",
+      "abbreviation": "CJ13",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6970",
+      "name": "CJ15",
+      "abbreviation": "CJ15",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6971",
+      "name": "CJ16",
+      "abbreviation": "CJ16",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6972",
+      "name": "CJ17",
+      "abbreviation": "CJ17",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6973",
+      "name": "CJ18",
+      "abbreviation": "CJ18",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6974",
+      "name": "CJ19",
+      "abbreviation": "CJ19",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6975",
+      "name": "CJ20",
+      "abbreviation": "CJ20",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6976",
+      "name": "CJ21",
+      "abbreviation": "CJ21",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6977",
+      "name": "CJ22",
+      "abbreviation": "CJ22",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6978",
+      "name": "CJ23",
+      "abbreviation": "CJ23",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6979",
+      "name": "CJ24",
+      "abbreviation": "CJ24",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6980",
+      "name": "CJ25",
+      "abbreviation": "CJ25",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6982",
+      "name": "CJ27",
+      "abbreviation": "CJ27",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6983",
+      "name": "CJ28",
+      "abbreviation": "CJ28",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6984",
+      "name": "CJ29",
+      "abbreviation": "CJ29",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6985",
+      "name": "CJ30",
+      "abbreviation": "CJ30",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6986",
+      "name": "CJ31",
+      "abbreviation": "CJ31",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6987",
+      "name": "CJ32",
+      "abbreviation": "CJ32",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6988",
+      "name": "CJ33",
+      "abbreviation": "CJ33",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "7005",
+      "name": "Subcommittee on Human Rights",
+      "abbreviation": "DROI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_SUB"
+      ]
+    },
+    {
+      "id": "7007",
+      "name": "Subcommittee on Tax Matters",
+      "abbreviation": "FISC",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_SUB"
+      ]
+    },
+    {
+      "id": "7911",
+      "name": "Committee on Security and Defence",
+      "abbreviation": "SEDE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "7912",
+      "name": "Committee on Public Health",
+      "abbreviation": "SANT",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "7913",
+      "name": "Committee on the Environment, Climate and Food Safety",
+      "abbreviation": "ENVI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    {
+      "id": "7914",
+      "name": "Special Committee on the European Democracy Shield",
+      "abbreviation": "EUDS",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_TEMPORARY"
+      ]
+    },
+    {
+      "id": "7915",
+      "name": "Special Committee on the Housing Crisis in the European Union",
+      "abbreviation": "HOUS",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_TEMPORARY"
+      ]
+    }
+  ],
+  "corporateBodyDetails": {
+    "6562": {
+      "id": "1232",
+      "name": "Committee on Foreign Affairs",
+      "abbreviation": "AFET",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6563": {
+      "id": "1233",
+      "name": "Committee on Development",
+      "abbreviation": "DEVE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6564": {
+      "id": "1234",
+      "name": "Committee on International Trade",
+      "abbreviation": "INTA",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6567": {
+      "id": "1235",
+      "name": "Committee on Budgets",
+      "abbreviation": "BUDG",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6568": {
+      "id": "1236",
+      "name": "Committee on Budgetary Control",
+      "abbreviation": "CONT",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6570": {
+      "id": "1237",
+      "name": "Committee on Economic and Monetary Affairs",
+      "abbreviation": "ECON",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6572": {
+      "id": "123",
+      "name": "Committee on Employment and Social Affairs",
+      "abbreviation": "EMPL",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6576": {
+      "id": "1077",
+      "name": "Committee on Industry, External Trade, Research and Energy",
+      "abbreviation": "ITRE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6579": {
+      "id": "2425",
+      "name": "Committee on the Internal Market and Consumer Protection",
+      "abbreviation": "IMCO",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6580": {
+      "id": "11",
+      "name": "Committee on Transports and Tourism",
+      "abbreviation": "TRAN",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6581": {
+      "id": "100",
+      "name": "Committee on Regional Policy",
+      "abbreviation": "REGI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6582": {
+      "id": "117",
+      "name": "Committee on Agriculture and Rural Development",
+      "abbreviation": "AGRI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6583": {
+      "id": "1081",
+      "name": "Committee on Fisheries",
+      "abbreviation": "PECH",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6584": {
+      "id": "1083",
+      "name": "Committee on Culture, Youth, Education, the Media and Sport",
+      "abbreviation": "CULT",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6585": {
+      "id": "122",
+      "name": "Committee on Legal Affairs and Citizens' Rights",
+      "abbreviation": "JURI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6586": {
+      "id": "1074",
+      "name": "Committee on Citizens' Freedoms and Rights, Justice and Home Affairs",
+      "abbreviation": "LIBE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6587": {
+      "id": "1085",
+      "name": "Committee on Constitutional Affairs",
+      "abbreviation": "AFCO",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6588": {
+      "id": "110",
+      "name": "Committee on Women's Rights",
+      "abbreviation": "FEMM",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6591": {
+      "id": "111",
+      "name": "Committee on Petitions",
+      "abbreviation": "PETI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "6956": {
+      "id": "6956",
+      "name": "Joint committee procedure - LIBE and FEMM",
+      "abbreviation": "CJ01",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6957": {
+      "id": "6957",
+      "name": "Joint committee procedure - JURI and FEMM",
+      "abbreviation": "CJ02",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6958": {
+      "id": "6958",
+      "name": "Joint committee procedure - JURI and LIBE",
+      "abbreviation": "CJ03",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6959": {
+      "id": "6959",
+      "name": "Joint committee procedure - ECON and IMCO",
+      "abbreviation": "CJ04",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6960": {
+      "id": "6960",
+      "name": "Joint committee procedure - ITRE and TRAN",
+      "abbreviation": "CJ05",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6961": {
+      "id": "6961",
+      "name": "Joint committee procedure - IMCO and TRAN",
+      "abbreviation": "CJ06",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6962": {
+      "id": "6962",
+      "name": "Joint committee procedure - DEVE and FEMM",
+      "abbreviation": "CJ07",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6963": {
+      "id": "6963",
+      "name": "Joint committee procedure - JURI - LIBE - AFCO",
+      "abbreviation": "CJ08",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6964": {
+      "id": "6964",
+      "name": "Joint committee procedure - CONT and LIBE",
+      "abbreviation": "CJ09",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6966": {
+      "id": "6966",
+      "name": "Joint committee procedure - PECH and FEMM",
+      "abbreviation": "CJ11",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6967": {
+      "id": "6967",
+      "name": "Joint committee procedure - ECON and LIBE",
+      "abbreviation": "CJ12",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6968": {
+      "id": "6968",
+      "name": "Joint committee procedure - BUDG and CONT",
+      "abbreviation": "CJ13",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6970": {
+      "id": "6970",
+      "name": "Joint committee procedure - AFET and BUDG",
+      "abbreviation": "CJ15",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6971": {
+      "id": "6971",
+      "name": "Joint committee procedure - BUDG and ECON",
+      "abbreviation": "CJ16",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6972": {
+      "id": "6972",
+      "name": "Joint committee procedure - LIBE and PETI",
+      "abbreviation": "CJ17",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6973": {
+      "id": "6973",
+      "name": "Joint committee procedure - ITRE and IMCO",
+      "abbreviation": "CJ18",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6974": {
+      "id": "6974",
+      "name": "Joint committee procedure - AFET and DEVE",
+      "abbreviation": "CJ19",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6975": {
+      "id": "6975",
+      "name": "Joint committee procedure - AFET and AFCO",
+      "abbreviation": "CJ20",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6976": {
+      "id": "6976",
+      "name": "Joint committee procedure - EMPL and FEMM",
+      "abbreviation": "CJ21",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6977": {
+      "id": "6977",
+      "name": "Joint committee procedure - JURI and AFCO",
+      "abbreviation": "CJ22",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6978": {
+      "id": "6978",
+      "name": "Joint committee procedure - ITRE and CULT",
+      "abbreviation": "CJ23",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6979": {
+      "id": "6979",
+      "name": "Joint committee procedure - IMCO and JURI",
+      "abbreviation": "CJ24",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6980": {
+      "id": "6980",
+      "name": "Joint committee procedure - AGRI and FEMM",
+      "abbreviation": "CJ25",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6982": {
+      "id": "6982",
+      "name": "Joint committee procedure - AFET and CULT",
+      "abbreviation": "CJ27",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6983": {
+      "id": "6983",
+      "name": "Joint committee procedure - EMPL and CULT",
+      "abbreviation": "CJ28",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6984": {
+      "id": "6984",
+      "name": "Joint committee procedure - ECON and JURI",
+      "abbreviation": "CJ29",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6985": {
+      "id": "6985",
+      "name": "Joint committee procedure - INTA and FEMM",
+      "abbreviation": "CJ30",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6986": {
+      "id": "6986",
+      "name": "Joint committee procedure - AFET - DEVE - BUDG",
+      "abbreviation": "CJ31",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6987": {
+      "id": "6987",
+      "name": "Joint committee procedure - ECON and AFCO",
+      "abbreviation": "CJ32",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6988": {
+      "id": "6988",
+      "name": "Joint committee procedure - INTA and IMCO",
+      "abbreviation": "CJ33",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "7005": {
+      "id": "7005",
+      "name": "Subcommittee on Human Rights",
+      "abbreviation": "DROI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_SUB"
+      ]
+    },
+    "7007": {
+      "id": "7007",
+      "name": "Subcommittee on Tax Matters",
+      "abbreviation": "FISC",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_SUB"
+      ]
+    },
+    "7911": {
+      "id": "7911",
+      "name": "Committee on Security and Defence",
+      "abbreviation": "SEDE",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "7912": {
+      "id": "7912",
+      "name": "Committee on Public Health",
+      "abbreviation": "SANT",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "7913": {
+      "id": "7913",
+      "name": "Committee on the Environment, Climate and Food Safety",
+      "abbreviation": "ENVI",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_STANDING"
+      ]
+    },
+    "7914": {
+      "id": "7914",
+      "name": "Special Committee on the European Democracy Shield",
+      "abbreviation": "EUDS",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_TEMPORARY"
+      ]
+    },
+    "7915": {
+      "id": "7915",
+      "name": "Special Committee on the Housing Crisis in the European Union",
+      "abbreviation": "HOUS",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_TEMPORARY"
+      ]
+    }
+  }
+}

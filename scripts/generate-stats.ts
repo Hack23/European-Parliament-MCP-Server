@@ -63,7 +63,6 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
 import { GENERATED_STATS } from '../src/data/generatedStats.js';
 import type { YearlyStats, PoliticalGroupSnapshot, PoliticalLandscapeData } from '../src/data/generatedStats.js';
@@ -87,9 +86,9 @@ interface MetricComparison {
   /** Percentage difference (positive = API higher, negative = API lower) */
   diffPercent: number | null;
   /** Optional note (e.g. error message on failure) */
-  note?: string;
+  note?: string | undefined;
   /** Per-month counts (12 elements, Jan=0..Dec=11) when available */
-  monthlyCounts?: number[];
+  monthlyCounts?: number[] | undefined;
 }
 
 /** Results for a single year's validation. */
@@ -182,7 +181,7 @@ Examples:
   const yearIdx = args.indexOf('--year');
   if (yearIdx !== -1) {
     const yearStr = args[yearIdx + 1];
-    if (!yearStr || !/^\d{4}$/.test(yearStr)) {
+    if (yearStr === undefined || yearStr === '' || !/^\d{4}$/.test(yearStr)) {
       console.error('Error: --year requires a valid 4-digit year (e.g. --year 2024)');
       process.exit(1);
     }
@@ -416,9 +415,10 @@ const DATE_PATTERN = /\b(\d{4})-(\d{2})-(\d{2})\b/;
  */
 const PROCEDURE_YEAR_PATTERN = /\b(\d{4})[-/]\d{3,5}/;
 
-function extractRecordDate(item: Record<string, unknown>): string | null {
+function extractRecordDate(item: object): string | null {
+  const record = item as Record<string, unknown>;
   // 1. Prefer the normalised `date` field if it looks like a date
-  const dateField = item['date'];
+  const dateField = record['date'];
   if (typeof dateField === 'string' && DATE_PATTERN.test(dateField)) {
     return dateField.substring(0, 10);
   }
@@ -430,8 +430,8 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
     'had_activity_date',
   ] as const;
   for (const field of nestedDateFields) {
-    const nested: unknown = item[field];
-    if (nested && typeof nested === 'object') {
+    const nested: unknown = record[field];
+    if (nested !== null && typeof nested === 'object') {
       const value = (nested as Record<string, unknown>)['@value'];
       if (typeof value === 'string' && DATE_PATTERN.test(value)) {
         return value.substring(0, 10);
@@ -443,18 +443,19 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
   //    Works for events: `eli/dl/event/...-DEPOT-2025-03-26`
   //    Works for speeches: `MTG-PL-2023-10-17-OTH-...`
   //    Works for plenary sessions: `MTG-PL-2025-01-20`
-  const idField = item['id'];
+  const idField = record['id'];
   if (typeof idField === 'string') {
     const match = DATE_PATTERN.exec(idField);
     if (match) {
-      return `${match[1]}-${match[2]}-${match[3]}`;
+      const [, y, m, d] = match;
+      return `${y ?? ''}-${m ?? ''}-${d ?? ''}`;
     }
   }
 
   // 4. Try `dateInitiated` / `dateLastActivity` — available on procedure records.
   //    These are proper YYYY-MM-DD dates set by the transformer.
   for (const field of ['dateInitiated', 'dateLastActivity'] as const) {
-    const val = item[field];
+    const val = record[field];
     if (typeof val === 'string' && DATE_PATTERN.test(val)) {
       return val.substring(0, 10);
     }
@@ -465,18 +466,18 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
   //    Return `YYYY-01-01` as a synthetic date so the year matches.
   //    Monthly bucketing will show all procedures in January (acceptable
   //    since yearly total is the primary use case).
-  const refField = item['reference'];
+  const refField = record['reference'];
   if (typeof refField === 'string') {
     const procMatch = PROCEDURE_YEAR_PATTERN.exec(refField);
     if (procMatch) {
-      return `${procMatch[1]}-01-01`;
+      return `${procMatch[1] ?? ''}-01-01`;
     }
   }
   // Also try the `id` field for procedure-style patterns
   if (typeof idField === 'string') {
     const procMatch = PROCEDURE_YEAR_PATTERN.exec(idField);
     if (procMatch) {
-      return `${procMatch[1]}-01-01`;
+      return `${procMatch[1] ?? ''}-01-01`;
     }
   }
 
@@ -513,7 +514,7 @@ function extractRecordDate(item: Record<string, unknown>): string | null {
 async function countItemsGroupedByMonth(
   label: string,
   year: number,
-  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: Array<Record<string, unknown>>; hasMore: boolean }>,
+  fetcher: (params: { limit: number; offset: number }) => Promise<{ data: object[]; hasMore: boolean }>,
   options?: { ordered?: boolean; yearFilterSupported?: boolean }
 ): Promise<{ total: number | null; monthlyCounts: number[]; error?: string }> {
   const isOrdered = options?.ordered !== false; // default: true (ordered)
@@ -536,15 +537,19 @@ async function countItemsGroupedByMonth(
       let pageMatches = 0;
       for (const item of result.data) {
         const dateStr = extractRecordDate(item);
-        if (!dateStr || !dateStr.startsWith(yearStr)) {
+        if (dateStr === null) {
           outsideYearOrUndated++;
-          continue; // skip items without a parseable date or outside the target year
+          continue; // skip items without a parseable date
+        }
+        if (!dateStr.startsWith(yearStr)) {
+          outsideYearOrUndated++;
+          continue; // skip items outside the target year
         }
         totalCount++;
         pageMatches++;
         const monthIdx = Number.parseInt(dateStr.substring(5, 7), 10) - 1;
         if (monthIdx >= 0 && monthIdx < 12) {
-          monthlyCounts[monthIdx]++;
+          monthlyCounts[monthIdx] = (monthlyCounts[monthIdx] ?? 0) + 1;
         }
       }
 
@@ -690,11 +695,11 @@ async function validateYearAgainstAPI(
   //   /speeches:                     ✅ supports `sitting-date` + `sitting-date-end`
   //   /events:                       ❌ NO year/date params — date extracted from ID suffix
   //   /procedures:                   ❌ NO year — year extracted from YYYY-NNNN reference
-  const monthlyMetrics: Array<{
+  const monthlyMetrics: {
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; monthlyCounts: number[]; error?: string }>;
-  }> = [
+  }[] = [
     {
       label: 'Plenary Sessions',
       storedKey: 'plenarySessions',
@@ -758,11 +763,11 @@ async function validateYearAgainstAPI(
   //                              `document_date` for client-side year/month bucketing
   //   /committee-documents:      ❌ NO `year`, NO date field — excluded
   //   /meps-declarations:        ✅ supports `year`
-  const yearlyMetrics: Array<{
+  const yearlyMetrics: {
     label: string;
     storedKey: keyof YearlyStats;
     count: () => Promise<{ total: number | null; error?: string }>;
-  }> = [
+  }[] = [
     {
       label: 'Parliamentary Questions',
       storedKey: 'parliamentaryQuestions',
@@ -787,7 +792,7 @@ async function validateYearAgainstAPI(
       // (date-extracted from `document_date` field ✅).
       // /committee-documents has neither year filtering nor date fields
       // in its response — excluded from per-year count.
-      count: async () => {
+      count: async (): Promise<{ total: number | null; error?: string }> => {
         // Fetch plenary docs and external docs SEQUENTIALLY to respect
         // EP API rate limits.  External docs require full pagination
         // (no year filter) so this can be slow — sequential ordering
@@ -799,8 +804,8 @@ async function validateYearAgainstAPI(
           { ordered: true, yearFilterSupported: false }
         );
         const errors: string[] = [];
-        if (plenary.error) errors.push(`Plenary: ${plenary.error}`);
-        if (external.error) errors.push(`External: ${external.error}`);
+        if (plenary.error !== undefined && plenary.error !== '') errors.push(`Plenary: ${plenary.error}`);
+        if (external.error !== undefined && external.error !== '') errors.push(`External: ${external.error}`);
 
         const plenaryCount = plenary.total ?? 0;
         const externalCount = external.total ?? 0;
@@ -809,7 +814,7 @@ async function validateYearAgainstAPI(
           return { total: null, error: errors.join(' | ') };
         }
         progress(`✅ Plenary Documents: ${String(plenaryCount)} plenary + ${String(externalCount)} external = ${String(total)}`);
-        return { total, error: errors.length > 0 ? errors.join(' | ') : undefined };
+        return errors.length > 0 ? { total, error: errors.join(' | ') } : { total };
       },
     },
     {
@@ -868,7 +873,7 @@ async function validateYearAgainstAPI(
       (p) => client.getCurrentMEPs(p),
     );
     {
-      const storedValue = yearStats.mepCount as number;
+      const storedValue = yearStats.mepCount;
       const { status, diffPercent } = compareValues(storedValue, currentTotal);
 
       comparisons.push({
@@ -897,16 +902,16 @@ async function validateYearAgainstAPI(
         : null;
 
     const turnoverNoteParts: string[] = [];
-    if (incomingError) {
+    if (incomingError !== undefined && incomingError !== '') {
       turnoverNoteParts.push(`Incoming: ${incomingError}`);
     }
-    if (outgoingError) {
+    if (outgoingError !== undefined && outgoingError !== '') {
       turnoverNoteParts.push(`Outgoing: ${outgoingError}`);
     }
     const turnoverNote = turnoverNoteParts.length > 0 ? turnoverNoteParts.join(' | ') : undefined;
 
     {
-      const storedValue = yearStats.mepTurnover as number;
+      const storedValue = yearStats.mepTurnover;
       const { status, diffPercent } = compareValues(storedValue, turnoverApiValue);
 
       comparisons.push({
@@ -1029,11 +1034,11 @@ function printYearComparison(validation: YearValidation): void {
     console.log(
       `  ${icon} ${padRight(c.metric, 26)}${padRight(storedStr, 10)}${padRight(apiStr, 10)}${padRight(diffStr, 20)}${c.status}`
     );
-    if (c.note) {
+    if (c.note !== undefined && c.note !== '') {
       console.log(`    ${DIM}↳ ${c.note}${RESET}`);
     }
     // Print monthly breakdown if available
-    if (c.monthlyCounts) {
+    if (c.monthlyCounts !== undefined) {
       const monthDetail = c.monthlyCounts
         .map((count, i) => `${monthNames[i] ?? ''}:${String(count).padStart(4)}`)
         .join(' ');
@@ -1122,7 +1127,7 @@ function printSummary(
   // Print summary
   console.log(`\n${'═'.repeat(80)}`);
   console.log(`${BOLD}VALIDATION SUMMARY${RESET}`);
-  console.log(`${'═'.repeat(80)}`);
+  console.log('═'.repeat(80));
   console.log(`  Total API checks:     ${String(summary.totalChecks)}`);
   console.log(`  ${GREEN}✓${RESET} Exact matches:      ${String(summary.matches)}`);
   console.log(`  ${YELLOW}≈${RESET} Close (±10%):       ${String(summary.close)}`);
@@ -1214,7 +1219,7 @@ function syncPoliticalLandscapeWithMepCount(
   );
   if (!mepCountComparison) return content;
   if (mepCountComparison.apiValue === null) return content;
-  if (mepCountComparison.note) return content; // skip partial fetches
+  if (mepCountComparison.note !== undefined && mepCountComparison.note !== '') return content; // skip partial fetches
 
   const newMepCount = mepCountComparison.apiValue;
 
@@ -1242,6 +1247,21 @@ function syncPoliticalLandscapeWithMepCount(
   if (newNiSeats < 0) {
     console.log(
       `  ${YELLOW}⚠${RESET} Cannot sync NI seats for ${String(latestCoveredYear)}: adjustment would make NI seats negative (${String(newNiSeats)})`
+    );
+    return content;
+  }
+
+  // Guard against silently absorbing large discrepancies into NI. Small
+  // drift (vacancies/late-arriving members) is fine to fold into NI, but a
+  // large mismatch usually means the whole group distribution is stale and
+  // should be regenerated from verified membership data (see
+  // `deriveCurrentPoliticalComposition` / `npm run generate:cache`) rather
+  // than papering over it here.
+  const MAX_AUTO_SYNC_SEAT_DRIFT = 5;
+  if (Math.abs(seatDiff) > MAX_AUTO_SYNC_SEAT_DRIFT) {
+    console.log(
+      `  ${YELLOW}⚠${RESET} Skipping NI auto-sync for ${String(latestCoveredYear)}: seat drift (${String(seatDiff)}) exceeds ${String(MAX_AUTO_SYNC_SEAT_DRIFT)}. ` +
+        'Regenerate POLITICAL_LANDSCAPE from verified membership data (deriveCurrentPoliticalComposition) instead of auto-adjusting NI.'
     );
     return content;
   }
@@ -1304,7 +1324,7 @@ function updateStatsFile(
   latestCoveredYear: number
 ): { updatedFields: number; skippedFields: number; updatedFile: boolean } {
   const statsFilePath = path.resolve(
-    import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url)),
+    import.meta.dirname,
     '../src/data/generatedStats.ts'
   );
 
@@ -1322,7 +1342,7 @@ function updateStatsFile(
       if (comparison.status === 'API_ERROR') continue;
 
       // Skip partial/errored fetches — note indicates incomplete data
-      if (comparison.note) {
+      if (comparison.note !== undefined && comparison.note !== '') {
         skippedFields++;
         console.log(
           `  ${DIM}⊘ Skipped ${String(yv.year)}.${comparison.metric}: partial fetch (${comparison.note})${RESET}`
@@ -1335,23 +1355,22 @@ function updateStatsFile(
       // Monthly data is gated by the same credibility check as yearly totals
       // to prevent writing incomplete monthly distributions.
       // Only metrics with real per-month dates are eligible (see MONTHLY_CAPABLE_FIELDS).
-      if (comparison.monthlyCounts && comparison.apiValue !== null) {
+      if (comparison.monthlyCounts !== undefined) {
         const mField = METRIC_TO_FIELD[comparison.metric];
         const hasNonZeroMonth = comparison.monthlyCounts.some((c) => c > 0);
-        if (mField && isUpdatableField(mField) && hasNonZeroMonth && MONTHLY_CAPABLE_FIELDS.has(mField)) {
+        if (mField !== undefined && isUpdatableField(mField) && hasNonZeroMonth && MONTHLY_CAPABLE_FIELDS.has(mField)) {
           // Apply credibility check: only collect monthly data if the total is credible
           const storedVal = comparison.storedValue;
           if (isCredibleApiValue(comparison.apiValue, storedVal)) {
-            if (!monthlyUpdates[yv.year]) {
-              monthlyUpdates[yv.year] = {};
-            }
-            monthlyUpdates[yv.year][mField] = comparison.monthlyCounts;
+            const yearUpdates = monthlyUpdates[yv.year] ?? {};
+            yearUpdates[mField] = comparison.monthlyCounts;
+            monthlyUpdates[yv.year] = yearUpdates;
           }
         }
       }
 
       const field = METRIC_TO_FIELD[comparison.metric];
-      if (!field) continue;
+      if (field === undefined) continue;
 
       // Only update fields that are API-verifiable
       if (!isUpdatableField(field) && !isLatestYearField(field)) continue;

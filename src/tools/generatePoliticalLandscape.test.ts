@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleGeneratePoliticalLandscape } from './generatePoliticalLandscape.js';
 import * as epClientModule from '../clients/europeanParliamentClient.js';
+import * as weeklyCacheModule from '../utils/weeklyDataCache.js';
 
 // Mock the EP client
 vi.mock('../clients/europeanParliamentClient.js', () => ({
@@ -14,9 +15,17 @@ vi.mock('../clients/europeanParliamentClient.js', () => ({
   }
 }));
 
+// Mock the bundled cache — most tests exercise the live-fetch fallback path
+// (no cache present), matching pre-cache-bundle test expectations.
+vi.mock('../utils/weeklyDataCache.js', () => ({
+  loadWeeklyMEPCache: vi.fn()
+}));
+
 describe('generate_political_landscape Tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue(null);
 
     vi.mocked(epClientModule.epClient.getCurrentMEPs).mockResolvedValue({
       data: [
@@ -265,6 +274,49 @@ describe('generate_political_landscape Tool', () => {
       // Assert — engagement is LOW because EP API does not provide attendance data
       expect(data.computedAttributes.overallEngagement).toBe('LOW');
       expect(data.computedAttributes.fragmentationIndex).toBe('HIGH'); // 8 groups >= 8
+    });
+  });
+
+  describe('Bundled cache usage (default, non-live mode)', () => {
+    it('should derive composition from the bundled cache using dated political-group memberships', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue({
+        metadata: { schemaVersion: 3, generatedAt: '2026-07-18T00:00:00Z', source: 'test', dataset: 'meps', scope: 'current', complete: true, recordCount: 2, detailCount: 2 },
+        meps: [
+          { id: 'person/1', name: 'A', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2024-07-16' },
+          { id: 'person/2', name: 'B', country: 'FR', politicalGroup: 'S&D', committees: [], active: true, termStart: '2024-07-16' },
+        ],
+        mepDetails: {
+          'person/1': { id: 'person/1', name: 'A', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2024-07-16', hasMembership: [{ organization: 'org/7018', membershipClassification: 'def/ep-entities/EU_POLITICAL_GROUP', memberDuring: { id: 'p1', type: 'PeriodOfTime', startDate: '2024-07-16' }, contactPoint: [] }] },
+          'person/2': { id: 'person/2', name: 'B', country: 'FR', politicalGroup: 'S&D', committees: [], active: true, termStart: '2024-07-16', hasMembership: [{ organization: 'org/7038', membershipClassification: 'def/ep-entities/EU_POLITICAL_GROUP', memberDuring: { id: 'p2', type: 'PeriodOfTime', startDate: '2024-07-16' }, contactPoint: [] }] },
+        },
+      });
+
+      const result = await handleGeneratePoliticalLandscape({});
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        parliament: { totalMEPs: number };
+        dataFreshness: string;
+      };
+
+      expect(data.parliament.totalMEPs).toBe(2);
+      expect(data.dataFreshness).toContain('Bundled EP API v2 cache');
+      expect(epClientModule.epClient.getCurrentMEPs).not.toHaveBeenCalled();
+    });
+
+    it('should bypass the bundled cache when live is true', async () => {
+      vi.mocked(weeklyCacheModule.loadWeeklyMEPCache).mockResolvedValue({
+        metadata: { schemaVersion: 3, generatedAt: '2026-07-18T00:00:00Z', source: 'test', dataset: 'meps', scope: 'current', complete: true, recordCount: 1, detailCount: 1 },
+        meps: [{ id: 'person/1', name: 'A', country: 'DE', politicalGroup: 'EPP', committees: [], active: true, termStart: '2024-07-16' }],
+        mepDetails: {},
+      });
+
+      const result = await handleGeneratePoliticalLandscape({ live: true });
+      const data = JSON.parse(result.content[0]?.text ?? '{}') as {
+        parliament: { totalMEPs: number };
+        activityMetrics: { recentSessionCount: number };
+      };
+
+      expect(data.parliament.totalMEPs).toBe(5);
+      expect(epClientModule.epClient.getCurrentMEPs).toHaveBeenCalled();
       // Session count comes from real EP API data (mocked as 12)
       expect(data.activityMetrics.recentSessionCount).toBe(12);
     });

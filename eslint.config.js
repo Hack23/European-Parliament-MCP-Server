@@ -77,6 +77,51 @@ export default tseslint.config(
     }
   },
   {
+    files: [
+      'scripts/generate-cache.ts',
+      'scripts/generate-stats.ts',
+      'scripts/verify-package.ts'
+    ],
+    extends: [
+      ...tseslint.configs.strictTypeChecked,
+      ...tseslint.configs.stylisticTypeChecked
+    ],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.es2025
+      },
+      ecmaVersion: 2025,
+      sourceType: 'module',
+      parserOptions: {
+        project: './tsconfig.scripts.json',
+        tsconfigRootDir: import.meta.dirname
+      }
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/no-unsafe-member-access': 'error',
+      '@typescript-eslint/no-unsafe-call': 'error',
+      '@typescript-eslint/no-unsafe-return': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/explicit-module-boundary-types': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_'
+      }],
+      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/strict-boolean-expressions': 'error',
+      '@typescript-eslint/dot-notation': 'off',
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error'
+    }
+  },
+  {
     files: ['**/*.test.ts', '**/*.spec.ts', 'tests/**/*.ts'],
     extends: [
       ...tseslint.configs.recommendedTypeChecked
