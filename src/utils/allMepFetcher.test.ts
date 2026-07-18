@@ -89,4 +89,16 @@ describe('fetchAllCurrentMEPs', () => {
     expect(getCurrentMEPs).toHaveBeenNthCalledWith(1, { limit: 100, offset: 0 });
     expect(getCurrentMEPs).toHaveBeenNthCalledWith(2, { limit: 100, offset: 100 });
   });
+
+  it('continues when a full page omits hasMore metadata', async () => {
+    const getCurrentMEPs = vi.fn()
+      .mockResolvedValueOnce({ data: Array.from({ length: 2 }, (_, index) => ({ id: `person/${index}` })), hasMore: false })
+      .mockResolvedValueOnce({ data: [{ id: 'person/2' }], hasMore: false });
+    const client: CurrentMEPPageClient = { getCurrentMEPs };
+
+    const meps = await fetchAllCurrentMEPs(client, 2);
+
+    expect(meps).toHaveLength(3);
+    expect(getCurrentMEPs).toHaveBeenNthCalledWith(2, { limit: 2, offset: 2 });
+  });
 });

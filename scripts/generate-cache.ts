@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { EuropeanParliamentClient } from '../src/clients/europeanParliamentClient.js';
+import { RateLimiter } from '../src/utils/rateLimiter.js';
 import {
   CommitteeSchema,
   MEPDetailsSchema,
@@ -56,8 +57,10 @@ const PAGE_SIZE = 100;
 const MIN_CURRENT_MEPS = 600;
 const MIN_CURRENT_BODIES = 100;
 const MIN_VOCABULARIES = 1;
-const MEP_DETAIL_RETRIES = 4;
-const CORPORATE_BODY_RETRIES = 4;
+const API_RETRIES = 8;
+const CACHE_GENERATION_RATE_LIMIT = 30;
+const RETRY_BASE_DELAY_MS = 10_000;
+const RETRY_MAX_DELAY_MS = 120_000;
 
 function metadata(
   dataset: Dataset,
@@ -94,11 +97,11 @@ function assertUniqueIds(items: readonly { id: string }[], label: string): void 
   }
 }
 
-function isRateLimitError(error: unknown): boolean {
-  return typeof error === 'object'
-    && error !== null
-    && 'statusCode' in error
-    && (error as { statusCode?: unknown }).statusCode === 429;
+function isTransientAPIError(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null || !('statusCode' in error)) return false;
+  const statusCode = (error as { statusCode?: unknown }).statusCode;
+  return typeof statusCode === 'number'
+    && (statusCode === 408 || statusCode === 425 || statusCode === 429 || statusCode >= 500);
 }
 
 function isNotFoundError(error: unknown): boolean {
@@ -118,43 +121,50 @@ function extractRetryAfterMs(error: unknown): number | undefined {
 }
 
 async function waitForRateLimitRetry(attempt: number, error: unknown): Promise<void> {
-  const retryAfterMs = extractRetryAfterMs(error) ?? (attempt + 1) * 5_000;
+  const exponentialDelay = Math.min(
+    RETRY_MAX_DELAY_MS,
+    RETRY_BASE_DELAY_MS * (2 ** attempt),
+  );
+  const retryAfterMs = extractRetryAfterMs(error) ?? exponentialDelay;
   await new Promise<void>((resolve) => {
     setTimeout(resolve, retryAfterMs);
   });
+}
+
+async function withAPIRetry<T>(operation: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; attempt <= API_RETRIES; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error: unknown) {
+      if (!isTransientAPIError(error) || attempt === API_RETRIES) throw error;
+      console.warn(`[cache] Transient EP API failure; retrying attempt ${String(attempt + 2)}/${String(API_RETRIES + 1)}`);
+      await waitForRateLimitRetry(attempt, error);
+    }
+  }
+  throw new Error('Unreachable EP API retry state');
 }
 
 async function fetchMEPDetailsWithRetry(
   client: EuropeanParliamentClient,
   mepId: string,
 ): Promise<ReturnType<typeof MEPDetailsSchema.parse>> {
-  for (let attempt = 0; attempt <= MEP_DETAIL_RETRIES; attempt += 1) {
-    try {
-      return await client.getMEPDetails(mepId, { live: true });
-    } catch (error: unknown) {
-      if (!isRateLimitError(error) || attempt === MEP_DETAIL_RETRIES) throw error;
-      await waitForRateLimitRetry(attempt, error);
-    }
-  }
-  throw new Error('Unreachable MEP detail retry state');
+  return withAPIRetry(() => client.getMEPDetails(mepId, { live: true }));
 }
 
 async function fetchCorporateBodyWithRetry(
   client: EuropeanParliamentClient,
   bodyId: string,
 ): Promise<ReturnType<typeof CommitteeSchema.parse> | null> {
-  for (let attempt = 0; attempt <= CORPORATE_BODY_RETRIES; attempt += 1) {
-    try {
+  try {
+    return await withAPIRetry(async () => {
       return CommitteeSchema.parse(await client.getCorporateBodyById(bodyId, {
         includeMemberships: false,
       }));
-    } catch (error: unknown) {
-      if (isNotFoundError(error)) return null;
-      if (!isRateLimitError(error) || attempt === CORPORATE_BODY_RETRIES) throw error;
-      await waitForRateLimitRetry(attempt, error);
-    }
+    });
+  } catch (error: unknown) {
+    if (isNotFoundError(error)) return null;
+    throw error;
   }
-  throw new Error('Unreachable corporate-body retry state');
 }
 
 async function fetchAllCurrentCorporateBodies(
@@ -162,7 +172,9 @@ async function fetchAllCurrentCorporateBodies(
 ): Promise<ReturnType<typeof CommitteeSchema.parse>[]> {
   const result: ReturnType<typeof CommitteeSchema.parse>[] = [];
   for (let offset = 0;; offset += PAGE_SIZE) {
-    const page = await client.getCurrentCorporateBodies({ limit: PAGE_SIZE, offset, live: true });
+    const page = await withAPIRetry(() =>
+      client.getCurrentCorporateBodies({ limit: PAGE_SIZE, offset, live: true }),
+    );
     result.push(...page.data.map((body) => CommitteeSchema.parse(body)));
     if (!page.hasMore) return result;
   }
@@ -173,7 +185,9 @@ async function fetchAllVocabularies(
 ): Promise<Record<string, unknown>[]> {
   const result: Record<string, unknown>[] = [];
   for (let offset = 0;; offset += PAGE_SIZE) {
-    const page = await client.getControlledVocabularies({ limit: PAGE_SIZE, offset });
+    const page = await withAPIRetry(() =>
+      client.getControlledVocabularies({ limit: PAGE_SIZE, offset }),
+    );
     result.push(...page.data);
     if (!page.hasMore) return result;
   }
@@ -183,7 +197,19 @@ async function buildMEPDataset(
   client: EuropeanParliamentClient,
   generatedAt: string,
 ): Promise<GeneratedDataset & { payload: WeeklyMEPCache }> {
-  const rawMEPs = await fetchAllCurrentMEPs(client, PAGE_SIZE);
+  const currentMEPClient = {
+    getCurrentMEPs: async (
+      params: { limit: number; offset: number },
+    ): Promise<Awaited<ReturnType<EuropeanParliamentClient['getCurrentMEPs']>>> => {
+      const page = await withAPIRetry(() =>
+        client.getCurrentMEPs({ ...params, live: true }),
+      );
+      // Some upstream responses omit pagination metadata. A full page is
+      // unambiguously evidence that another page may exist.
+      return { ...page, hasMore: page.hasMore || page.data.length >= params.limit };
+    },
+  };
+  const rawMEPs = await fetchAllCurrentMEPs(currentMEPClient, PAGE_SIZE);
   const meps = rawMEPs.map((mep) => MEPSchema.parse(mep));
   if (meps.length < MIN_CURRENT_MEPS) {
     throw new Error(`Current MEP listing is incomplete: ${String(meps.length)} < ${String(MIN_CURRENT_MEPS)}`);
@@ -308,7 +334,9 @@ async function buildVocabularyDataset(
 
   const vocabularyDetails: NonNullable<WeeklyVocabulariesCache['vocabularyDetails']> = Object.create(null) as NonNullable<WeeklyVocabulariesCache['vocabularyDetails']>;
   for (const id of ids) {
-    vocabularyDetails[id] = await client.getControlledVocabularyById(shortReference(id));
+    vocabularyDetails[id] = await withAPIRetry(() =>
+      client.getControlledVocabularyById(shortReference(id)),
+    );
   }
   if (Object.keys(vocabularyDetails).length !== vocabularies.length) {
     throw new Error('Vocabulary detail coverage does not match vocabulary listing');
@@ -391,6 +419,10 @@ async function main(): Promise<void> {
   const client = new EuropeanParliamentClient({
     timeoutMs: 180_000,
     maxResponseBytes: 50 * 1024 * 1024,
+    rateLimiter: new RateLimiter({
+      tokensPerInterval: CACHE_GENERATION_RATE_LIMIT,
+      interval: 'minute',
+    }),
   });
   console.log(`[cache] Building complete cache generation ${generatedAt}`);
   const meps = await buildMEPDataset(client, generatedAt);
