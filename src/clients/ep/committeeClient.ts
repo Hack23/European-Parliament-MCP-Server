@@ -468,13 +468,17 @@ export class CommitteeClient extends BaseEPClient {
    * @throws {APIError} If committee not found
    * @private
    */
-  private async resolveCommittee(searchTerm: string, abortSignal?: AbortSignal): Promise<Committee> {
+  private async resolveCommittee(
+    searchTerm: string,
+    abortSignal?: AbortSignal,
+    includeMemberships = true,
+  ): Promise<Committee> {
     if (searchTerm !== '') {
-      const directResult = await this.fetchCommitteeDirectly(searchTerm, abortSignal);
+      const directResult = await this.fetchCommitteeDirectly(searchTerm, abortSignal, includeMemberships);
       if (directResult !== null) return directResult;
     }
 
-    const found = await this.searchCommitteeInList(searchTerm, abortSignal);
+    const found = await this.searchCommitteeInList(searchTerm, abortSignal, includeMemberships);
     if (found !== null) return found;
 
     throw new APIError(`Committee not found: ${searchTerm || 'unknown'}`, 404);
@@ -515,7 +519,11 @@ export class CommitteeClient extends BaseEPClient {
    * Searches the corporate-bodies list for a matching committee.
    * @private
    */
-  private async searchCommitteeInList(searchTerm: string, abortSignal?: AbortSignal): Promise<Committee | null> {
+  private async searchCommitteeInList(
+    searchTerm: string,
+    abortSignal?: AbortSignal,
+    includeMemberships = true,
+  ): Promise<Committee | null> {
     const listParams: Record<string, unknown> = {
       'body-classification': 'COMMITTEE_PARLIAMENTARY_STANDING',
       limit: 100,
@@ -525,7 +533,9 @@ export class CommitteeClient extends BaseEPClient {
     for (const item of response.data) {
       const committee = this.transformCorporateBody(item);
       if (committee.abbreviation === searchTerm || committee.id === searchTerm) {
-        return await this.enrichCommitteeMembership(committee, item, abortSignal);
+        return includeMemberships
+          ? await this.enrichCommitteeMembership(committee, item, abortSignal)
+          : committee;
       }
     }
     return null;
@@ -544,13 +554,15 @@ export class CommitteeClient extends BaseEPClient {
     id?: string;
     abbreviation?: string;
     abortSignal?: AbortSignal;
+    includeMemberships?: boolean;
   }): Promise<Committee> {
     const action = 'get_committee_info';
     // Audit params exclude `abortSignal` (not a property we want in audit logs).
     const auditParams = { id: params.id, abbreviation: params.abbreviation };
     try {
       const searchTerm = params.abbreviation ?? params.id ?? '';
-      const committee = await this.resolveCommittee(searchTerm, params.abortSignal);
+      const includeMemberships = params.includeMemberships ?? true;
+      const committee = await this.resolveCommittee(searchTerm, params.abortSignal, includeMemberships);
       auditLogger.logDataAccess(action, auditParams, 1);
       return committee;
     } catch (error: unknown) {

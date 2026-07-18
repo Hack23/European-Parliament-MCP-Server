@@ -682,7 +682,10 @@ export class EuropeanParliamentClient {
         : findCachedCommittee(lookup, bodies, meps);
       if (cached !== undefined) return CommitteeSchema.parse(cached) as Committee;
     }
-    return this.committeeClient.getCommitteeInfo(params);
+    return this.committeeClient.getCommitteeInfo({
+      ...params,
+      includeMemberships: params.live !== true,
+    });
   }
 
   /**
@@ -734,7 +737,10 @@ export class EuropeanParliamentClient {
    * Returns a single EP Corporate Body by body ID.
    * **EP API Endpoint:** `GET /corporate-bodies/{body-id}`
    */
-  async getCorporateBodyById(bodyId: string, options: { abortSignal?: AbortSignal } = {}): Promise<Committee> {
+  async getCorporateBodyById(
+    bodyId: string,
+    options: { abortSignal?: AbortSignal; includeMemberships?: boolean } = {},
+  ): Promise<Committee> {
     return this.committeeClient.getCorporateBodyById(bodyId, options);
   }
 

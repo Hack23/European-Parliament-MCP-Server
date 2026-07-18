@@ -305,6 +305,8 @@ describe('get_committee_info Tool', () => {
     it('should bypass cache when live=true', async () => {
       await handleGetCommitteeInfo({ abbreviation: 'ENVI', live: true });
       expect(epClientModule.epClient.getCommitteeInfo).toHaveBeenCalled();
+      expect(weeklyCacheModule.loadWeeklyCorporateBodiesCache).not.toHaveBeenCalled();
+      expect(weeklyCacheModule.loadWeeklyMEPCache).not.toHaveBeenCalled();
     });
 
     it('should call getCurrentCorporateBodies when showCurrent is true', async () => {
