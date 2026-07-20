@@ -1,13 +1,13 @@
 {
   "metadata": {
     "schemaVersion": 3,
-    "generatedAt": "2026-07-18T21:37:47.307Z",
+    "generatedAt": "2026-07-20T03:15:04.645Z",
     "source": "European Parliament Open Data Portal API v2",
     "dataset": "corporate-bodies",
     "scope": "current",
     "complete": true,
     "recordCount": 475,
-    "detailCount": 56
+    "detailCount": 57
   },
   "corporateBodies": [
     {
@@ -2565,15 +2565,6 @@
       ]
     },
     {
-      "id": "6802",
-      "name": "AfD",
-      "abbreviation": "AfD",
-      "members": [],
-      "responsibilities": [
-        "NATIONAL_POLITICAL_GROUP"
-      ]
-    },
-    {
       "id": "6803",
       "name": "Die PARTEI",
       "abbreviation": "Die PARTEI",
@@ -4221,6 +4212,15 @@
       ]
     },
     {
+      "id": "6989",
+      "name": "CJ34",
+      "abbreviation": "CJ34",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
       "id": "7005",
       "name": "Subcommittee on Human Rights",
       "abbreviation": "DROI",
@@ -4721,6 +4721,15 @@
       "id": "6988",
       "name": "Joint committee procedure - INTA and IMCO",
       "abbreviation": "CJ33",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6989": {
+      "id": "6989",
+      "name": "Joint committee procedure - ECON and FEMM",
+      "abbreviation": "CJ34",
       "members": [],
       "responsibilities": [
         "COMMITTEE_PARLIAMENTARY_JOINT"
