@@ -185,7 +185,7 @@
     "jsdom": "29.1.1",
     "knip": "6.27.0",
     "license-compliance": "3.0.1",
-    "prettier": "3.9.5",
+    "prettier": "3.9.6",
     "tsx": "4.23.1",
     "typedoc": "0.28.20",
     "typedoc-plugin-markdown": "4.12.0",
