@@ -166,10 +166,13 @@
     "zod": "4.4.3"
   },
   "overrides": {
-    "vite": "8.1.1",
+    "body-parser": "2.3.0",
+    "brace-expansion": "5.0.7",
+    "js-yaml": "4.3.0",
     "joi": "17.13.4",
+    "qs": "6.15.3",
     "undici": "8.8.0",
-    "qs": "6.15.3"
+    "vite": "8.1.5"
   },
   "devDependencies": {
     "@stryker-mutator/core": "9.6.1",
@@ -191,8 +194,8 @@
     "typedoc-plugin-markdown": "4.12.0",
     "typedoc-plugin-mdn-links": "5.1.1",
     "typedoc-plugin-zod": "1.4.3",
-    "typescript": "npm:@typescript/typescript6@6.0.2",
-    "typescript-7": "npm:typescript@7.0.1-rc",
+    "typescript": "npm:@typescript/typescript6@6.0.3",
+    "typescript-7": "npm:typescript@7.0.2",
     "typescript-eslint": "8.65.0",
     "vitest": "4.1.10"
   }
