@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -134,7 +134,7 @@ Vote corrections from RCV Correction element (optional)
 
 ### groupBreakdown?
 
-> `optional` **groupBreakdown?**: `Record`\<`string`, \{ `abstain`: `number`; `against`: `number`; `for`: `number`; \}\>
+> `optional` **groupBreakdown?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, \{ `abstain`: `number`; `against`: `number`; `for`: `number`; \}\>
 
 Defined in: [clients/ep/doceoXmlParser.ts:119](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L119)
 
@@ -144,7 +144,7 @@ Political group breakdown of votes
 
 ### mepVotes?
 
-> `optional` **mepVotes?**: `Record`\<`string`, `"FOR"` \| `"AGAINST"` \| `"ABSTAIN"`\>
+> `optional` **mepVotes?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `"FOR"` \| `"AGAINST"` \| `"ABSTAIN"`\>
 
 Defined in: [clients/ep/doceoXmlParser.ts:117](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/doceoXmlParser.ts#L117)
 

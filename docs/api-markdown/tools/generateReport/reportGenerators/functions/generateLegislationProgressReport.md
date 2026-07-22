@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: generateLegislationProgressReport()
 
-> **generateLegislationProgressReport**(`params`): `Promise`\<[`Report`](../../types/interfaces/Report.md)\>
+> **generateLegislationProgressReport**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Report`](../../types/interfaces/Report.md)\>
 
 Defined in: [tools/generateReport/reportGenerators.ts:446](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/reportGenerators.ts#L446)
 
@@ -35,4 +35,4 @@ Cyclomatic complexity: 1
 
 ## Returns
 
-`Promise`\<[`Report`](../../types/interfaces/Report.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Report`](../../types/interfaces/Report.md)\>

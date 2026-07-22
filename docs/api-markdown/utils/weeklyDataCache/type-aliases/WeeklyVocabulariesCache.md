@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -54,8 +54,8 @@ Defined in: [utils/weeklyDataCache.ts:64](https://github.com/Hack23/European-Par
 
 ### vocabularies
 
-> **vocabularies**: `Record`\<`string`, `unknown`\>[]
+> **vocabularies**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>[]
 
 ### vocabularyDetails?
 
-> `optional` **vocabularyDetails?**: `Record`\<`string`, `Record`\<`string`, `unknown`\>\>
+> `optional` **vocabularyDetails?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleReadResource()
 
-> **handleReadResource**(`uri`): `Promise`\<[`ResourceReadResult`](../interfaces/ResourceReadResult.md)\>
+> **handleReadResource**(`uri`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ResourceReadResult`](../interfaces/ResourceReadResult.md)\>
 
 Defined in: [resources/index.ts:477](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/resources/index.ts#L477)
 
@@ -22,7 +22,7 @@ Resource URI (e.g., "ep://meps/12345")
 
 ## Returns
 
-`Promise`\<[`ResourceReadResult`](../interfaces/ResourceReadResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ResourceReadResult`](../interfaces/ResourceReadResult.md)\>
 
 Resource content
 

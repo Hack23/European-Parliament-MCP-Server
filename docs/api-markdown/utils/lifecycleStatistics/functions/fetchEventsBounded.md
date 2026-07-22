@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: fetchEventsBounded()
 
-> **fetchEventsBounded**(`procedures`, `concurrency?`, `deadline?`): `Promise`\<`Map`\<`string`, [`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)[]\>\>
+> **fetchEventsBounded**(`procedures`, `concurrency?`, `deadline?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, [`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)[]\>\>
 
 Defined in: [utils/lifecycleStatistics.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/lifecycleStatistics.ts#L261)
 
@@ -43,7 +43,7 @@ Optional wall-clock deadline (epoch ms). If `Date.now()`
 
 ## Returns
 
-`Promise`\<`Map`\<`string`, [`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)[]\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, [`EPEvent`](../../../types/ep/activities/interfaces/EPEvent.md)[]\>\>
 
 Map of process-id → events array (failed fetches are absent;
   procedures whose batch never ran due to the deadline are also absent)

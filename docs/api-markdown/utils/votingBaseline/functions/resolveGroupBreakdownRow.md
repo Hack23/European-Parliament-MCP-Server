@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -22,7 +22,7 @@ where DOCEO XML uses raw short labels (e.g. `RE`, `Verts/ALE`) while
 
 ### breakdown
 
-`Record`\<`string`, \{ `abstain`: `number`; `against`: `number`; `for`: `number`; \}\> \| `undefined`
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, \{ `abstain`: `number`; `against`: `number`; `for`: `number`; \}\> \| `undefined`
 
 ### normalizedGroup
 

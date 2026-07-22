@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -231,19 +231,19 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -471,19 +471,19 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -1057,19 +1057,19 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -1287,19 +1287,19 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -1825,19 +1825,19 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -2055,19 +2055,19 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -2601,19 +2601,19 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -2839,19 +2839,19 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -3377,19 +3377,19 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -3623,19 +3623,19 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -3861,19 +3861,19 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -4407,19 +4407,19 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -4645,19 +4645,19 @@ Define the layaout for Json+ld
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -5216,19 +5216,19 @@ A type of a Work.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -5447,19 +5447,19 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6017,19 +6017,19 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6255,19 +6255,19 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6485,19 +6485,19 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -6755,19 +6755,19 @@ Method of vote
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -7001,19 +7001,19 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -7247,19 +7247,19 @@ The number of items to skip before starting to collect the result set.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -7517,19 +7517,19 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -9831,19 +9831,19 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -10417,19 +10417,19 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -10663,19 +10663,19 @@ Parliamentary Term from 0 to the current.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -10925,19 +10925,19 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -11187,19 +11187,19 @@ EP political groups.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -11441,19 +11441,19 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -11679,19 +11679,19 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -12233,19 +12233,19 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -12471,19 +12471,19 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -13025,19 +13025,19 @@ A type of a Work. Values are concepts of the EP Vocabulary [ep-document-types](h
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -13383,19 +13383,19 @@ Year. The format of the values is **YYYY**.
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -13621,19 +13621,19 @@ Language of the resource. Values are *ISO 639-1* language codes identifying the 
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14167,19 +14167,19 @@ A type of a Process. Values are concepts of the EP Vocabulary [ep-procedure-type
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14397,19 +14397,19 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14611,19 +14611,19 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -14849,19 +14849,19 @@ Response format
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -15515,19 +15515,19 @@ Video start time. (range start). This parameter refers to the video timestamp of
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 
@@ -15777,19 +15777,19 @@ A free text search in the content of the resource. For language-specific results
 
 ##### get.responses.200.content.application/ld+json.data
 
-> **data**: `Record`\<`string`, `never`\>
+> **data**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.@context?
 
-> `optional` **@context?**: `Record`\<`string`, `never`\>
+> `optional` **@context?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.included?
 
-> `optional` **included?**: `Record`\<`string`, `never`\>
+> `optional` **included?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.content.application/ld+json.searchResults?
 
-> `optional` **searchResults?**: `Record`\<`string`, `never`\>
+> `optional` **searchResults?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 ##### get.responses.200.headers
 

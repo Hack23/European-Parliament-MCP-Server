@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -58,7 +58,7 @@ European Parliament API base URL.
 
 ### cache
 
-> `protected` `readonly` **cache**: `LRUCache`\<`string`, `Record`\<`string`, `unknown`\>\>
+> `protected` `readonly` **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
 Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
 
@@ -180,7 +180,7 @@ API endpoint path (same value passed to [get](../../baseClient/classes/BaseEPCli
 
 ##### params?
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Optional query parameters (same value passed to [get](../../baseClient/classes/BaseEPClient.md#get))
 
@@ -198,7 +198,7 @@ Optional query parameters (same value passed to [get](../../baseClient/classes/B
 
 ### fetchVoteResultsForSession()
 
-> `private` **fetchVoteResultsForSession**(`sessionId`, `apiParams`, `abortSignal?`): `Promise`\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
+> `private` **fetchVoteResultsForSession**(`sessionId`, `apiParams`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
 
 Defined in: [clients/ep/votingClient.ts:54](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L54)
 
@@ -212,7 +212,7 @@ Fetches vote results for a specific sitting/session.
 
 ##### apiParams
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ##### abortSignal?
 
@@ -220,7 +220,7 @@ Fetches vote results for a specific sitting/session.
 
 #### Returns
 
-`Promise`\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
 
 #### Private
 
@@ -228,7 +228,7 @@ Fetches vote results for a specific sitting/session.
 
 ### fetchVoteResultsFromRecentMeetings()
 
-> `private` **fetchVoteResultsFromRecentMeetings**(`params`): `Promise`\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
+> `private` **fetchVoteResultsFromRecentMeetings**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
 
 Defined in: [clients/ep/votingClient.ts:72](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L72)
 
@@ -252,7 +252,7 @@ Fetches vote results from recent meetings when no sessionId is given.
 
 #### Returns
 
-`Promise`\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)[]\>
 
 #### Private
 
@@ -296,7 +296,7 @@ Applies client-side filters to voting records.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): `Promise`\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:687](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L687)
 
@@ -306,7 +306,7 @@ Executes a cached, rate-limited GET request to the EP API.
 
 ##### T
 
-`T` *extends* `Record`\<`string`, `unknown`\>
+`T` *extends* [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Expected response type (extends `Record<string, unknown>`)
 
@@ -320,7 +320,7 @@ API endpoint path (relative to `baseURL`)
 
 ##### params?
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Optional query parameters
 
@@ -346,7 +346,7 @@ Optional caller-provided cancellation signal. When
 
 #### Returns
 
-`Promise`\<`T`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
 Promise resolving to the typed API response
 
@@ -405,7 +405,7 @@ Returns cache statistics for monitoring and debugging.
 
 ### getSpeechById()
 
-> **getSpeechById**(`speechId`, `options?`): `Promise`\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>
+> **getSpeechById**(`speechId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>
 
 Defined in: [clients/ep/votingClient.ts:240](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L240)
 
@@ -426,13 +426,13 @@ Returns a single speech by ID.
 
 #### Returns
 
-`Promise`\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>
 
 ***
 
 ### getSpeeches()
 
-> **getSpeeches**(`params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>\>
+> **getSpeeches**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>\>
 
 Defined in: [clients/ep/votingClient.ts:211](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L211)
 
@@ -472,13 +472,13 @@ these are mapped to `sitting-date` / `sitting-date-end`.
 
 #### Returns
 
-`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Speech`](../../../../types/ep/activities/interfaces/Speech.md)\>\>
 
 ***
 
 ### getVotingRecords()
 
-> **getVotingRecords**(`params`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
+> **getVotingRecords**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
 
 Defined in: [clients/ep/votingClient.ts:149](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/votingClient.ts#L149)
 
@@ -522,7 +522,7 @@ sessionId, topic, dateFrom, dateTo, limit, offset
 
 #### Returns
 
-`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`VotingRecord`](../../../../types/ep/plenary/interfaces/VotingRecord.md)\>\>
 
 Paginated voting records list
 
@@ -542,7 +542,7 @@ Defined in: [clients/ep/votingClient.ts:46](https://github.com/Hack23/European-P
 
 ##### apiData
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 #### Returns
 
@@ -560,7 +560,7 @@ Defined in: [clients/ep/votingClient.ts:39](https://github.com/Hack23/European-P
 
 ##### apiData
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ##### sessionId
 

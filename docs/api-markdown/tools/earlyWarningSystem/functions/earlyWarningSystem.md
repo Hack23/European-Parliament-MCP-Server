@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: earlyWarningSystem()
 
-> **earlyWarningSystem**(`params`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **earlyWarningSystem**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/earlyWarningSystem.ts:323](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/earlyWarningSystem.ts#L323)
 
@@ -34,7 +34,7 @@ Validated tool parameters
 
 ## Returns
 
-`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 A [ToolResult](../../shared/types/interfaces/ToolResult.md) containing the warning report or a
   structured error response on failure

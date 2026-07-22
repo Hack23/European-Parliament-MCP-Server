@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Type Alias: ToolHandler
 
-> **ToolHandler** = (`args`) => `Promise`\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
+> **ToolHandler** = (`args`) => [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [server/types.ts:24](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/types.ts#L24)
 
@@ -22,6 +22,6 @@ Raw (unvalidated) tool arguments from the MCP request
 
 ## Returns
 
-`Promise`\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 
 Promise resolving to the tool execution result

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: dispatchToolCall()
 
-> **dispatchToolCall**(`name`, `args`): `Promise`\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
+> **dispatchToolCall**(`name`, `args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [server/toolRegistry.ts:334](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/server/toolRegistry.ts#L334)
 
@@ -36,7 +36,7 @@ Validated tool arguments
 
 ## Returns
 
-`Promise`\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../../tools/shared/types/interfaces/ToolResult.md)\>
 
 Tool execution result
 

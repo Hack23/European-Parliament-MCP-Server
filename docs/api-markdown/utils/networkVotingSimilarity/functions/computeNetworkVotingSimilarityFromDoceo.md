@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: computeNetworkVotingSimilarityFromDoceo()
 
-> **computeNetworkVotingSimilarityFromDoceo**(`mepIdSubset`, `options?`): `Promise`\<[`NetworkVotingSimilarityResult`](../interfaces/NetworkVotingSimilarityResult.md) \| `null`\>
+> **computeNetworkVotingSimilarityFromDoceo**(`mepIdSubset`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`NetworkVotingSimilarityResult`](../interfaces/NetworkVotingSimilarityResult.md) \| `null`\>
 
 Defined in: [utils/networkVotingSimilarity.ts:198](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/networkVotingSimilarity.ts#L198)
 
@@ -31,7 +31,7 @@ Optional bounds and timeout overrides.
 
 ## Returns
 
-`Promise`\<[`NetworkVotingSimilarityResult`](../interfaces/NetworkVotingSimilarityResult.md) \| `null`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`NetworkVotingSimilarityResult`](../interfaces/NetworkVotingSimilarityResult.md) \| `null`\>
 
 Edges with similarity ≥ `minSimilarity` (default 0.7) and
   ≥ [MIN\_SHARED\_DECISIVE\_VOTES](../variables/MIN_SHARED_DECISIVE_VOTES.md) co-participations, or `null` when

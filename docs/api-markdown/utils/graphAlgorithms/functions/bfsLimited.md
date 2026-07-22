@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: bfsLimited()
 
-> **bfsLimited**(`adj`, `seeds`, `maxDepth`): `Set`\<`string`\>
+> **bfsLimited**(`adj`, `seeds`, `maxDepth`): [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>
 
 Defined in: [utils/graphAlgorithms.ts:103](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/graphAlgorithms.ts#L103)
 
@@ -26,4 +26,4 @@ readonly `string`[]
 
 ## Returns
 
-`Set`\<`string`\>
+[`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: getLifecycleStatistics()
 
-> **getLifecycleStatistics**(`options?`): `Promise`\<[`LifecycleStatisticsModel`](../interfaces/LifecycleStatisticsModel.md)\>
+> **getLifecycleStatistics**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LifecycleStatisticsModel`](../interfaces/LifecycleStatisticsModel.md)\>
 
 Defined in: [utils/lifecycleStatistics.ts:391](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/lifecycleStatistics.ts#L391)
 
@@ -50,7 +50,7 @@ Ignore cached model and rebuild
 
 ## Returns
 
-`Promise`\<[`LifecycleStatisticsModel`](../interfaces/LifecycleStatisticsModel.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`LifecycleStatisticsModel`](../interfaces/LifecycleStatisticsModel.md)\>
 
 The lifecycle statistics model (possibly partial when `deadline`
   fires before the full corpus has been fetched)

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: computeMepVotingActivityFromDoceo()
 
-> **computeMepVotingActivityFromDoceo**(`mepId`, `options?`): `Promise`\<[`DoceoMepAggregateResult`](../interfaces/DoceoMepAggregateResult.md) \| `null`\>
+> **computeMepVotingActivityFromDoceo**(`mepId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`DoceoMepAggregateResult`](../interfaces/DoceoMepAggregateResult.md) \| `null`\>
 
 Defined in: [utils/doceoMepAggregator.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/doceoMepAggregator.ts#L294)
 
@@ -33,7 +33,7 @@ Optional date range, political group, timeout and limit overrides.
 
 ## Returns
 
-`Promise`\<[`DoceoMepAggregateResult`](../interfaces/DoceoMepAggregateResult.md) \| `null`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`DoceoMepAggregateResult`](../interfaces/DoceoMepAggregateResult.md) \| `null`\>
 
 Aggregate result or `null` if DOCEO data is unavailable.
 

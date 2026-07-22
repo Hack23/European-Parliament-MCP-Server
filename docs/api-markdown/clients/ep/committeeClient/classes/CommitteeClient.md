@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -58,7 +58,7 @@ European Parliament API base URL.
 
 ### cache
 
-> `protected` `readonly` **cache**: `LRUCache`\<`string`, `Record`\<`string`, `unknown`\>\>
+> `protected` `readonly` **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
 Defined in: [clients/ep/baseClient.ts:219](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L219)
 
@@ -212,7 +212,7 @@ Defined in: [clients/ep/committeeClient.ts:117](https://github.com/Hack23/Europe
 
 ##### apiData
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ##### committeeAbbreviation
 
@@ -226,7 +226,7 @@ Defined in: [clients/ep/committeeClient.ts:117](https://github.com/Hack23/Europe
 
 ### collectMembershipsFromBatch()
 
-> `private` **collectMembershipsFromBatch**(`meps`, `organizationCandidates`, `abortSignal?`): `Promise`\<\{ `memberIds`: `Set`\<`string`\>; `memberships`: [`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)[]; `viceChairIds`: `Set`\<`string`\>; `chairId?`: `string`; \}\>
+> `private` **collectMembershipsFromBatch**(`meps`, `organizationCandidates`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `memberIds`: [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>; `memberships`: [`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)[]; `viceChairIds`: [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>; `chairId?`: `string`; \}\>
 
 Defined in: [clients/ep/committeeClient.ts:212](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L212)
 
@@ -246,13 +246,13 @@ Defined in: [clients/ep/committeeClient.ts:212](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<\{ `memberIds`: `Set`\<`string`\>; `memberships`: [`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)[]; `viceChairIds`: `Set`\<`string`\>; `chairId?`: `string`; \}\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<\{ `memberIds`: [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>; `memberships`: [`CommitteeMembership`](../../../../types/ep/committee/interfaces/CommitteeMembership.md)[]; `viceChairIds`: [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>; `chairId?`: `string`; \}\>
 
 ***
 
 ### enrichCommitteeMembership()
 
-> `private` **enrichCommitteeMembership**(`committee`, `apiData`, `abortSignal?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+> `private` **enrichCommitteeMembership**(`committee`, `apiData`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L139)
 
@@ -264,7 +264,7 @@ Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/Europe
 
 ##### apiData
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ##### abortSignal?
 
@@ -272,7 +272,7 @@ Defined in: [clients/ep/committeeClient.ts:139](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 ***
 
@@ -298,7 +298,7 @@ API endpoint path (same value passed to [get](../../baseClient/classes/BaseEPCli
 
 ##### params?
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Optional query parameters (same value passed to [get](../../baseClient/classes/BaseEPClient.md#get))
 
@@ -324,7 +324,7 @@ Defined in: [clients/ep/committeeClient.ts:343](https://github.com/Hack23/Europe
 
 ##### details
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ##### organizationCandidates
 
@@ -356,7 +356,7 @@ Defined in: [clients/ep/committeeClient.ts:63](https://github.com/Hack23/Europea
 
 ### fetchCommitteeDirectly()
 
-> `private` **fetchCommitteeDirectly**(`bodyId`, `abortSignal?`, `includeMemberships?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
+> `private` **fetchCommitteeDirectly**(`bodyId`, `abortSignal?`, `includeMemberships?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
 Defined in: [clients/ep/committeeClient.ts:491](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L491)
 
@@ -378,7 +378,7 @@ Attempts a direct corporate-body lookup by ID.
 
 #### Returns
 
-`Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
 #### Private
 
@@ -386,7 +386,7 @@ Attempts a direct corporate-body lookup by ID.
 
 ### get()
 
-> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): `Promise`\<`T`\>
+> `protected` **get**\<`T`\>(`endpoint`, `params?`, `minimumTimeoutMs?`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
 Defined in: [clients/ep/baseClient.ts:687](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L687)
 
@@ -396,7 +396,7 @@ Executes a cached, rate-limited GET request to the EP API.
 
 ##### T
 
-`T` *extends* `Record`\<`string`, `unknown`\>
+`T` *extends* [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Expected response type (extends `Record<string, unknown>`)
 
@@ -410,7 +410,7 @@ API endpoint path (relative to `baseURL`)
 
 ##### params?
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Optional query parameters
 
@@ -436,7 +436,7 @@ Optional caller-provided cancellation signal. When
 
 #### Returns
 
-`Promise`\<`T`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`T`\>
 
 Promise resolving to the typed API response
 
@@ -513,7 +513,7 @@ Defined in: [clients/ep/committeeClient.ts:105](https://github.com/Hack23/Europe
 
 ### getCommitteeInfo()
 
-> **getCommitteeInfo**(`params`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+> **getCommitteeInfo**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 Defined in: [clients/ep/committeeClient.ts:555](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L555)
 
@@ -545,7 +545,7 @@ id or abbreviation of the committee, with optional `abortSignal`
 
 #### Returns
 
-`Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 Committee information
 
@@ -557,7 +557,7 @@ Audit logged per GDPR Article 30
 
 ### getCorporateBodies()
 
-> **getCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
+> **getCorporateBodies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
 Defined in: [clients/ep/committeeClient.ts:584](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L584)
 
@@ -582,13 +582,13 @@ Returns the list of all EP Corporate Bodies.
 
 #### Returns
 
-`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
 ***
 
 ### getCorporateBodiesFeed()
 
-> **getCorporateBodiesFeed**(`options?`): `Promise`\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
+> **getCorporateBodiesFeed**(`options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 Defined in: [clients/ep/committeeClient.ts:631](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L631)
 
@@ -608,13 +608,13 @@ Extended timeout applied (120 s minimum).
 
 #### Returns
 
-`Promise`\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<`Record`\<`string`, `unknown`\>\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
 ***
 
 ### getCorporateBodyById()
 
-> **getCorporateBodyById**(`bodyId`, `options?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+> **getCorporateBodyById**(`bodyId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 Defined in: [clients/ep/committeeClient.ts:609](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L609)
 
@@ -639,13 +639,13 @@ Returns a single EP Corporate Body by ID.
 
 #### Returns
 
-`Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 ***
 
 ### getCurrentCorporateBodies()
 
-> **getCurrentCorporateBodies**(`params?`): `Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
+> **getCurrentCorporateBodies**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
 Defined in: [clients/ep/committeeClient.ts:641](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L641)
 
@@ -670,7 +670,7 @@ Returns the list of all current EP Corporate Bodies for today's date.
 
 #### Returns
 
-`Promise`\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>\>
 
 ***
 
@@ -702,7 +702,7 @@ Defined in: [clients/ep/committeeClient.ts:434](https://github.com/Hack23/Europe
 
 ##### membership
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 #### Returns
 
@@ -712,7 +712,7 @@ Defined in: [clients/ep/committeeClient.ts:434](https://github.com/Hack23/Europe
 
 ### getMEPMembershipSummary()
 
-> `private` **getMEPMembershipSummary**(`mep`, `organizationCandidates`, `abortSignal?`, `inferMemberFromRoster?`): `Promise`\<`MEPMembershipSummary`\>
+> `private` **getMEPMembershipSummary**(`mep`, `organizationCandidates`, `abortSignal?`, `inferMemberFromRoster?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPMembershipSummary`\>
 
 Defined in: [clients/ep/committeeClient.ts:261](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L261)
 
@@ -720,7 +720,7 @@ Defined in: [clients/ep/committeeClient.ts:261](https://github.com/Hack23/Europe
 
 ##### mep
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ##### organizationCandidates
 
@@ -736,7 +736,7 @@ Defined in: [clients/ep/committeeClient.ts:261](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<`MEPMembershipSummary`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPMembershipSummary`\>
 
 ***
 
@@ -750,7 +750,7 @@ Defined in: [clients/ep/committeeClient.ts:334](https://github.com/Hack23/Europe
 
 ##### details
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 #### Returns
 
@@ -786,7 +786,7 @@ Defined in: [clients/ep/committeeClient.ts:397](https://github.com/Hack23/Europe
 
 ##### membership
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 #### Returns
 
@@ -814,7 +814,7 @@ Defined in: [clients/ep/committeeClient.ts:101](https://github.com/Hack23/Europe
 
 ### loadCommitteeMemberships()
 
-> `private` **loadCommitteeMemberships**(`organizationCandidates`, `abortSignal?`): `Promise`\<`CommitteeMembershipSummary`\>
+> `private` **loadCommitteeMemberships**(`organizationCandidates`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`CommitteeMembershipSummary`\>
 
 Defined in: [clients/ep/committeeClient.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L155)
 
@@ -830,13 +830,13 @@ Defined in: [clients/ep/committeeClient.ts:155](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<`CommitteeMembershipSummary`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`CommitteeMembershipSummary`\>
 
 ***
 
 ### loadMEPMembershipSummaryFromDetails()
 
-> `private` **loadMEPMembershipSummaryFromDetails**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MembershipRoleSummary`\>
+> `private` **loadMEPMembershipSummaryFromDetails**(`mepId`, `organizationCandidates`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MembershipRoleSummary`\>
 
 Defined in: [clients/ep/committeeClient.ts:313](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L313)
 
@@ -856,7 +856,7 @@ Defined in: [clients/ep/committeeClient.ts:313](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<`MembershipRoleSummary`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MembershipRoleSummary`\>
 
 ***
 
@@ -870,7 +870,7 @@ Defined in: [clients/ep/committeeClient.ts:409](https://github.com/Hack23/Europe
 
 ##### membership
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ##### organizationCandidates
 
@@ -938,7 +938,7 @@ Defined in: [clients/ep/committeeClient.ts:92](https://github.com/Hack23/Europea
 
 ### resolveCommittee()
 
-> `private` **resolveCommittee**(`searchTerm`, `abortSignal?`, `includeMemberships?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+> `private` **resolveCommittee**(`searchTerm`, `abortSignal?`, `includeMemberships?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 Defined in: [clients/ep/committeeClient.ts:471](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L471)
 
@@ -960,7 +960,7 @@ Resolves a committee by trying direct lookup then list search.
 
 #### Returns
 
-`Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md)\>
 
 #### Throws
 
@@ -972,7 +972,7 @@ If committee not found
 
 ### resolveDetailMembershipSummary()
 
-> `private` **resolveDetailMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MEPMembershipSummary`\>
+> `private` **resolveDetailMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPMembershipSummary`\>
 
 Defined in: [clients/ep/committeeClient.ts:300](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L300)
 
@@ -992,13 +992,13 @@ Defined in: [clients/ep/committeeClient.ts:300](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<`MEPMembershipSummary`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPMembershipSummary`\>
 
 ***
 
 ### resolveRosterMembershipSummary()
 
-> `private` **resolveRosterMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): `Promise`\<`MEPMembershipSummary`\>
+> `private` **resolveRosterMembershipSummary**(`mepId`, `organizationCandidates`, `abortSignal?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPMembershipSummary`\>
 
 Defined in: [clients/ep/committeeClient.ts:284](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L284)
 
@@ -1018,13 +1018,13 @@ Defined in: [clients/ep/committeeClient.ts:284](https://github.com/Hack23/Europe
 
 #### Returns
 
-`Promise`\<`MEPMembershipSummary`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPMembershipSummary`\>
 
 ***
 
 ### searchCommitteeInList()
 
-> `private` **searchCommitteeInList**(`searchTerm`, `abortSignal?`, `includeMemberships?`): `Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
+> `private` **searchCommitteeInList**(`searchTerm`, `abortSignal?`, `includeMemberships?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
 Defined in: [clients/ep/committeeClient.ts:524](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/committeeClient.ts#L524)
 
@@ -1046,7 +1046,7 @@ Searches the corporate-bodies list for a matching committee.
 
 #### Returns
 
-`Promise`\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`Committee`](../../../../types/ep/committee/interfaces/Committee.md) \| `null`\>
 
 #### Private
 
@@ -1062,7 +1062,7 @@ Defined in: [clients/ep/committeeClient.ts:59](https://github.com/Hack23/Europea
 
 ##### apiData
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 #### Returns
 

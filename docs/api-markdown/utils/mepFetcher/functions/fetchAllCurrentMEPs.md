@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: fetchAllCurrentMEPs()
 
-> **fetchAllCurrentMEPs**(): `Promise`\<[`FetchMEPsResult`](../interfaces/FetchMEPsResult.md)\>
+> **fetchAllCurrentMEPs**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`FetchMEPsResult`](../interfaces/FetchMEPsResult.md)\>
 
 Defined in: [utils/mepFetcher.ts:40](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/mepFetcher.ts#L40)
 
@@ -19,7 +19,7 @@ collected so far as partial results. Callers should check
 
 ## Returns
 
-`Promise`\<[`FetchMEPsResult`](../interfaces/FetchMEPsResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`FetchMEPsResult`](../interfaces/FetchMEPsResult.md)\>
 
 A [FetchMEPsResult](../interfaces/FetchMEPsResult.md) containing the MEPs, a `complete` flag,
   and an optional `failureOffset` when the fetch was incomplete.

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -58,4 +58,4 @@ Defined in: [utils/weeklyDataCache.ts:63](https://github.com/Hack23/European-Par
 
 ### corporateBodyDetails?
 
-> `optional` **corporateBodyDetails?**: `Record`\<`string`, \{ `abbreviation`: `string`; `id`: `string`; `members`: `string`[]; `name`: `string`; `chair?`: `string`; `meetingSchedule?`: `string`[]; `memberships?`: `object`[]; `responsibilities?`: `string`[]; `viceChairs?`: `string`[]; \}\>
+> `optional` **corporateBodyDetails?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, \{ `abbreviation`: `string`; `id`: `string`; `members`: `string`[]; `name`: `string`; `chair?`: `string`; `meetingSchedule?`: `string`[]; `memberships?`: `object`[]; `responsibilities?`: `string`[]; `viceChairs?`: `string`[]; \}\>

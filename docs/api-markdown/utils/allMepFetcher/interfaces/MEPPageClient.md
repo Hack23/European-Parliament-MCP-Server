@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -12,7 +12,7 @@ Defined in: [utils/allMepFetcher.ts:14](https://github.com/Hack23/European-Parli
 
 ### getMEPs()
 
-> **getMEPs**(`params`): `Promise`\<`MEPPage`\>
+> **getMEPs**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPPage`\>
 
 Defined in: [utils/allMepFetcher.ts:15](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/allMepFetcher.ts#L15)
 
@@ -34,4 +34,4 @@ Defined in: [utils/allMepFetcher.ts:15](https://github.com/Hack23/European-Parli
 
 #### Returns
 
-`Promise`\<`MEPPage`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`MEPPage`\>
