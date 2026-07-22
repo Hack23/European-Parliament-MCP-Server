@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleGetProcedureEventById()
 
-> **handleGetProcedureEventById**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleGetProcedureEventById**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/getProcedureEventById.ts:26](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getProcedureEventById.ts#L26)
 
@@ -22,7 +22,7 @@ Raw tool arguments, validated against [GetProcedureEventByIdSchema](../../../sch
 
 ## Returns
 
-`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing the procedure event data
 

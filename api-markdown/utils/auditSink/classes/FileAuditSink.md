@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [utils/auditSink.ts:289](https://github.com/Hack23/European-Parliame
 
 ### writeQueue
 
-> `private` **writeQueue**: `Promise`\<`void`\>
+> `private` **writeQueue**: [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
 Defined in: [utils/auditSink.ts:294](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L294)
 
@@ -75,19 +75,19 @@ sequences never interleave across parallel `log()` invocations.
 
 ### rotateIfNeeded()
 
-> `private` **rotateIfNeeded**(): `Promise`\<`void`\>
+> `private` **rotateIfNeeded**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
 Defined in: [utils/auditSink.ts:318](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L318)
 
 #### Returns
 
-`Promise`\<`void`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
 ***
 
 ### write()
 
-> **write**(`entry`): `Promise`\<`void`\>
+> **write**(`entry`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
 Defined in: [utils/auditSink.ts:306](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L306)
 
@@ -101,7 +101,7 @@ Write a single audit entry to the sink
 
 #### Returns
 
-`Promise`\<`void`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
 #### Implementation of
 

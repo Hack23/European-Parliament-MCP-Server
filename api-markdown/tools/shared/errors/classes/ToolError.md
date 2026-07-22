@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -14,7 +14,7 @@ leaking internal implementation details to clients.
 
 ## Extends
 
-- `Error`
+- [`Error`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error)
 
 ## Constructors
 
@@ -96,7 +96,7 @@ Defined in: [tools/shared/errors.ts:40](https://github.com/Hack23/European-Parli
 
 ### cause?
 
-> `readonly` `optional` **cause?**: `Error`
+> `readonly` `optional` **cause?**: [`Error`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error)
 
 Defined in: [tools/shared/errors.ts:46](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/shared/errors.ts#L46)
 

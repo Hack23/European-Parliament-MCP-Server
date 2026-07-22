@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleGetMEPDeclarations()
 
-> **handleGetMEPDeclarations**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleGetMEPDeclarations**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/getMEPDeclarations.ts:61](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getMEPDeclarations.ts#L61)
 
@@ -27,7 +27,7 @@ Raw tool arguments, validated against [GetMEPDeclarationsSchema](../../../schema
 
 ## Returns
 
-`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing either a single MEP financial declaration document
   or a paginated list of declarations, optionally filtered by filing year

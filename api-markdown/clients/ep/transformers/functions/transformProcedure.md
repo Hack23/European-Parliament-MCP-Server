@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -16,7 +16,7 @@ Transforms EP API procedure data to internal [Procedure](../../../../types/ep/ac
 
 ### apiData
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ## Returns
 

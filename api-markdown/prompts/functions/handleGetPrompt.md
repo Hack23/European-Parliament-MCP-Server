@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../README.md)
 
 ***
 
@@ -22,7 +22,7 @@ Prompt name
 
 ### args?
 
-`Record`\<`string`, `string`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
 
 Prompt arguments
 

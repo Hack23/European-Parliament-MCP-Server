@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../README.md)
 
 ***
 
@@ -24,7 +24,7 @@ Parse a resource URI and extract template parameters
 
 ### params
 
-> **params**: `Record`\<`string`, `string`\>
+> **params**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `string`\>
 
 ### template
 

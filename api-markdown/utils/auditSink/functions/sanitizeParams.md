@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: sanitizeParams()
 
-> **sanitizeParams**(`params`, `sensitiveKeys?`): `Record`\<`string`, `unknown`\>
+> **sanitizeParams**(`params`, `sensitiveKeys?`): [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Defined in: [utils/auditSink.ts:155](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L155)
 
@@ -19,7 +19,7 @@ unchanged, so callers should sanitise nested params separately if needed.
 
 ### params
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Original parameter map
 
@@ -31,7 +31,7 @@ Keys to redact (defaults to [DEFAULT\_SENSITIVE\_KEYS](../variables/DEFAULT_SENS
 
 ## Returns
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Sanitised copy of `params`
 

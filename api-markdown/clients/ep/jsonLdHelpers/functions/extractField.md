@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -20,7 +20,7 @@ When the value is an array, the first element is used.
 
 ### data
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Record to search
 

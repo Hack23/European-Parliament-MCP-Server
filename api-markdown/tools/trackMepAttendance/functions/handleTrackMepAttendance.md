@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleTrackMepAttendance()
 
-> **handleTrackMepAttendance**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleTrackMepAttendance**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/trackMepAttendance.ts:369](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/trackMepAttendance.ts#L369)
 
@@ -27,7 +27,7 @@ Raw tool arguments, validated against [TrackMepAttendanceSchema](../variables/Tr
 
 ## Returns
 
-`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing individual MEP attendance rates, overall summary
   statistics, attendance trend classification, and computed participation scores

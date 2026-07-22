@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -30,7 +30,7 @@ Maximum number of uncached items to fetch this run.
 
 ### details
 
-> **details**: `Record`\<`string`, `unknown`\>
+> **details**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Defined in: [utils/weeklyCacheState.ts:132](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/weeklyCacheState.ts#L132)
 
@@ -40,7 +40,7 @@ Detail map fetched so far (mutated in place).
 
 ### fetchDetail
 
-> **fetchDetail**: (`item`) => `Promise`\<`unknown`\>
+> **fetchDetail**: (`item`) => [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`unknown`\>
 
 Defined in: [utils/weeklyCacheState.ts:140](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/weeklyCacheState.ts#L140)
 
@@ -54,7 +54,7 @@ Fetches the detail record for one item.
 
 #### Returns
 
-`Promise`\<`unknown`\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`unknown`\>
 
 ***
 
@@ -130,7 +130,7 @@ readonly `string`[]
 
 ### missingIds
 
-> **missingIds**: `Set`\<`string`\>
+> **missingIds**: [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>
 
 Defined in: [utils/weeklyCacheState.ts:134](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/weeklyCacheState.ts#L134)
 

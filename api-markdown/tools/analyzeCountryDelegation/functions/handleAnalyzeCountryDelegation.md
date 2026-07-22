@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: handleAnalyzeCountryDelegation()
 
-> **handleAnalyzeCountryDelegation**(`args`): `Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+> **handleAnalyzeCountryDelegation**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 Defined in: [tools/analyzeCountryDelegation.ts:307](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/analyzeCountryDelegation.ts#L307)
 
@@ -27,7 +27,7 @@ Raw tool arguments, validated against [AnalyzeCountryDelegationSchema](../variab
 
 ## Returns
 
-`Promise`\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
 MCP tool result containing a CountryDelegationAnalysis object with
   delegation breakdown, computed attributes, confidence level, and methodology note

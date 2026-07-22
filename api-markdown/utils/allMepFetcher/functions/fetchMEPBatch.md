@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: fetchMEPBatch()
 
-> **fetchMEPBatch**(`client`, `batchSize`): `Promise`\<`unknown`[]\>
+> **fetchMEPBatch**(`client`, `batchSize`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`unknown`[]\>
 
 Defined in: [utils/allMepFetcher.ts:36](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/allMepFetcher.ts#L36)
 
@@ -28,6 +28,6 @@ Number of MEPs requested for this refresh.
 
 ## Returns
 
-`Promise`\<`unknown`[]\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`unknown`[]\>
 
 MEP records from the first listing page.

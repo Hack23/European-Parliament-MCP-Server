@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -17,7 +17,7 @@ departed entity does not permanently suppress a re-added one.
 
 ### missingIds
 
-`Set`\<`string`\>
+[`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>
 
 Missing-id set (mutated in place).
 

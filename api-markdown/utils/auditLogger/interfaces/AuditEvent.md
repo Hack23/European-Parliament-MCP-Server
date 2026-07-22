@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -57,7 +57,7 @@ Wall-clock duration of the operation in milliseconds
 
 ### params?
 
-> `optional` **params?**: `Record`\<`string`, `unknown`\>
+> `optional` **params?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Defined in: [utils/auditLogger.ts:93](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditLogger.ts#L93)
 

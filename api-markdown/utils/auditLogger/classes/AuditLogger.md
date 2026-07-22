@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -258,7 +258,7 @@ Parameter values matching `sensitiveKeys` are automatically replaced by
 
 ##### entry
 
-`Omit`\<[`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md), `"timestamp"`\>
+[`Omit`](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys)\<[`AuditLogEntry`](../../auditSink/interfaces/AuditLogEntry.md), `"timestamp"`\>
 
 Audit log entry without a timestamp (generated automatically)
 
@@ -295,7 +295,7 @@ Action name (e.g. `'get_meps'`, `'get_committee_meetings'`)
 
 ##### params
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Query parameters (sanitised automatically)
 
@@ -339,7 +339,7 @@ Action name
 
 ##### params
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Parameters supplied to the failed operation (sanitised)
 
@@ -387,7 +387,7 @@ Name of the MCP tool that was invoked
 
 ##### params
 
-`Record`\<`string`, `unknown`\>
+[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Tool input parameters (sanitised automatically)
 

@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -25,7 +25,7 @@ Defined in: [clients/ep/baseClient.ts:199](https://github.com/Hack23/European-Pa
 
 ### cache
 
-> **cache**: `LRUCache`\<`string`, `Record`\<`string`, `unknown`\>\>
+> **cache**: `LRUCache`\<`string`, [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>
 
 Defined in: [clients/ep/baseClient.ts:197](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/baseClient.ts#L197)
 

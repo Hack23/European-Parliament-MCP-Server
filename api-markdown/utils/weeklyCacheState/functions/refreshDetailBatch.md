@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: refreshDetailBatch()
 
-> **refreshDetailBatch**\<`Item`\>(`options`): `Promise`\<[`DetailBatchResult`](../interfaces/DetailBatchResult.md)\>
+> **refreshDetailBatch**\<`Item`\>(`options`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`DetailBatchResult`](../interfaces/DetailBatchResult.md)\>
 
 Defined in: [utils/weeklyCacheState.ts:174](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/weeklyCacheState.ts#L174)
 
@@ -29,6 +29,6 @@ Batch configuration and mutable state.
 
 ## Returns
 
-`Promise`\<[`DetailBatchResult`](../interfaces/DetailBatchResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`DetailBatchResult`](../interfaces/DetailBatchResult.md)\>
 
 Counts describing this run's progress and whether the cache is complete.

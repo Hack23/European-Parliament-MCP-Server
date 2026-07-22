@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -25,7 +25,7 @@ Cyclomatic complexity: 5
 
 ### services
 
-> `private` `readonly` **services**: `Map`\<`symbol`, `ServiceDescriptor`\<`unknown`\>\>
+> `private` `readonly` **services**: [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`symbol`, `ServiceDescriptor`\<`unknown`\>\>
 
 Defined in: [di/container.ts:44](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/di/container.ts#L44)
 

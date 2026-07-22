@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,6 +6,6 @@
 
 # Type Alias: webhooks
 
-> **webhooks** = `Record`\<`string`, `never`\>
+> **webhooks** = [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `never`\>
 
 Defined in: [generated/ep-api-types.ts:1114](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/generated/ep-api-types.ts#L1114)

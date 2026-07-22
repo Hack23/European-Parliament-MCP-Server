@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -26,7 +26,7 @@ class MyCustomSink implements AuditSink {
 
 ### write()
 
-> **write**(`entry`): `void` \| `Promise`\<`void`\>
+> **write**(`entry`): `void` \| [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
 Defined in: [utils/auditSink.ts:88](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/auditSink.ts#L88)
 
@@ -40,7 +40,7 @@ Write a single audit entry to the sink
 
 #### Returns
 
-`void` \| `Promise`\<`void`\>
+`void` \| [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
 ***
 

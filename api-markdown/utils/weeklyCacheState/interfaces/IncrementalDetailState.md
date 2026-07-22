@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -16,7 +16,7 @@ definitive "not found" and should not be retried this cycle.
 
 ### details
 
-> **details**: `Record`\<`string`, `unknown`\>
+> **details**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 Defined in: [utils/weeklyCacheState.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/weeklyCacheState.ts#L20)
 
@@ -24,6 +24,6 @@ Defined in: [utils/weeklyCacheState.ts:20](https://github.com/Hack23/European-Pa
 
 ### missingIds
 
-> **missingIds**: `Set`\<`string`\>
+> **missingIds**: [`Set`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Set)\<`string`\>
 
 Defined in: [utils/weeklyCacheState.ts:21](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/weeklyCacheState.ts#L21)

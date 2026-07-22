@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [tools/generateReport/types.ts:19](https://github.com/Hack23/Europea
 
 ### statistics
 
-> **statistics**: `Record`\<`string`, `number` \| `string`\>
+> **statistics**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `number` \| `string`\>
 
 Defined in: [tools/generateReport/types.ts:20](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/generateReport/types.ts#L20)
 

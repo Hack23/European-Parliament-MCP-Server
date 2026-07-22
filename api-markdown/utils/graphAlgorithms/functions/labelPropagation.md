@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -6,7 +6,7 @@
 
 # Function: labelPropagation()
 
-> **labelPropagation**(`nodeIds`, `edges`, `maxIterations?`): `Map`\<`string`, `string`\>
+> **labelPropagation**(`nodeIds`, `edges`, `maxIterations?`): [`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `string`\>
 
 Defined in: [utils/graphAlgorithms.ts:345](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/graphAlgorithms.ts#L345)
 
@@ -26,4 +26,4 @@ readonly [`WeightedEdge`](../interfaces/WeightedEdge.md)[]
 
 ## Returns
 
-`Map`\<`string`, `string`\>
+[`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, `string`\>

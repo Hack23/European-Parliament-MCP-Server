@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -301,7 +301,7 @@ Combined with votesAgainst and abstentions determines outcome.
 
 ### mepVotes?
 
-> `optional` **mepVotes?**: `Record`\<`string`, `"FOR"` \| `"AGAINST"` \| `"ABSTAIN"`\>
+> `optional` **mepVotes?**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `"FOR"` \| `"AGAINST"` \| `"ABSTAIN"`\>
 
 Defined in: [types/ep/plenary.ts:403](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/types/ep/plenary.ts#L403)
 

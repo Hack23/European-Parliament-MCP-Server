@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../../README.md)
 
 ***
 
@@ -14,13 +14,13 @@ JSON-LD response format from EP API.
 
 ## Extends
 
-- `Record`\<`string`, `unknown`\>
+- [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ## Type Parameters
 
 ### T
 
-`T` = `Record`\<`string`, `unknown`\>
+`T` = [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>
 
 ## Indexable
 

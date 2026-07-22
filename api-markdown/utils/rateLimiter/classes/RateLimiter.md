@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.3**](../../../README.md)
+[**European Parliament MCP Server API v1.4.4**](../../../README.md)
 
 ***
 
@@ -169,7 +169,7 @@ Refill tokens based on elapsed time
 
 ### removeTokens()
 
-> **removeTokens**(`count`, `options?`): `Promise`\<[`RateLimitResult`](../type-aliases/RateLimitResult.md)\>
+> **removeTokens**(`count`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RateLimitResult`](../type-aliases/RateLimitResult.md)\>
 
 Defined in: [utils/rateLimiter.ts:180](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/utils/rateLimiter.ts#L180)
 
@@ -202,7 +202,7 @@ Maximum time to wait in milliseconds (default 5000); non-finite or negative valu
 
 #### Returns
 
-`Promise`\<[`RateLimitResult`](../type-aliases/RateLimitResult.md)\>
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`RateLimitResult`](../type-aliases/RateLimitResult.md)\>
 
 Promise resolving to a [RateLimitResult](../type-aliases/RateLimitResult.md). `allowed` is `true`
   when tokens were consumed, `false` when the timeout was reached.
