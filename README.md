@@ -1,3 +1,5 @@
+[![MCP Toplist](https://mcptoplist.com/badge/glama%2FHack23%2Feuropean-parliament-mcp-server.svg)](https://mcptoplist.com/server/glama%2FHack23%2Feuropean-parliament-mcp-server)
+
 <p align="center">
   <img src="https://hack23.com/icon-192.png" alt="Hack23 Logo" width="128" height="128">
 </p>
