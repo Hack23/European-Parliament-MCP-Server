@@ -177,7 +177,7 @@
   "devDependencies": {
     "@stryker-mutator/core": "9.6.1",
     "@stryker-mutator/vitest-runner": "9.6.1",
-    "@types/jsdom": "28.0.3",
+    "@types/jsdom": "30.0.0",
     "@types/node": "26.2.0",
     "@typescript-eslint/eslint-plugin": "8.66.0",
     "@typescript-eslint/parser": "8.66.0",
