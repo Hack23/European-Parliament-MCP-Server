@@ -1,13 +1,13 @@
 {
   "metadata": {
     "schemaVersion": 3,
-    "generatedAt": "2026-08-03T03:09:11.837Z",
+    "generatedAt": "2026-08-10T02:50:33.597Z",
     "source": "European Parliament Open Data Portal API v2",
     "dataset": "corporate-bodies",
     "scope": "current",
     "complete": true,
     "recordCount": 475,
-    "detailCount": 56
+    "detailCount": 57
   },
   "corporateBodies": [
     {
@@ -1659,15 +1659,6 @@
       "id": "6701",
       "name": "SLD-UP",
       "abbreviation": "SLD-UP",
-      "members": [],
-      "responsibilities": [
-        "NATIONAL_POLITICAL_GROUP"
-      ]
-    },
-    {
-      "id": "6702",
-      "name": "PiS",
-      "abbreviation": "PiS",
       "members": [],
       "responsibilities": [
         "NATIONAL_POLITICAL_GROUP"
@@ -4041,15 +4032,6 @@
       ]
     },
     {
-      "id": "6967",
-      "name": "CJ12",
-      "abbreviation": "CJ12",
-      "members": [],
-      "responsibilities": [
-        "COMMITTEE_PARLIAMENTARY_JOINT"
-      ]
-    },
-    {
       "id": "6968",
       "name": "CJ13",
       "abbreviation": "CJ13",
@@ -4215,6 +4197,24 @@
       "id": "6988",
       "name": "CJ33",
       "abbreviation": "CJ33",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6989",
+      "name": "CJ34",
+      "abbreviation": "CJ34",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
+      "id": "6990",
+      "name": "CJ35",
+      "abbreviation": "CJ35",
       "members": [],
       "responsibilities": [
         "COMMITTEE_PARLIAMENTARY_JOINT"
@@ -4546,15 +4546,6 @@
         "COMMITTEE_PARLIAMENTARY_JOINT"
       ]
     },
-    "6967": {
-      "id": "6967",
-      "name": "Joint committee procedure - ECON and LIBE",
-      "abbreviation": "CJ12",
-      "members": [],
-      "responsibilities": [
-        "COMMITTEE_PARLIAMENTARY_JOINT"
-      ]
-    },
     "6968": {
       "id": "6968",
       "name": "Joint committee procedure - BUDG and CONT",
@@ -4721,6 +4712,24 @@
       "id": "6988",
       "name": "Joint committee procedure - INTA and IMCO",
       "abbreviation": "CJ33",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6989": {
+      "id": "6989",
+      "name": "Joint committee procedure - ECON and FEMM",
+      "abbreviation": "CJ34",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6990": {
+      "id": "6990",
+      "name": "Joint committee procedure - AFCO and PETI",
+      "abbreviation": "CJ35",
       "members": [],
       "responsibilities": [
         "COMMITTEE_PARLIAMENTARY_JOINT"
