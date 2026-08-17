@@ -1,13 +1,13 @@
 {
   "metadata": {
     "schemaVersion": 3,
-    "generatedAt": "2026-08-10T02:50:33.597Z",
+    "generatedAt": "2026-08-17T02:30:31.923Z",
     "source": "European Parliament Open Data Portal API v2",
     "dataset": "corporate-bodies",
     "scope": "current",
     "complete": true,
-    "recordCount": 475,
-    "detailCount": 57
+    "recordCount": 473,
+    "detailCount": 58
   },
   "corporateBodies": [
     {
@@ -1017,15 +1017,6 @@
       ]
     },
     {
-      "id": "6630",
-      "name": "BURO",
-      "abbreviation": "BURO",
-      "members": [],
-      "responsibilities": [
-        "GOVERNING_BODY"
-      ]
-    },
-    {
       "id": "6631",
       "name": "BCPR",
       "abbreviation": "BCPR",
@@ -1350,15 +1341,6 @@
       ]
     },
     {
-      "id": "6667",
-      "name": "PSOE",
-      "abbreviation": "PSOE",
-      "members": [],
-      "responsibilities": [
-        "NATIONAL_POLITICAL_GROUP"
-      ]
-    },
-    {
       "id": "6668",
       "name": "IU",
       "abbreviation": "IU",
@@ -1659,6 +1641,15 @@
       "id": "6701",
       "name": "SLD-UP",
       "abbreviation": "SLD-UP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6702",
+      "name": "PiS",
+      "abbreviation": "PiS",
       "members": [],
       "responsibilities": [
         "NATIONAL_POLITICAL_GROUP"
@@ -2601,15 +2592,6 @@
       ]
     },
     {
-      "id": "6807",
-      "name": "Freie Wähler",
-      "abbreviation": "Freie Wähler",
-      "members": [],
-      "responsibilities": [
-        "NATIONAL_POLITICAL_GROUP"
-      ]
-    },
-    {
       "id": "6808",
       "name": "Die Tierschutzpartei",
       "abbreviation": "Die Tierschutzpartei",
@@ -2874,15 +2856,6 @@
       "id": "6837",
       "name": "Ind.",
       "abbreviation": "Ind.",
-      "members": [],
-      "responsibilities": [
-        "NATIONAL_POLITICAL_GROUP"
-      ]
-    },
-    {
-      "id": "6838",
-      "name": "LKR",
-      "abbreviation": "LKR",
       "members": [],
       "responsibilities": [
         "NATIONAL_POLITICAL_GROUP"
@@ -4032,6 +4005,15 @@
       ]
     },
     {
+      "id": "6967",
+      "name": "CJ12",
+      "abbreviation": "CJ12",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    {
       "id": "6968",
       "name": "CJ13",
       "abbreviation": "CJ13",
@@ -4541,6 +4523,15 @@
       "id": "6966",
       "name": "Joint committee procedure - PECH and FEMM",
       "abbreviation": "CJ11",
+      "members": [],
+      "responsibilities": [
+        "COMMITTEE_PARLIAMENTARY_JOINT"
+      ]
+    },
+    "6967": {
+      "id": "6967",
+      "name": "Joint committee procedure - ECON and LIBE",
+      "abbreviation": "CJ12",
       "members": [],
       "responsibilities": [
         "COMMITTEE_PARLIAMENTARY_JOINT"
