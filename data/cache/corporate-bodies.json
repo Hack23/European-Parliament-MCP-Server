@@ -1,13 +1,13 @@
 {
   "metadata": {
     "schemaVersion": 3,
-    "generatedAt": "2026-08-17T02:30:31.923Z",
+    "generatedAt": "2026-08-24T02:33:11.616Z",
     "source": "European Parliament Open Data Portal API v2",
     "dataset": "corporate-bodies",
     "scope": "current",
     "complete": true,
-    "recordCount": 473,
-    "detailCount": 58
+    "recordCount": 475,
+    "detailCount": 56
   },
   "corporateBodies": [
     {
@@ -1017,6 +1017,15 @@
       ]
     },
     {
+      "id": "6630",
+      "name": "BURO",
+      "abbreviation": "BURO",
+      "members": [],
+      "responsibilities": [
+        "GOVERNING_BODY"
+      ]
+    },
+    {
       "id": "6631",
       "name": "BCPR",
       "abbreviation": "BCPR",
@@ -1335,6 +1344,15 @@
       "id": "6666",
       "name": "PP",
       "abbreviation": "PP",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6667",
+      "name": "PSOE",
+      "abbreviation": "PSOE",
       "members": [],
       "responsibilities": [
         "NATIONAL_POLITICAL_GROUP"
@@ -2592,6 +2610,15 @@
       ]
     },
     {
+      "id": "6807",
+      "name": "Freie Wähler",
+      "abbreviation": "Freie Wähler",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
       "id": "6808",
       "name": "Die Tierschutzpartei",
       "abbreviation": "Die Tierschutzpartei",
@@ -2856,6 +2883,15 @@
       "id": "6837",
       "name": "Ind.",
       "abbreviation": "Ind.",
+      "members": [],
+      "responsibilities": [
+        "NATIONAL_POLITICAL_GROUP"
+      ]
+    },
+    {
+      "id": "6838",
+      "name": "LKR",
+      "abbreviation": "LKR",
       "members": [],
       "responsibilities": [
         "NATIONAL_POLITICAL_GROUP"
@@ -4185,24 +4221,6 @@
       ]
     },
     {
-      "id": "6989",
-      "name": "CJ34",
-      "abbreviation": "CJ34",
-      "members": [],
-      "responsibilities": [
-        "COMMITTEE_PARLIAMENTARY_JOINT"
-      ]
-    },
-    {
-      "id": "6990",
-      "name": "CJ35",
-      "abbreviation": "CJ35",
-      "members": [],
-      "responsibilities": [
-        "COMMITTEE_PARLIAMENTARY_JOINT"
-      ]
-    },
-    {
       "id": "7005",
       "name": "Subcommittee on Human Rights",
       "abbreviation": "DROI",
@@ -4703,24 +4721,6 @@
       "id": "6988",
       "name": "Joint committee procedure - INTA and IMCO",
       "abbreviation": "CJ33",
-      "members": [],
-      "responsibilities": [
-        "COMMITTEE_PARLIAMENTARY_JOINT"
-      ]
-    },
-    "6989": {
-      "id": "6989",
-      "name": "Joint committee procedure - ECON and FEMM",
-      "abbreviation": "CJ34",
-      "members": [],
-      "responsibilities": [
-        "COMMITTEE_PARLIAMENTARY_JOINT"
-      ]
-    },
-    "6990": {
-      "id": "6990",
-      "name": "Joint committee procedure - AFCO and PETI",
-      "abbreviation": "CJ35",
       "members": [],
       "responsibilities": [
         "COMMITTEE_PARLIAMENTARY_JOINT"
