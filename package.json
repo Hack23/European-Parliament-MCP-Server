@@ -186,7 +186,7 @@
     "eslint": "10.9.1",
     "globals": "17.11.0",
     "jsdom": "30.0.1",
-    "knip": "6.32.2",
+    "knip": "6.32.3",
     "license-compliance": "4.0.0",
     "prettier": "3.9.6",
     "tsx": "4.23.12",
