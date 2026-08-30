@@ -163,7 +163,7 @@
     "@modelcontextprotocol/sdk": "1.30.0",
     "lru-cache": "11.5.2",
     "undici": "8.10.0",
-    "zod": "4.5.2"
+    "zod": "4.5.4"
   },
   "overrides": {
     "body-parser": "2.3.0",
