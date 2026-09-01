@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.32**](../../../README.md)
+[**European Parliament MCP Server API v1.4.33**](../../../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **handleGetAllGeneratedStats**(`args`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`ToolResult`](../../shared/types/interfaces/ToolResult.md)\>
 
-Defined in: [tools/getAllGeneratedStats.ts:479](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L479)
+Defined in: [tools/getAllGeneratedStats.ts:478](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/tools/getAllGeneratedStats.ts#L478)
 
 MCP `CallTool` handler entry point for `get_all_generated_stats`.
 
