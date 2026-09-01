@@ -349,13 +349,12 @@ async function fetchAdoptedTexts(
         try {
           const resp = await epClient.getAdoptedTexts({ year, limit: FETCH_PAGE_LIMIT, abortSignal: signal });
           return { year, ok: true, data: Array.isArray(resp.data) ? resp.data : [] };
-        } catch (err: unknown) {
+        } catch {
           // Intentional suppression: per-year failures are surfaced via the
           // aggregated `failedYears` warning rather than thrown — partial
           // outage must not zero out the other years. The error is audit-
           // logged at the per-source level by `runSource()` if every year
           // ends up failing.
-          void err;
           return { year, ok: false };
         }
       }),

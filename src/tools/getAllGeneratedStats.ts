@@ -339,7 +339,6 @@ export function getAllGeneratedStats(
       .map((y) => {
         if (params.includeMonthlyBreakdown) return y;
         const { monthlyActivity: _monthly, ...rest } = y;
-        void _monthly;
         return rest;
       });
 
