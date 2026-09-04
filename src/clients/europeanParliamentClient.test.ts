@@ -4426,10 +4426,11 @@ describe('EuropeanParliamentClient', () => {
         json: async () => ({})
       });
 
+      const expectedMessage: unknown = expect.stringContaining('content not yet available');
       await expect(client.getAdoptedTextById('TA-10-2026-0099'))
         .rejects.toMatchObject({
           statusCode: 404,
-          message: expect.stringContaining('content not yet available') as unknown as string
+          message: expectedMessage
         });
     });
 
