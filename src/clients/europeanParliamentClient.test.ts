@@ -266,6 +266,19 @@ describe('EuropeanParliamentClient', () => {
       expect(result.data).toHaveLength(10);
     });
 
+    it('should handle malformed legacy meps payloads gracefully', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        headers: new Headers(),
+        json: async () => ({ '@context': [] })
+      });
+
+      const result = await client.getMEPs({ country: 'INVALID' });
+
+      expect(Array.isArray(result.data)).toBe(true);
+      expect(result.data).toHaveLength(0);
+    });
+
     it('should respect country filter', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
