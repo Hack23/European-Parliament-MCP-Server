@@ -169,7 +169,8 @@ export class MEPClient extends BaseEPClient {
     apiParams['offset'] = offset;
 
     const response = await this.get<JSONLDResponse>('meps', apiParams, undefined, params.abortSignal);
-    const meps = response.data.map((item) => this.transformMEP(item));
+    const items = Array.isArray(response.data) ? response.data : [];
+    const meps = items.map((item) => this.transformMEP(item));
     const hasMore = meps.length === limit;
     return {
       data: meps,
