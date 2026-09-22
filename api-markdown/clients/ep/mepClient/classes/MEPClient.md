@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.46**](../../../../README.md)
+[**European Parliament MCP Server API v1.4.47**](../../../../README.md)
 
 ***
 
@@ -404,7 +404,7 @@ Returns cache statistics for monitoring and debugging.
 
 > **getCurrentMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:282](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L282)
+Defined in: [clients/ep/mepClient.ts:283](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L283)
 
 Returns all currently active MEPs for today's date.
 
@@ -458,7 +458,7 @@ Pagination offset (default 0)
 
 > **getHomonymMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:362](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L362)
+Defined in: [clients/ep/mepClient.ts:363](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L363)
 
 Returns homonym MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-homonyms`
@@ -489,7 +489,7 @@ Returns homonym MEPs for the current parliamentary term.
 
 > **getIncomingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:314](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L314)
+Defined in: [clients/ep/mepClient.ts:315](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L315)
 
 Returns all incoming MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-incoming`
@@ -520,7 +520,7 @@ Returns all incoming MEPs for the current parliamentary term.
 
 > **getMEPDeclarationById**(`docId`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDeclaration`](../../../../types/ep/activities/interfaces/MEPDeclaration.md)\>
 
-Defined in: [clients/ep/mepClient.ts:461](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L461)
+Defined in: [clients/ep/mepClient.ts:462](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L462)
 
 Returns a single MEP declaration by document ID.
 **EP API Endpoint:** `GET /meps-declarations/{doc-id}`
@@ -551,7 +551,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarations**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEPDeclaration`](../../../../types/ep/activities/interfaces/MEPDeclaration.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:387](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L387)
+Defined in: [clients/ep/mepClient.ts:388](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L388)
 
 Returns MEP declarations of financial interests.
 **EP API Endpoint:** `GET /meps-declarations`
@@ -590,7 +590,7 @@ Declarations contain personal financial data – access is audit-logged
 
 > **getMEPDeclarationsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/mepClient.ts:439](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L439)
+Defined in: [clients/ep/mepClient.ts:440](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L440)
 
 Retrieves recently updated MEP declarations via the feed endpoint.
 **EP API Endpoint:** `GET /meps-declarations/feed`
@@ -627,7 +627,7 @@ Configurable-window feed.  Extended timeout applied for `one-month`.
 
 > **getMEPDetails**(`id`, `options?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`MEPDetails`](../../../../types/ep/mep/interfaces/MEPDetails.md)\>
 
-Defined in: [clients/ep/mepClient.ts:238](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L238)
+Defined in: [clients/ep/mepClient.ts:239](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L239)
 
 Retrieves detailed information about a specific MEP.
 
@@ -664,7 +664,7 @@ Personal data access logged per GDPR Article 30
 
 > **getMEPs**(`params`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:190](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L190)
+Defined in: [clients/ep/mepClient.ts:191](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L191)
 
 Retrieves Members of the European Parliament with filtering and pagination.
 
@@ -718,7 +718,7 @@ Personal data access logged per GDPR Article 30
 
 > **getMEPsFeed**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`JSONLDResponse`](../../baseClient/interfaces/JSONLDResponse.md)\<[`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`string`, `unknown`\>\>\>
 
-Defined in: [clients/ep/mepClient.ts:418](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L418)
+Defined in: [clients/ep/mepClient.ts:419](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L419)
 
 Retrieves recently updated MEPs via the feed endpoint.
 **EP API Endpoint:** `GET /meps/feed`
@@ -803,7 +803,7 @@ Defined in: [clients/ep/mepClient.ts:154](https://github.com/Hack23/European-Par
 
 > **getOutgoingMEPs**(`params?`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<[`PaginatedResponse`](../../../../types/ep/common/interfaces/PaginatedResponse.md)\<[`MEP`](../../../../types/ep/mep/interfaces/MEP.md)\>\>
 
-Defined in: [clients/ep/mepClient.ts:338](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L338)
+Defined in: [clients/ep/mepClient.ts:339](https://github.com/Hack23/European-Parliament-MCP-Server/blob/main/src/clients/ep/mepClient.ts#L339)
 
 Returns all outgoing MEPs for the current parliamentary term.
 **EP API Endpoint:** `GET /meps/show-outgoing`
