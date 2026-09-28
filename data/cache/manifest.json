@@ -1,31 +1,31 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-21T02:23:21.530Z",
+  "generatedAt": "2026-09-28T02:28:25.042Z",
   "source": "European Parliament Open Data Portal API v2",
   "datasets": {
     "meps": {
       "file": "meps.json",
-      "generatedAt": "2026-09-21T02:23:21.530Z",
+      "generatedAt": "2026-09-28T02:28:25.042Z",
       "scope": "current",
       "recordCount": 718,
       "detailCount": 718,
-      "sha256": "e8150ec9abd26b207a7cd67fe2020c4c9a90a1513e418858d75d9e6b5a7ab50b"
+      "sha256": "a1dbdb545cf60d05c3c65698a2ec069beeffcc99f31fc69520e43c78aff4b453"
     },
     "corporate-bodies": {
       "file": "corporate-bodies.json",
-      "generatedAt": "2026-09-21T02:23:21.530Z",
+      "generatedAt": "2026-09-28T02:28:25.042Z",
       "scope": "current",
-      "recordCount": 475,
-      "detailCount": 56,
-      "sha256": "3375fa536f6dba0e7c751fbfddd3952eba643e08af6724f49fd032eb2453627e"
+      "recordCount": 307,
+      "detailCount": 26,
+      "sha256": "4932861181b943b2583bf8f25aa62382fb541872f1de2fc5115c551c344e6089"
     },
     "controlled-vocabularies": {
       "file": "controlled-vocabularies.json",
-      "generatedAt": "2026-09-21T02:23:21.530Z",
+      "generatedAt": "2026-09-28T02:28:25.042Z",
       "scope": "all",
       "recordCount": 5,
       "detailCount": 5,
-      "sha256": "79db0849c10d38445ebf398bc9f388ccfe08a31575eab73d5e940adf9efa3374"
+      "sha256": "039e2d2a039d240a9adf762705fd02e3edb56e601168acfeb29d107f70ca4afb"
     }
   }
 }
