@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.62**](../../../README.md)
+[**European Parliament MCP Server API v1.4.63**](../../../README.md)
 
 ***
 
@@ -13,12 +13,6 @@ Defined in: [types/branded.ts:31](https://github.com/Hack23/European-Parliament-
 Branded type for compile-time type safety.
 Prevents mixing of different ID types at compile time.
 
-## Type Declaration
-
-### \_\_brand
-
-> **\_\_brand**: `T`
-
 ## Type Parameters
 
 ### K
@@ -32,6 +26,12 @@ The base type (e.g., string, number)
 `T`
 
 The brand identifier (e.g., 'MEPID', 'SessionID')
+
+## Type Declaration
+
+### \_\_brand
+
+> **\_\_brand**: `T`
 
 ## Example
 
