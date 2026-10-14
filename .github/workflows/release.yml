@@ -129,7 +129,8 @@ jobs:
             cp -r .vitest/. builds/test-results/
             cp .vitest/index.html builds/test-results/report.html
           else
-            echo "::warning::Vitest HTML reporter did not create .vitest/index.html"
+            echo "::error::Vitest HTML reporter did not create .vitest/index.html"
+            exit 1
           fi
           if [ -d "builds/test-results" ] && [ "$(ls -A builds/test-results 2>/dev/null)" ]; then
             cp -r builds/test-results/* docs/test-results/
@@ -145,7 +146,8 @@ jobs:
             cp -r .vitest/. builds/e2e-results/
             cp .vitest/index.html builds/e2e-results/report.html
           else
-            echo "::warning::Vitest HTML reporter did not create .vitest/index.html"
+            echo "::error::Vitest HTML reporter did not create .vitest/index.html"
+            exit 1
           fi
           if [ -d "builds/e2e-results" ] && [ "$(ls -A builds/e2e-results 2>/dev/null)" ]; then
             cp -r builds/e2e-results/* docs/e2e-results/
