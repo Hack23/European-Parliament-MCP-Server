@@ -1,4 +1,4 @@
-[**European Parliament MCP Server API v1.4.62**](../../../README.md)
+[**European Parliament MCP Server API v1.4.63**](../../../README.md)
 
 ***
 
@@ -36,7 +36,7 @@ Tool metadata for MCP registration
 
 #### inputSchema.properties.date.pattern
 
-> **pattern**: `string` = '^\\d\{4\}-\\d\{2\}-\\d\{2\}$'
+> **pattern**: `string` = '^\\\\d\{4\}-\\\\d\{2\}-\\\\d\{2\}$'
 
 #### inputSchema.properties.date.type
 
@@ -132,7 +132,7 @@ Tool metadata for MCP registration
 
 #### inputSchema.properties.weekStart.pattern
 
-> **pattern**: `string` = '^\\d\{4\}-\\d\{2\}-\\d\{2\}$'
+> **pattern**: `string` = '^\\\\d\{4\}-\\\\d\{2\}-\\\\d\{2\}$'
 
 #### inputSchema.properties.weekStart.type
 
