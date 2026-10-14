@@ -123,7 +123,14 @@ jobs:
       - name: Generate unit test reports
         run: |
           mkdir -p builds/test-results docs/test-results
-          npm run test:unit -- --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/test-results/index.html --outputFile.json=./builds/test-results/results.json || true
+          rm -rf .vitest
+          npm run test:unit -- --reporter=default --reporter=html --reporter=json --outputFile.json=./builds/test-results/results.json || true
+          if [ -f ".vitest/index.html" ]; then
+            cp -r .vitest/. builds/test-results/
+            cp .vitest/index.html builds/test-results/report.html
+          else
+            echo "::warning::Vitest HTML reporter did not create .vitest/index.html"
+          fi
           if [ -d "builds/test-results" ] && [ "$(ls -A builds/test-results 2>/dev/null)" ]; then
             cp -r builds/test-results/* docs/test-results/
           fi
@@ -132,7 +139,14 @@ jobs:
       - name: Generate E2E test reports
         run: |
           mkdir -p builds/e2e-results docs/e2e-results
-          npm run test:e2e -- --reporter=default --reporter=html --reporter=json --outputFile.html=./builds/e2e-results/index.html --outputFile.json=./builds/e2e-results/results.json || true
+          rm -rf .vitest
+          npm run test:e2e -- --reporter=default --reporter=html --reporter=json --outputFile.json=./builds/e2e-results/results.json || true
+          if [ -f ".vitest/index.html" ]; then
+            cp -r .vitest/. builds/e2e-results/
+            cp .vitest/index.html builds/e2e-results/report.html
+          else
+            echo "::warning::Vitest HTML reporter did not create .vitest/index.html"
+          fi
           if [ -d "builds/e2e-results" ] && [ "$(ls -A builds/e2e-results 2>/dev/null)" ]; then
             cp -r builds/e2e-results/* docs/e2e-results/
           fi
