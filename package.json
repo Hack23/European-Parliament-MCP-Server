@@ -162,7 +162,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
     "lru-cache": "11.5.3",
-    "undici": "8.11.2",
+    "undici": "8.12.1",
     "zod": "4.6.7"
   },
   "overrides": {
@@ -171,7 +171,7 @@
     "js-yaml": "4.3.1",
     "joi": "17.13.4",
     "qs": "6.15.3",
-    "undici": "8.11.2",
+    "undici": "8.12.1",
     "vite": "8.1.5"
   },
   "devDependencies": {
