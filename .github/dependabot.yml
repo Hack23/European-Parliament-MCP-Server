@@ -34,6 +34,13 @@ updates:
     versioning-strategy: increase
     # Group minor and patch updates
     groups:
+      stryker:
+        patterns:
+          - "@stryker-mutator/*"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
       development-dependencies:
         dependency-type: "development"
         update-types:
