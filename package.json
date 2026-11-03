@@ -181,8 +181,8 @@
     "@types/node": "26.6.6",
     "@typescript-eslint/eslint-plugin": "8.72.1",
     "@typescript-eslint/parser": "8.72.1",
-    "@vitest/coverage-v8": "5.0.5",
-    "@vitest/ui": "5.0.5",
+    "@vitest/coverage-v8": "5.1.0",
+    "@vitest/ui": "5.1.0",
     "eslint": "10.14.0",
     "globals": "17.14.0",
     "jsdom": "30.1.3",
@@ -197,6 +197,6 @@
     "typescript": "npm:@typescript/typescript6@6.0.3",
     "typescript-7": "npm:typescript@7.0.2",
     "typescript-eslint": "8.72.1",
-    "vitest": "5.0.5"
+    "vitest": "5.1.0"
   }
 }
